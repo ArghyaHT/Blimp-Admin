@@ -20,7 +20,8 @@ uploadFile(file: File, folder?: string): Promise<any> {
     formData.append('folder', folder);
   }
 
-  const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/upload`;
+  const resourceType = file.type.startsWith('video/') ? 'video' : 'image';
+  const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/${resourceType}/upload`;
   return this.http.post(cloudinaryUrl, formData).toPromise();
 }
 }

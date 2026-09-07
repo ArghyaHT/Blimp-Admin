@@ -55,8 +55,8 @@ export class AddArticleComponent extends BaseComponent {
       peers: [''],
       peer_image: [''],
       video_url: [''],
-      video_title: ['', [Validators.required]],
-      video_description: ['', [Validators.required]],
+      video_title: [''],
+      video_description: [''],
       other_details: ['', [Validators.required]],
     });
   }
