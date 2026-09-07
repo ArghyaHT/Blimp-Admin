@@ -52,9 +52,9 @@ export class AddArticleComponent extends BaseComponent {
       description: ['', [Validators.required]],
       category_id: ['', [Validators.required]],
       //sub_category_id: ['', [Validators.required]],
-      peers: ['', [Validators.required]],
-      peer_image: ['', [Validators.required]],
-      video_url: ['', [Validators.required]],
+      peers: [''],
+      peer_image: [''],
+      video_url: [''],
       video_title: ['', [Validators.required]],
       video_description: ['', [Validators.required]],
       other_details: ['', [Validators.required]],
@@ -91,35 +91,27 @@ export class AddArticleComponent extends BaseComponent {
     this.spinner.show();
     this.is_submited = true;
     if (this.addArticleForm.valid) {
-
-      const articlefileName = this.randomString() + this.selectedArticleImage.name;
-      const articlefileKey = `blimp/articles/${articlefileName}`;
-
-      const peersfileName = this.randomString() + this.selectedPeersImage.name;
-      const peersfileKey = `blimp/peers/${peersfileName}`;
-
-      const videofileName = this.randomString() + this.selectedArticleVideo.name;
-      const videofileKey = `blimp/videos/${videofileName}`;
+      if (!this.selectedArticleImage) {
+        this.spinner.hide();
+        this.showToast('error', 'Please select an article image');
+        return;
+      }
 
       try {
-        // await this.s3Service.uploadFile(this.selectedArticleImage, 'hlis-bhavin-bucket', articlefileKey);
-        // await this.s3Service.uploadFile(this.selectedPeersImage, 'hlis-bhavin-bucket', peersfileKey);
-        // await this.s3Service.uploadFile(this.selectedArticleVideo, 'hlis-bhavin-bucket', videofileKey);
-
-        // Upload files to Cloudinary folders
         const articleImageResponse = await this.cloudinaryService.uploadFile(this.selectedArticleImage, 'articles');
-        const peersImageResponse = await this.cloudinaryService.uploadFile(this.selectedPeersImage, 'peers');
-        const videoResponse = await this.cloudinaryService.uploadFile(this.selectedArticleVideo, 'bannerVideo');
-
-        // Use Cloudinary returned public_id or secure_url for references
-        // const articleImagePublicId = articleImageResponse.public_id;  // or use articleImageResponse.secure_url
-        // const peersImagePublicId = peersImageResponse.public_id;
-        // const videoPublicId = videoResponse.public_id;
-
-
         const articleImagePublicId = extractFilename(articleImageResponse.public_id);  // or use articleImageResponse.secure_url
-        const peersImagePublicId = extractFilename(peersImageResponse.public_id);
-        const videoPublicId = extractFilename(videoResponse.public_id);
+        let peersImagePublicId = '';
+        let videoPublicId = '';
+
+        if (this.selectedPeersImage) {
+          const peersImageResponse = await this.cloudinaryService.uploadFile(this.selectedPeersImage, 'peers');
+          peersImagePublicId = extractFilename(peersImageResponse.public_id);
+        }
+
+        if (this.selectedArticleVideo) {
+          const videoResponse = await this.cloudinaryService.uploadFile(this.selectedArticleVideo, 'bannerVideo');
+          videoPublicId = extractFilename(videoResponse.public_id);
+        }
 
 
         const articleBody = {
