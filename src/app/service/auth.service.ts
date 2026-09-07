@@ -89,7 +89,8 @@ export class AuthService {
   
 
   getPermission() {
-    const data = {id: this.adminId};
+    const adminId = localStorage.getItem('adminId');
+    const data = { id: adminId };
 
     return this.http.post(environment.APIURL + '/get-permission', data, {
       headers: {
