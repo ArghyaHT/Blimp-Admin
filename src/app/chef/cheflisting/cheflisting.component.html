@@ -1,0 +1,117 @@
+<!-- <div class="panel mt-6 pb-0"> -->
+
+    <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+        <h5 class="text-lg font-semibold dark:text-white-light">Customers</h5>
+    
+        
+        <div class="ltr:ml-auto rtl:mr-auto">
+          <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
+            (input)="searchData()" />
+    
+        </div>
+      </div>
+    
+    
+    
+      <ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode"
+        [headerHeight]="60" [footerHeight]="60" [rowHeight]="60">
+    
+        <ngx-datatable-column name="Id" [flexGrow]="2" [sortable]="true">
+          <ng-template let-rowIndex="rowIndex" let-row="row" ngx-datatable-cell-template>
+            {{(row?.id)}}
+          </ng-template>
+        </ngx-datatable-column>
+    
+        <!-- <ngx-datatable-column name="Profile image" [flexGrow]="2" [sortable]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="flex w-max items-center">
+              <img class="h-9 w-9 rounded-full object-cover ltr:mr-2 rtl:ml-2"
+                  [src]="'/assets/images/profile-' + '.jpeg'" />
+          </div>
+          </ng-template>
+        </ngx-datatable-column> -->
+    
+        <ngx-datatable-column [headerClass]="'custom-header-class'" name="Name" [flexGrow]="2" [sortable]="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.chef_name }}
+          </ng-template>
+        </ngx-datatable-column>
+    
+    
+    
+        <ngx-datatable-column name="Email" [minWidth]="300" [flexGrow]="2" [sortable]="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.email }}
+          </ng-template>
+        </ngx-datatable-column>
+    
+        <ngx-datatable-column name="Mobile Number" [sortable]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span class="total-orders-text">{{ row?.phone_no }}</span>
+          </ng-template>
+        </ngx-datatable-column>
+    
+       
+    
+    
+        <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button *ngIf="row?.is_blocked === 0" type="button" class="btn btn-success"
+              (click)="Blockuser(row.id)">Block</button>
+            <button *ngIf="row?.is_blocked === 1" type="button" class="btn btn-danger"
+              (click)="UnBlockuser(row.id)">Unblock</button>
+          </ng-template>
+        </ngx-datatable-column>
+    
+    
+    
+       
+        <ngx-datatable-column name="Action" [flexGrow]="0" [sortable]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="flex items-center">
+  
+                
+                  <div>
+                      <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="Edit" [routerLink]="['/admin/chef/chef-details', row.id]">
+                          <icon-eye />
+                      </button>
+                  </div>
+                  <div>
+                      <button type="button" ngxTippy="Delete" (click)="DeleteUser(row.id)">
+                          <icon-trash-lines />
+                      </button>
+                  </div>
+              </div>
+          </ng-template>
+      </ngx-datatable-column>
+    
+      </ngx-datatable>
+    
+    
+      <!-- Display this message if no data is found -->
+      <!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
+    
+    
+      <div class="container">
+
+        <div class="pag-container">
+          <div class="pagination-info">{{ getRange() }}</div>
+          <select [(ngModel)]="per_page" (change)="changePerPage()" class="form-select">
+            <option [selected] value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      
+        <div class="pagination-container">
+          <button class="pagination-button" (click)="moveToFirstPage()" [disabled]="page === 1">First</button>
+          <button class="pagination-button" (click)="moveToPreviousPage()" [disabled]="page === 1">Previous</button>
+          <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+          <button class="pagination-button" (click)="moveToNextPage()" [disabled]="page === totalPages">Next</button>
+          <button class="pagination-button" (click)="moveToLastPage()" [disabled]="page === totalPages">Last</button>
+        </div>
+      </div>
+        
+    

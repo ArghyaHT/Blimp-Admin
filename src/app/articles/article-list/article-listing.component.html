@@ -1,0 +1,143 @@
+
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Manage Articles</h5>
+
+    <button type="button" class="btn btn-outline-success" (click)="navigateToAddArticle()">+ Add</button>
+    <div class="ltr:ml-auto rtl:mr-auto">
+        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
+            (input)="searchData()" />
+
+    </div>
+</div>
+
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    (sort)="onSort($event)" [footerHeight]="60" [rowHeight]="'auto'"  [count]="totalArticle" >
+
+    <ngx-datatable-column name="Title" [flexGrow]="2" [sortable]="true" prop="title">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.title }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Description" [flexGrow]="4" [sortable]="true" prop="description">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.description }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Image" [flexGrow]="2" [sortable]="false" prop="Image">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="image-container">
+                <img [src]="row?.image" alt="Image" class="datatable-image" />
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Peers" [flexGrow]="4" [sortable]="true" prop="peers">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.peers }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Peers Image" [flexGrow]="2" [sortable]="false" prop="peer_images">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="image-container">
+                <img [src]="row?.peer_images" alt="Peer Image" class="datatable-image" />
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Video Title" [flexGrow]="2" [sortable]="true" prop="video_title">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.video_title }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Author Name" [flexGrow]="2" [sortable]="true" prop="author_name">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.author_name }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Video Description" [flexGrow]="4" [sortable]="true" prop="video_description">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.video_description }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <!-- <ngx-datatable-column name="Other Details" [flexGrow]="4" [sortable]="true" prop="other_details">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.other_details }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column> -->
+
+    <ngx-datatable-column name="Status Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <button *ngIf="row?.is_active === 1" type="button" class="btn btn-success"
+                (click)="active_Article(row.id)">Active</button>
+            <button *ngIf="row?.is_active === 0" type="button" class="btn btn-danger"
+                (click)="inactive_Article(row.id)">Inactive</button>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="flex items-center">
+                <div>
+                    <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="Edit" (click)="navigateToEditArticle(row.id)">
+                        <icon-pencil-paper />
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="View" [routerLink]="['/admin/article/article-details', row.id]">
+                        <icon-eye />
+                    </button>
+                </div>
+                <div>
+                    <button type="button" ngxTippy="Delete" (click)="deleteArticle(row.id)">
+                        <icon-trash-lines />
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+</ngx-datatable>
+
+
+<!-- Display this message if no data is found -->
+<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
+
+<div class="container">
+    <div class="pag-container">
+        <div class="pagination-info">{{ getRange() }}</div>
+        <select [(ngModel)]="per_page" (change)="changePerPage($event)" class="form-select">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+    </div>
+    
+    <div class="pagination-container">
+        <button class="pagination-button" (click)="moveToFirstPage()" [disabled]="!totalArticle || page === 1">First</button>
+        <button class="pagination-button" (click)="moveToPreviousPage()" [disabled]="!totalArticle || page === 1">Previous</button>
+        <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+        <button class="pagination-button" (click)="moveToNextPage()" [disabled]="!totalArticle || page === totalPages">Next</button>
+        <button class="pagination-button" (click)="moveToLastPage()" [disabled]="!totalArticle || page === totalPages">Last</button>
+    </div>
+</div>

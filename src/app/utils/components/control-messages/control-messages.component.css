@@ -1,0 +1,6 @@
+.form-text.text-muted.danger,
+.dark-mode *.form-text.text-muted.danger {
+    color: #FF5400 !important;
+    font-size: 14px;
+    margin-top: 7px
+}

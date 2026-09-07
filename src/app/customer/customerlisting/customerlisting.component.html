@@ -1,0 +1,114 @@
+<!-- <div class="panel mt-6 pb-0"> -->
+
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+  <h5 class="text-lg font-semibold dark:text-white-light">Reports</h5>
+
+
+  <div class="ltr:ml-auto rtl:mr-auto">
+    <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..." (input)="searchData()" />
+
+  </div>
+</div>
+
+<div class="mb-4.5 flex flex-col justify-between gap-5 md:flex-row md:items-center">
+  <div class="flex flex-wrap items-center">
+    <!-- <button type="button" class="btn btn-success btn-sm m-1" (click)="exportTable('csv')">
+          <icon-file class="h-5 w-5 ltr:mr-2 rtl:ml-2" />
+          CSV
+      </button> -->
+    <!-- <button type="button" class="btn btn-success btn-sm m-1" (click)="exportTable('txt')">
+          <icon-txt-file class="h-5 w-5 ltr:mr-2 rtl:ml-2" />
+          TXT
+      </button> -->
+    <button type="button" class="btn btn-success btn-sm m-1" (click)="exportTable('excel')">
+      <icon-code-file class="ltr:mr-2 rtl:ml-2" />
+      EXCEL
+    </button>
+  </div>
+
+</div>
+
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode"  [headerHeight]="60"
+  [footerHeight]="60" [rowHeight]="60" >
+
+  <ngx-datatable-column name="Id" [flexGrow]="2" [sortable]="true">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{(row?.id)}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Title" [flexGrow]="2" [sortable]="true">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row?.customer_name }}
+    </ng-template>
+  </ngx-datatable-column>
+  
+
+  <ngx-datatable-column name="Description" [minWidth]="300" [flexGrow]="2" [sortable]="true">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row?.email }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Created Date" [flexGrow]="2" [sortable]="true" prop="registered_at">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row?.registered_at }}
+    </ng-template>
+  </ngx-datatable-column>
+
+
+  <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      <button *ngIf="row?.is_blocked === 0" type="button" class="btn btn-success"
+        (click)="Blockuser(row.id)">Block</button>
+      <button *ngIf="row?.is_blocked === 1" type="button" class="btn btn-danger"
+        (click)="UnBlockuser(row.id)">Unblock</button>
+    </ng-template>
+  </ngx-datatable-column>
+
+
+
+  <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      <button type="button" ngxTippy="Delete" (click)="DeleteUser(row.id)">
+        <icon-trash-lines />
+      </button>
+    </ng-template>
+  </ngx-datatable-column>
+
+
+</ngx-datatable>
+
+
+<!-- Display this message if no data is found -->
+<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
+
+<div class="container">
+  <div class="pag-container">
+    <div class="pagination-info">{{ getRange() }}</div>
+    <select [(ngModel)]="per_page" (change)="changePerPage()" class="form-select">
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="30">30</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+
+  <div class="pagination-container">
+    <button class="pagination-button" (click)="moveToFirstPage()" [disabled]="page === 1">First</button>
+    <button class="pagination-button" (click)="moveToPreviousPage()" [disabled]="page === 1">Previous</button>
+    <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+    <button class="pagination-button" (click)="moveToNextPage()" [disabled]="page === totalPages">Next</button>
+    <button class="pagination-button" (click)="moveToLastPage()" [disabled]="page === totalPages">Last</button>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- </div> -->

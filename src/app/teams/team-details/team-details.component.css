@@ -1,0 +1,86 @@
+.tabs {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.tabs input[type="radio"] {
+    display: none;
+}
+
+.tabs label {
+    cursor: pointer;
+    padding: 15px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+    background-color: #518ece;
+    /* Blue background */
+    color: white;
+    margin-right: 2px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tabs label:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+.tabs input[type="radio"]:checked+label {
+    background-color: #fff;
+    color: #007bff;
+    /* Blue text */
+    border-bottom: 1px solid #fff;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 0 0 5px 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease;
+}
+
+#tab-en:checked~.tab-content#content-en,
+#tab-fr:checked~.tab-content#content-fr,
+#tab-de:checked~.tab-content#content-de,
+#tab-it:checked~.tab-content#content-it {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.tab-content h4 {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.panel {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bold-label {
+    font-weight: bold;
+}
+
+.fixed-size-image {
+    width: 300px;  /* Set the desired width */
+    height: 300px; /* Set the desired height */
+    object-fit: cover; /* Ensures the image covers the area without distorting */
+    border-radius: 8px; /* Optional: for rounded corners */
+}

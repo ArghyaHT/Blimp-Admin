@@ -1,0 +1,96 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Align items vertically in the center */
+  /* margin-top: 19px; */
+}
+
+.pag-container {
+  display: flex;
+  margin-top: 20px;
+}
+
+.pagination-container {
+  display: flex;
+  margin-top: 20px;
+}
+
+.pagination-button {
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  font-size: 0.875rem;
+  background-color: #00ab55;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease;
+}
+
+.pagination-button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  margin: 0 1rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.form-select {
+  width: 30%;
+  padding-right: 25px !important;
+}
+
+/* Custom dropdown styling */
+.ng-select.custom-dropdown {
+  width: 300px; /* Customize the width as needed */
+}
+
+/* Dropdown options styling */
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect on dropdown options */
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option:hover {
+  background-color: #f0f0f0;
+}
+
+/* Selected option styling */
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
+  background-color: #007bff; /* Customize the color as needed */
+  color: #fff;
+}
+
+.download-button {
+  display: flex;
+  align-items: center;
+}
+
+.download-button button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green background */
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.download-button button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+

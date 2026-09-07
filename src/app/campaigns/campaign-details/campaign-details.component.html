@@ -1,0 +1,277 @@
+<div class="panel">
+    <div class="mb-5 ">
+        <div class="w-100">
+            <div class="mt-4 flex items-center">
+                <div class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">
+                    <button class="btn btn-success" routerLink="/admin/campaign">Back</button>
+                </div>
+                <div class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">
+                    <h4 id="name" class="ViewArticleLink">View Campaign</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <!-- Category -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Category</label>
+            <h4 id="name" class="form-input flex-1">{{campaignData?.categories?.name}}</h4>
+        </div>
+
+        <!-- Sub Category -->
+        <!-- <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Sub Category</label>
+            <h4 id="name" class="form-input flex-1">{{campaignData?.subCategories?.name}}</h4>
+        </div> -->
+
+        <!-- Country -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Country</label>
+            <h4 id="title" class="form-input flex-1">{{campaignData?.country?.name}}</h4>
+        </div>
+
+        <!-- Target Amount -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Target Amount</label>
+            <h4 id="title" class="form-input flex-1">{{campaignData?.target_amount}}</h4>
+        </div>
+
+        <!-- Campaign Details -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Campaign Details</label>
+            <h4 id="campaign_details" class="form-input flex-1" [innerHTML]="campaignData?.campaign_details"></h4>
+        </div>
+
+        <!-- Purpose -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Purpose</label>
+            <h4 id="purpose" class="form-input flex-1">{{campaignData?.purpose | purposeAction}}</h4>
+        </div>
+
+        <!-- Campaign Name -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Campaign Name</label>
+            <h4 id="campaign_name" class="form-input flex-1">{{campaignData?.campaign_name}}</h4>
+        </div>
+
+        <!-- Campaign Description -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Campaign Description</label>
+            <h4 id="description" class="form-input flex-1" [innerHTML]="campaignData?.description"></h4>
+        </div>
+
+        <!-- Created Date -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">End Date</label>
+            <h4 id="campagin_date" class="form-input flex-1">{{campaignData?.campagin_date | date: 'yyyy-MM-dd'}}</h4>
+        </div>
+
+        <!-- Hear About Blimp -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Hear About Blimp</label>
+            <h4 id="hear_about_blimp" class="form-input flex-1">{{campaignData?.hear_about_blimp}}</h4>
+        </div>
+
+        <!-- Banner Image -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Banner Image</label>
+            <img *ngIf="campaignData?.banner_image" [src]="campaignData?.banner_image" alt="Banner Image"
+                class="form-input flex-1 article-image" />
+            <span *ngIf="!campaignData?.banner_image" class="form-input flex-1 no-image">No Image Available</span>
+        </div>
+
+        <div class="mt-4 flex items-start">
+            <!-- Title Section -->
+            <label class="bold-label w-1/3 ltr:mr-4 rtl:ml-4 text-left">Campaign Images</label>
+            
+            <!-- Campaign Images Section -->
+            <div 
+                *ngIf="campaignData?.campaignsImages?.length > 0" 
+                class="campaign-images-box p-4 border border-gray-300 rounded-lg shadow-md bg-white w-2/3"
+            >
+                <div class="images-container grid grid-cols-2 gap-4">
+                    <div *ngFor="let image of campaignData.campaignsImages" class="image-box">
+                        <img 
+                            [src]="image.image" 
+                            alt="Campaign Image" 
+                            class="campaign-image object-cover w-full h-40 rounded-md border"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 flex items-center" *ngIf="campaignData?.campaign_video">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Campaign Video URL</label>
+            <div class="video-container form-input flex-1">
+                <video controls>
+                    <source [src]="campaignData?.campaign_video" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+
+        <div class="mt-4 flex items-center" *ngIf="campaignData?.youtube_link">
+            <!-- Title Section -->
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Campaign YouTube Link</label>
+            
+            <!-- Embedded YouTube Video -->
+            <div class="flex-1">
+                <iframe 
+                    [src]="sanitizedUrl"
+                    class="w-full h-64 rounded-md border border-gray-300" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+        
+
+
+        <!-- Personal Details Section -->
+        <div class="mt-8">
+            <h3 class="text-lg font-semibold">Personal Details</h3>
+
+            <!-- Name -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Name</label>
+                <h4 id="name" class="form-input flex-1">{{campaignData?.name}}</h4>
+            </div>
+
+            <!-- Email -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Email</label>
+                <h4 id="email" class="form-input flex-1">{{campaignData?.email}}</h4>
+            </div>
+
+            <!-- Beneficiary Details -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Beneficiary Details</label>
+                <h4 id="beneficiary_details" class="form-input flex-1" [innerHTML]="campaignData?.beneficiary_details"></h4>
+            </div>
+
+            <!-- Patient Relation -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Patient Relation</label>
+                <h4 id="patient_relation" class="form-input flex-1">{{campaignData?.patient_relation |patientRelationAction}}</h4>
+            </div>
+
+            <!-- Education Status -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Education Status</label>
+                <h4 id="education_status" class="form-input flex-1">{{campaignData?.education_status | educationStatusAction}}</h4>
+            </div>
+
+            <!-- Employment Status -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Employment Status</label>
+                <h4 id="employment_status" class="form-input flex-1">{{campaignData?.employee_status | employmentStatusAction}}</h4>
+            </div>
+
+            <!-- Contact Method -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Contact Method</label>
+                <h4 id="contact_method" class="form-input flex-1">{{campaignData?.contact_method | contactMethodAction}}
+                </h4>
+            </div>
+
+            <!-- Donor Request -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Donor Request</label>
+                <h4 id="donor_request" class="form-input flex-1">{{campaignData?.request_for_donor | donorRequestAction}}</h4>
+            </div>
+
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Aadhar Card</label>
+                <img *ngIf="campaignData?.aadhar_card" [src]="campaignData?.aadhar_card" alt="Banner Image"
+                    class="form-input flex-1 article-image" />
+                <span *ngIf="!campaignData?.aadhar_card" class="form-input flex-1 no-image">No Image Available</span>
+            </div>
+
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Record Policy</label>
+                <button *ngIf="campaignData?.record_policy" (click)="downloadRecordPolicy()"
+                    class="btn-download flex-1">Download</button>
+                <span *ngIf="!campaignData?.record_policy" class="form-input flex-1">No Document Available</span>
+            </div>
+            
+            <!-- Medical Document -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Medical Document</label>
+                <button *ngIf="campaignData?.medical_document" (click)="downloadMedicalDocument()"
+                    class="btn-download flex-1">Download</button>
+                <span *ngIf="!campaignData?.medical_document" class="form-input flex-1">No Document Available</span>
+            </div>
+        
+        </div>
+
+
+        <div class="mt-8 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Rasing Funds Description</label>
+            <h4 id="rasing_funds_decription" class="form-input flex-1" [innerHTML]="campaignData?.rasing_funds_decription"></h4>
+        </div>
+
+        <!-- Team Members -->
+        <div class="mt-8 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Team Members</label>
+            <h4 id="team_memeber_name" class="form-input flex-1">{{campaignData?.team_memeber_name}}</h4>
+        </div>
+
+
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Draft</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.is_draft | Draft }}</h4>
+        </div>
+
+
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Support</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.is_support | Support }}</h4>
+        </div>
+
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Discover</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.is_discover | Discover }}</h4>
+        </div>
+
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Featured</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.is_featured | Featured }}</h4>
+        </div>
+
+
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Verfied</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.is_verified | Verfied }}</h4>
+        </div>
+
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Tax Benefits</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.is_tax_benefits | TaxBenefits }}</h4>
+        </div>
+
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">ApprovalAction</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.is_approved | ApprovalAction }}</h4>
+        </div>
+
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Status</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.is_active | Status }}</h4>
+        </div>
+
+        <!-- Created At -->
+        <div class="mt-4 flex items-center">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Creation Date</label>
+            <h4 id="createdAt" class="form-input flex-1">{{campaignData?.createdAt | date: 'yyyy-MM-dd' }}</h4>
+        </div>
+
+        <div class="mt-4 flex items-center" *ngIf="campaignData?.admindetails">
+            <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Update Employee Name</label>
+            <h4 id="name" class="form-input flex-1">{{campaignData?.admindetails?.firstname}}</h4>
+        </div>
+
+    </div>
+</div>

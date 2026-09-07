@@ -1,0 +1,155 @@
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Earnings</h5>
+    <div class="ltr:ml-auto rtl:mr-auto">
+        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
+            (input)="searchData()" />
+    </div>
+</div>
+
+<div class="mb-2 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Filter: </h5>
+    <ng-select class="custom-dropdown" [items]="options" bindLabel="campaign_name" bindValue="id"
+        placeholder="Select Campaign Name" [(ngModel)]="selectedCampaignOption" (change)="fetchData()">
+    </ng-select>
+
+    <button type="button" class="btn btn-success btn-sm m-1" (click)="exportTable('excel')">
+        <icon-code-file class="ltr:mr-2 rtl:ml-2" />
+        EXCEL
+    </button>
+</div>
+
+<!-- <form [formGroup]="form1">
+    <fieldset class="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
+        <div>
+            <label for="start_date" class="mr-2">Start Date:</label>
+            <ng2-flatpickr [config]="basic" formControlName="start_date" addClass="form-input"
+                (ngModelChange)="fetchData()"></ng2-flatpickr>
+        </div>
+        <div>
+            <label for="end_date" class="mr-2">End Date:</label>
+            <ng2-flatpickr [config]="basic" formControlName="end_date" addClass="form-input"
+                (ngModelChange)="fetchData()"></ng2-flatpickr>
+        </div>
+    </fieldset>
+</form> -->
+
+<form [formGroup]="form1">
+    <fieldset class="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
+        <div>
+            <label for="start_date" class="mr-2">Start Date:</label>
+            <ng2-flatpickr [config]="basic" formControlName="start_date" addClass="form-input" placeholder="dd/mm/yy"
+                (ngModelChange)="fetchData()"></ng2-flatpickr>
+        </div>
+        <div>
+            <label for="end_date" class="mr-2">End Date:</label>
+            <ng2-flatpickr [config]="basic" formControlName="end_date" addClass="form-input" placeholder="dd/mm/yy"
+                (ngModelChange)="fetchData()"></ng2-flatpickr>
+        </div>
+    </fieldset>
+</form>
+
+<br>
+
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    [footerHeight]="60" [rowHeight]="60" [externalSorting]="false">
+
+    <ngx-datatable-column name="Campaign Title" [flexGrow]="2" [sortable]="true" prop="campaign_name">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="wrap-text">
+                {{ row?.campaignInfo?.campaign_name }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Total Amount" [flexGrow]="4" [sortable]="true" prop="final_amount">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                ${{ row?.final_amount }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Admin Commission" [flexGrow]="4" [sortable]="true" prop="admin_commission">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.admin_commission ? row?.admin_commission : 0 }}%
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    
+
+    <ngx-datatable-column name="Admin Final Amount" [flexGrow]="4" [sortable]="true" prop="admin_final_amount">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                ${{ row?.admin_final_amount }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Tip Amount" [flexGrow]="4" [sortable]="true" prop="tip_amount">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                ${{ row?.tip_amount ? row?.tip_amount : 0 }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Processing Fees" [flexGrow]="4" [sortable]="true" prop="processing_fees">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                ${{ row?.processing_fees }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Donor Name" [flexGrow]="4" [sortable]="true" prop="fullname">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.userInfo?.fullname }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Donor Email" [flexGrow]="4" [sortable]="true" prop="email">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.userInfo?.email }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Donation Date" [flexGrow]="4" [sortable]="true" prop="createdAt">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.createdAt | date: 'yyyy-MM-dd' }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+</ngx-datatable>
+
+<div class="container">
+    <div class="pag-container">
+        <div class="pagination-info">{{ getRange() }}</div>
+        <select [(ngModel)]="per_page" (change)="changePerPage($event)" class="form-select">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+
+    <div class="pagination-container">
+        <button class="pagination-button" (click)="moveToFirstPage()"
+            [disabled]="!totalEarnings || page === 1">First</button>
+        <button class="pagination-button" (click)="moveToPreviousPage()"
+            [disabled]="!totalEarnings || page === 1">Previous</button>
+        <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+        <button class="pagination-button" (click)="moveToNextPage()"
+            [disabled]="!totalEarnings || page === totalPages">Next</button>
+        <button class="pagination-button" (click)="moveToLastPage()"
+            [disabled]="!totalEarnings || page === totalPages">Last</button>
+    </div>
+</div>

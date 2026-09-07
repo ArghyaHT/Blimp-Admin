@@ -1,0 +1,257 @@
+﻿<div [ngClass]="{ 'dark text-white-dark': store.semidark }">
+    <nav
+        class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
+        <div class="h-full bg-white dark:bg-[#0e1726]">
+            <div class="flex items-center justify-between px-4 py-3">
+                <a routerLink="/admin" class="main-logo flex shrink-0 items-center">
+                    <img class="flex-none logo-img-login" src="./assets/logo/logo.svg" alt="" />
+                    <!-- &nbsp; &nbsp; -->
+                    <!-- <span class="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">BLIMP</span> -->
+                </a>
+                <a href="javascript:;"
+                    class="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 hover:text-primary rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
+                    (click)="storeData.dispatch({ type: 'toggleSidebar'})">
+                    <icon-carets-down class="m-auto rotate-90" />
+                </a>
+            </div>
+            <ng-scrollbar class="relative !h-[calc(100vh-80px)]" appearance="compact">
+                <ul class="relative space-y-0.5 py-0 font-semibold">
+
+                    <li class="nav-item">
+                        <ul>
+                            <li class="nav-item">
+                                <a routerLink="/admin" class="group" routerLinkActive="/"
+                                    (click)="toggleMobileMenu()">
+                                    <div class="flex items-center">
+                                        <img src="./assets/logo/dashboard.svg" style="width: 25px; height: 25px;" alt="" />
+                                        <span
+                                            class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                            'Dashboard' | translate }}</span>
+                                    </div>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('customers'))">
+                        <ul>
+                            <li class="nav-item">
+                                <a routerLink="/admin/customers" class="group" routerLinkActive="active" (click)="toggleMobileMenu()">
+                                    <div class="flex items-center">
+                                        <img src="./assets/logo/customer.svg" style="width: 25px; height: 25px;" alt="" />
+                                        <span
+                                            class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                            'Manage Customers' | translate }}</span>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+      
+                     <li class="menu nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('campaign'))">
+                        <a routerLink="/admin/campaign" class="nav-link group" routerLinkActive="active">
+                            <div class="flex items-center">
+                                <img  src="./assets/logo/mannage country.svg" style="width: 25px; height: 25px;" alt="" />
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Manage Campaigns' | translate }}</span>
+                            </div>
+                        </a>
+                    </li> 
+
+                    <li class="menu nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('country'))">
+                        <a routerLink="/admin/country" class="nav-link group" routerLinkActive="active">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/mannage country.svg" style="width: 25px; height: 25px;" alt="" />
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Manage Country' | translate }}</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('category'))" >
+                        <a routerLink="/admin/category" class="group" routerLinkActive="active"
+                            (click)="toggleMobileMenu()">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/mannage-category.svg" style="width: 25px; height: 25px;" alt="" />
+
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Manage Category' | translate }}</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <!-- <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('sub-category'))" >
+                        <a routerLink="/admin/sub-category" class="group" routerLinkActive="active"
+                            (click)="toggleMobileMenu()">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/sub-category.svg" style="width: 25px; height: 25px;" alt="" />
+
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Manage Sub Category' | translate }}</span>
+                            </div>
+                        </a>
+                    </li> -->
+
+                    <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('article'))">
+                        <ul>
+                            <li class="nav-item">
+                                <a routerLink="/admin/article" class="group" routerLinkActive="active"
+                                    (click)="toggleMobileMenu()">
+                                    <div class="flex items-center">
+                                        <img src="./assets/logo/arricles.svg" style="width: 25px; height: 25px;" alt="" />
+                                        <span
+                                            class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                            'Manage Articles' | translate }}</span>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item"*ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('blogs'))">
+                        <a routerLink="/admin/blogs" class="group" routerLinkActive="active"
+                            (click)="toggleMobileMenu()">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/blogs.svg" style="width: 25px; height: 25px;" alt="" />
+
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Manage Blogs' | translate }}</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('teams'))" >
+                        <a routerLink="/admin/teams" class="group" routerLinkActive="active"
+                            (click)="toggleMobileMenu()">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/team.svg" style="width: 25px; height: 25px;" alt="" />
+
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Manage Team' | translate }}</span>
+                            </div>
+                        </a>
+                    </li>
+
+                     <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('earning'))">
+                        <a routerLink="/admin/earning"  class="group" routerLinkActive="active"
+                            (click)="toggleMobileMenu()">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/earning.svg" style="width: 25px; height: 25px;" alt="" />
+
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Earnings' | translate }}</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="menu nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('transaction'))">
+                        <a routerLink="/admin/transaction" class="nav-link group" routerLinkActive="active">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/transaction.svg" style="width: 25px; height: 25px;" alt="" />
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Transactions' | translate }}</span>
+                            </div>
+                        </a>
+                    </li> 
+
+                    <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('notification'))">
+                        <a routerLink="/admin/notification" class="group" routerLinkActive="active"
+                            (click)="toggleMobileMenu()">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/notification 1.svg" style="width: 25px; height: 25px;" alt="" />
+
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Send Notification' | translate }}</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <!-- <li class="menu nav-item">
+                        <a routerLink="/admin/report" class="nav-link group" routerLinkActive="active">
+                            <div class="flex items-center">
+                                <icon-user [fill]="true" class="shrink-0 group-hover:!text-success" />
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Reports' | translate }}</span>
+                            </div>
+                        </a>
+                    </li> -->
+
+                    <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('subscribe-newsletters'))">
+                        <a routerLink="/admin/subscribe-newsletters" class="group" routerLinkActive="active"
+                            (click)="toggleMobileMenu()">
+                            <div class="flex items-center">
+                                <img src="./assets/logo/team.svg" style="width: 25px; height: 25px;" alt="" />
+
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'Subscribe News Letters' | translate }}</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+                    <li class="accordion menu nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('pages'))" >
+                        <button type="button" class="nav-link group w-full"
+                            [ngClass]="{ active: activeDropdown.includes('pages')}" (click)="toggleAccordion('pages')">
+                            <div class="flex items-center">
+
+
+                                <img src="./assets/logo/page.svg" style="width: 25px; height: 25px;" alt="" />
+
+
+                                <span
+                                    class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                    'CMS Page' | translate }}</span>
+                            </div>
+                            <div
+                                [ngClass]="{ 'rtl:rotate-90 -rotate-90': !activeDropdown.includes('pages') && !activeDropdown.includes('error')}">
+                                <icon-caret-down />
+                            </div>
+                        </button>
+                        <div [@slideDownUp]="!activeDropdown.includes('pages')" class="accordion-content ancestor">
+                            <ul class="sub-menu text-gray-500">
+
+                                <li>
+                                    <a routerLink="/admin/cms/about-us" routerLinkActive="active">{{ 'About Us' |
+                                        translate }}</a>
+                                </li>
+
+                                <li>
+                                    <a routerLink="/admin/cms/privacy-policy" routerLinkActive="active">{{ 'Privacy
+                                        Policy' | translate }}</a>
+                                </li>
+
+                                <li>
+                                    <a routerLink="/admin/cms/terms-condition" routerLinkActive="active">{{ 'Terms &
+                                        Condition' | translate }}</a>
+                                </li>
+
+                                <li>
+                                    <a routerLink="/admin/cms/faq" routerLinkActive="active">{{ 'FAQ' | translate }}</a>
+                                </li>
+
+                                <li>
+                                    <a routerLink="/admin/cms/contact-us" routerLinkActive="active">{{ 'Contact Us' |
+                                        translate }}</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+
+                </ul>
+            </ng-scrollbar>
+        </div>
+    </nav>
+</div>

@@ -1,0 +1,52 @@
+<div class="container">
+    <h2 class="blogs-heading">Add Notification</h2>
+    <form [formGroup]="addNotificationForm" (ngSubmit)="addNotification()">
+
+        <br>
+        <label for="name">Title</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="text" name="title" formControlName="title" placeholder="Enter Title"
+                class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !addNotificationControl['title'].valid">
+            {{ addNotificationControl['title'].errors?.['pattern'] ? 'Please provide valid title' : 'Please provide title'
+            }}
+        </span>
+        <br>
+        <br>
+
+        <label for="description">Message</label>
+        <div class="relative text-white-dark">
+            <textarea id="description" type="text" name="message" formControlName="message" placeholder="Enter Message"
+                class="form-input" rows="9"> </textarea>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !addNotificationControl['message'].valid">
+            {{ addNotificationControl['message'].errors?.['pattern'] ? 'Please provide valid message' : 'Please provide message'
+            }}
+        </span>
+        <br>
+        <br>
+
+        <label>Select User</label>
+        <ng-select [items]="selectedUser" [(ngModel)]="selectedItems" [multiple]="true" [closeOnSelect]="false"
+            [clearable]="false" [disabled]="disable" placeholder="Select User" formControlName="reciver_id"
+            bindLabel="fullname" bindValue="id">
+        </ng-select>
+        
+        <span class="errormsg" *ngIf="is_submited && !addNotificationControl['reciver_id'].valid">
+            {{ addNotificationControl['reciver_id'].errors?.['pattern'] ? 'Please Select valid User' : 'Please Select User' }}
+        </span>
+        <br />
+        <br />
+        <div>
+            <input type="checkbox" [formControl]="selectAllChecked" (change)="toggleSelectAll()" /> 
+            Select All
+        </div>
+        
+
+        <div class="mt-8 flex items-center justify-center">
+            <!-- <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button> -->
+            <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Add</button>
+        </div>
+    </form>
+</div>

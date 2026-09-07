@@ -1,0 +1,98 @@
+/* General styles for the heading */
+.heading {
+  font-family: 'Arial', sans-serif;
+  font-size: 2em;
+  color: #333;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ccc;
+}
+
+/* Container styling */
+.container {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Header styling */
+.header {
+  margin-top: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* HTML editor header styling */
+.html-header {
+  margin: 5px 0;
+}
+
+/* HTML editor container styling */
+.html {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem;
+  background-color: #f1f1f1;
+  min-height: 20px;
+  max-height: 10rem;
+  overflow: auto;
+}
+
+/* Styling for the update button */
+.update-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: block;  /* Center the button horizontally */
+  font-size: 16px;
+  margin: 20px auto; /* Center the button horizontally and add vertical spacing */
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Update button hover effect */
+.update-button:hover {
+  background-color: #45a049;
+}
+
+
+
+.title-input {
+  width: calc(100% - 0px); /* Adjust based on label width */
+  padding: 6px; /* Reduce padding for a smaller input box */
+  margin: 10px 0 20px 0;
+  display: block;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  
+}
+
+.title-input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+  outline: none;
+}
+/* Container margin for better spacing between sections */
+.container {
+  margin-bottom: 40px;
+}
+
+/* Styling for the language section */
+.language-section {
+  margin-bottom: 30px;
+}
+
+.language-label {
+  width: 150px; /* Adjust as needed */
+  font-weight: bold; /* Make label text bold */
+}

@@ -1,0 +1,71 @@
+.article-heading {
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+.article-lable {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.preloaded-images {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.preloaded-image {
+  position: relative;
+  margin: 10px;
+}
+
+.preloaded-image img {
+  width: 300px;
+  height: 200px;
+  border: 1px solid #ddd;
+}
+
+.remove-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.custom-dropzone {
+  border: 2px dashed #007bff; /* Change border color */
+  padding: 20px; /* Add padding for aesthetics */
+  border-radius: 10px; /* Rounded corners */
+  text-align: center; /* Center align text */
+  background-color: #f9f9f9; /* Light background color */
+}
+
+.ngx-dropzone-image-preview {
+  position: relative; /* For absolute positioning of the remove button */
+  display: inline-block; /* Align images horizontally */
+  margin: 10px; /* Space between image previews */
+  width: 100px; /* Fixed width for image previews */
+  height: 100px; /* Fixed height for image previews */
+  overflow: hidden; /* Hide overflow */
+  border: 1px solid #ddd; /* Border for visibility */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.ngx-dropzone-image-preview img {
+  width: 100%; /* Fill width */
+  height: 100%; /* Fill height */
+  object-fit: cover; /* Maintain aspect ratio while covering */
+}
+
+.ngx-dropzone-label {
+  display: block; /* Display label as block for better spacing */
+  margin-bottom: 10px; /* Space below label */
+  font-weight: bold; /* Bold text for visibility */
+}

@@ -1,0 +1,148 @@
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Manage Customer</h5>
+
+    
+    <button type="button" class="btn btn-success btn-sm m-1" (click)="exportTable('excel')">
+        <icon-code-file class="ltr:mr-2 rtl:ml-2" />
+        EXCEL
+    </button>
+
+    <div class="ltr:ml-auto rtl:mr-auto">
+        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
+            (input)="searchData()" />
+    </div>
+</div>
+
+<!-- Filter row ke liye -->
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Filter: </h5>
+    <ng-select class="custom-dropdown" [items]="options" bindLabel="name" bindValue="id" placeholder="Select Name"
+        [(ngModel)]="selectedOption" (change)="fetchData()">
+    </ng-select>
+    <ng-select class="custom-dropdown" [items]="options" bindLabel="email" bindValue="email" placeholder="Select Email"
+        [(ngModel)]="selectedEmailOption" (change)="fetchData()">
+    </ng-select>
+
+    <!-- New User Type Filter Dropdown -->
+    <ng-select class="custom-dropdown" [items]="userTypeOptions" bindLabel="label" bindValue="value"
+        placeholder="Select User Type" [(ngModel)]="selectedUserType" (change)="fetchData()">
+    </ng-select>
+
+
+</div>
+
+<form [formGroup]="form1">
+    <fieldset class="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
+        <div>
+            <label for="start_date" class="mr-2">Start Date:</label>
+            <ng2-flatpickr [config]="basic" formControlName="start_date" addClass="form-input" placeholder="dd/mm/yy"
+                (ngModelChange)="fetchData()"></ng2-flatpickr>
+        </div>
+        <div>
+            <label for="end_date" class="mr-2">End Date:</label>
+            <ng2-flatpickr [config]="basic" formControlName="end_date" addClass="form-input" placeholder="dd/mm/yy"
+                (ngModelChange)="fetchData()"></ng2-flatpickr>
+        </div>
+    </fieldset>
+</form>
+
+<br/>
+
+
+
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    [footerHeight]="60" [rowHeight]="60" [externalSorting]="false">
+
+    <ngx-datatable-column name="Name" [flexGrow]="1" [sortable]="true" prop="fullname">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.fullname }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Email" [flexGrow]="2" [sortable]="true" prop="email">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.email }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Country Code" [flexGrow]="2" [sortable]="true" prop="country_code">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.country_code ? row?.country_code : '-' }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Phone Number" [flexGrow]="2" [sortable]="true" prop="phone_number">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.phone_number ? row?.phone_number : '-' }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="User Type" [flexGrow]="2" [sortable]="true" prop="user_type">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.user_type === 1 ? 'Donor' : 'Campaigner' }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Account Type" [flexGrow]="2" [sortable]="true" prop="account_type" >
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.account_type === 1 ? 'Independant' : 'Organization' }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Identity Type" [flexGrow]="2" [sortable]="true" prop="identity_type">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.identity_type === 1 ? 'Anonymous' : (row?.identity_type === 2 ? 'Share Identity' : 'Not Defined') }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Status Action" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <button type="button" class="btn" [ngClass]="row?.is_active === 1 ? 'btn-success' : 'btn-danger'"
+                (click)="toggleCustomerStatus(row.id, row?.is_active === 1 ? true : false)">
+                {{ row?.is_active === 1 ? 'UnBlock' : 'Block' }}
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Created Date" [flexGrow]="6" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.createdAt | date: 'yyyy-MM-dd' }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <button type="button" ngxTippy="View" [routerLink]="['/admin/customers/customer-details', row.id]">
+                <icon-eye />
+            </button>
+            &nbsp;  &nbsp; 
+            <button type="button" ngxTippy="Delete" (click)="deleteCustomer(row.id)">
+                <icon-trash-lines />
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+
+</ngx-datatable>
+
+<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
+
+<div class="container">
+    <div class="pag-container">
+        <div class="pagination-info">{{ getRange() }}</div>
+        <select [(ngModel)]="per_page" (change)="changePerPage()" class="form-select">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+    </div>
+
+    <div class="pagination-container">
+        <button class="pagination-button" (click)="moveToFirstPage()" [disabled]="page === 1">First</button>
+        <button class="pagination-button" (click)="moveToPreviousPage()" [disabled]="page === 1">Previous</button>
+        <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+        <button class="pagination-button" (click)="moveToNextPage()" [disabled]="page === totalPages">Next</button>
+        <button class="pagination-button" (click)="moveToLastPage()" [disabled]="page === totalPages">Last</button>
+    </div>
+</div>

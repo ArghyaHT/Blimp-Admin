@@ -1,0 +1,104 @@
+<div class="container">
+    <h2 class="blogs-heading">Add Teams</h2>
+    <form [formGroup]="addTeamsForm" (ngSubmit)="addTeams()">
+        <label for="name">Team Image</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="file" accept="image/*" (change)="uploadProfileImage($event)" name="image"
+                formControlName="image" class="form-input" accept=".jpg,.jpeg,.png,.gif" />
+                <img *ngIf="teamImage" [src]="teamImage" alt="Peer Image" style="width: 500px; height: 300px;"/>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !addTeamsControl['image'].valid">
+            {{ addTeamsControl['image'].errors?.['pattern'] ? 'Please provide valid image' : 'Please provide image' }}
+        </span>
+        <br>
+        <label for="name">Team Name</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="text" name="name" formControlName="name" placeholder="Enter Team Name"
+                class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !addTeamsControl['name'].valid">
+            {{ addTeamsControl['name'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide name'
+            }}
+        </span>
+        <br>
+
+        <label for="email">Team Email</label>
+        <div class="relative text-white-dark">
+            <input id="email" name="email" formControlName="email" placeholder="Enter Team Email" class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !addTeamsControl['email'].valid">
+            {{ addTeamsControl['email'].errors?.['pattern'] ? 'Please provide valid email' : 'Please provide email' }}
+        </span>
+        <br>
+
+        <label for="Password">Password</label>
+        <div class="relative text-white-dark">
+            <input id="Password" [type]="passwordVisible ? 'text' : 'password'" placeholder="Enter Password"
+                name="password" formControlName="password" class="form-input ps-10 placeholder:text-white-dark" />
+            <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                <icon-lock-dots [fill]="true" />
+            </span>
+            <button type="button" class="absolute inset-y-0 right-4 flex items-center"
+                (click)="togglePasswordVisibility()">
+                <i [class]="passwordVisible ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+            </button>
+        </div>
+        <span class="errormsg"
+            *ngIf="(is_submited && !addTeamsControl['password'].valid) || (!addTeamsControl['password'].valid && addTeamsControl['password'].touched)">
+            {{ addTeamsControl['password'].errors?.['pattern'] ? 'Please provide a valid password' : 'Please provide a password' }}
+        </span>
+        <br>
+
+        <label for="designation">Team Designation</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="text" name="designation" formControlName="designation"
+                placeholder="Enter Team Designation" class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !addTeamsControl['designation'].valid">
+            {{ addTeamsControl['designation'].errors?.['pattern'] ? 'Please provide valid designation' : 'Please provide designation'
+            }}
+        </span>
+        <br>
+        <label for="description">Team Description</label>
+        <div class="relative text-white-dark">
+            <textarea id="description" type="text" name="description" formControlName="description"
+                placeholder="Enter Team Description" class="form-input" rows="9"> </textarea>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !addTeamsControl['description'].valid">
+            {{ addTeamsControl['description'].errors?.['pattern'] ? 'Please provide valid description' : 'Please provide description'
+            }}
+        </span>
+
+        <br>
+        <label for="linkedin_profile">Team Linkedin Profile</label>
+        <div class="relative text-white-dark">
+            <input id="linkedin_profile" type="text" name="linkedin_profile" formControlName="linkedin_profile"
+                placeholder="Enter Team Linkedin Profile" class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !addTeamsControl['linkedin_profile'].valid">
+            {{ addTeamsControl['linkedin_profile'].errors?.['pattern'] ? 'Please provide valid linkedin profile' : 'Please provide linkedin profile'
+            }}
+        </span>
+
+        <br>
+        <label>Select Module Permission</label>
+        <ng-select [items]="modules" [(ngModel)]="selectedItems" [multiple]="true" [closeOnSelect]="false"
+            [clearable]="false" [disabled]="disable" placeholder="Select Module Permission" formControlName="permission"
+            bindLabel="label" bindValue="value">
+        </ng-select>
+        <span class="errormsg" *ngIf="is_submited && !addTeamsControl['permission'].valid">
+            {{ addTeamsControl['permission'].errors?.['pattern'] ? 'Please provide valid permission' : 'Please provide permission'
+            }}
+        </span>
+        <br />
+        <div>
+            <input type="checkbox" [formControl]="selectAllChecked" (change)="toggleSelectAll()" />
+            Select All
+        </div>
+
+        <div class="mt-8 flex items-center justify-center">
+            <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Add</button>
+        </div>
+    </form>
+</div>

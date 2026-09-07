@@ -1,0 +1,246 @@
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Manage Campaigns</h5>
+    <div class="ltr:ml-auto rtl:mr-auto">
+        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
+            (input)="searchData()" />
+
+    </div>
+</div>
+
+<div class="mb-2 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Filter: </h5>
+    <ng-select class="custom-dropdown" [items]="options" bindLabel="campaign_name" bindValue="id"
+        placeholder="Select Campaign Name" [(ngModel)]="selectedCampaignOption" (change)="fetchData()">
+    </ng-select>
+
+    <button type="button" class="btn btn-success btn-sm m-1" (click)="exportTable('excel')">
+        <icon-code-file class="ltr:mr-2 rtl:ml-2" />
+        EXCEL
+    </button>
+</div>
+
+
+
+<form [formGroup]="form1">
+    <fieldset class="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
+        <div>
+            <label for="start_date" class="mr-2">Start Date:</label>
+            <ng2-flatpickr [config]="basic" formControlName="start_date" addClass="form-input" placeholder="dd/mm/yy"
+                (ngModelChange)="fetchData()"></ng2-flatpickr>
+        </div>
+        <div>
+            <label for="end_date" class="mr-2">End Date:</label>
+            <ng2-flatpickr [config]="basic" formControlName="end_date" addClass="form-input" placeholder="dd/mm/yy"
+                (ngModelChange)="fetchData()"></ng2-flatpickr>
+        </div>
+    </fieldset>
+</form>
+
+<br/>
+
+
+
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    (sort)="onSort($event)" [footerHeight]="60" [rowHeight]="'auto'" [count]="totalCampaigns">
+
+    <ngx-datatable-column name="Country" [flexGrow]="4" [sortable]="true" prop="country_id">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.country?.name }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Banner Image" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="image-container">
+                <img [src]="row?.banner_image" alt="Image" class="datatable-image" />
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Campaign Name" [flexGrow]="2" [sortable]="true" prop="campaign_name">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.campaign_name }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Support Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <!-- Mark as Supported button, disabled if is_approved === 0 or 2 -->
+            <button *ngIf="row?.is_support === 0 && row?.is_approved === 1" type="button" class="btn btn-primary"
+                (click)="toggleSupport(row.id, 1)">
+                Mark as Supported
+            </button>
+
+            <!-- Supported button, always disabled if is_approved === 0 or 2 -->
+            <button *ngIf="row?.is_support === 1 || row?.is_approved !== 1" type="button" class="btn btn-success"
+                [disabled]="row?.is_approved !== 1">
+                Supported
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Discoverability Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <!-- Mark as Discoverable button, disabled if is_approved === 0 or 2 -->
+            <button *ngIf="row?.is_discover === 0 && row?.is_approved === 1" type="button" class="btn btn-primary"
+                (click)="toggleDiscover(row.id, 1)">
+                Mark as Discoverable
+            </button>
+
+            <!-- Discoverable button, always disabled if is_approved === 0 or 2 -->
+            <button *ngIf="row?.is_discover === 1 || row?.is_approved !== 1" type="button" class="btn btn-success"
+                [disabled]="row?.is_approved !== 1">
+                Discoverable
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="Featured Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <button *ngIf="row?.is_featured === 0 && row?.is_approved === 1" type="button" class="btn btn-primary"
+                (click)="toggleFeatured(row.id, 1)">
+                Mark as Featured
+            </button>
+
+            <button *ngIf="row?.is_featured === 1 || row?.is_approved !== 1" type="button" class="btn btn-success"
+                [disabled]="row?.is_approved !== 1">
+                Featured
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+
+
+    <ngx-datatable-column name="Verification Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <!-- Mark as Verified button, disabled if is_approved === 0 or 2 -->
+            <button *ngIf="row?.is_verified === 0 && row?.is_approved === 1" type="button" class="btn btn-primary"
+                (click)="toggleVerification(row.id, 1)">
+                Mark as Verified
+            </button>
+
+            <!-- Verified button, always disabled if is_approved === 0 or 2 -->
+            <button *ngIf="row?.is_verified === 1 || row?.is_approved !== 1" type="button" class="btn btn-success"
+                [disabled]="row?.is_approved !== 1">
+                Verified
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Tax Benefits Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <!-- Mark as Verified button, disabled if is_approved === 0 or 2 -->
+            <button *ngIf="row?.is_tax_benefits === 0 && row?.is_approved === 1" type="button" class="btn btn-primary"
+                (click)="noTaxBenefitsCampaign(row.id)">
+                Mark as tax benefits
+            </button>
+
+            <!-- Verified button, always disabled if is_approved === 0 or 2 -->
+            <button *ngIf="row?.is_tax_benefits === 1 || row?.is_approved !== 1" type="button" class="btn btn-success"
+                [disabled]="row?.is_approved !== 1" (click)="taxBenefitsCampaign(row.id)">
+                Tax Benefits
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Status Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <button *ngIf="row?.is_active === 1 && row?.is_approved !== 2" type="button" class="btn btn-success"
+            [disabled]="row?.is_approved !== 1"
+                (click)="activeCampaign(row.id)">
+                Active
+            </button>
+
+            <button *ngIf="row?.is_active === 0 && row?.is_approved !== 2" type="button" class="btn btn-danger"
+                (click)="inactiveCampaign(row.id)">
+                Inactive
+            </button>
+
+            <button *ngIf="row?.is_approved === 2" type="button" class="btn btn-secondary" disabled>
+                Status Disabled
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Approval Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <!-- Action Button: Shows Approve/Reject dialog when status is Pending -->
+            <button *ngIf="row?.is_approved === 0" type="button" class="btn btn-primary"
+                (click)="approveRejectCampaign(row.id)">
+                Approve / Reject
+            </button>
+
+            <!-- Approved Status Button: Disabled after approval -->
+            <button *ngIf="row?.is_approved === 1" type="button" class="btn btn-success" disabled>
+                Approved
+            </button>
+
+            <!-- Rejected Status Button: Disabled after rejection -->
+            <button *ngIf="row?.is_approved === 2" type="button" class="btn btn-danger" disabled>
+                Rejected
+            </button>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Created Date" [flexGrow]="6" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.createdAt | date: 'yyyy-MM-dd' }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="flex items-center">
+                <div>
+                    <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="Edit"
+                        (click)="navigateToEditCampaign(row.id)">
+                        <icon-pencil-paper />
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="View"
+                        [routerLink]="['/admin/campaign/campaign-details', row.id]">
+                        <icon-eye />
+                    </button>
+                </div>
+                <div>
+                    <button type="button" ngxTippy="Delete" (click)="deleteCamaign(row.id)">
+                        <icon-trash-lines />
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+</ngx-datatable>
+
+<!-- Display this message if no data is found -->
+<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
+
+<div class="container">
+    <div class="pag-container">
+        <div class="pagination-info">{{ getRange() }}</div>
+        <select [(ngModel)]="per_page" (change)="changePerPage($event)" class="form-select">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+
+    <div class="pagination-container">
+        <button class="pagination-button" (click)="moveToFirstPage()"
+            [disabled]="!totalCampaigns || page === 1">First</button>
+        <button class="pagination-button" (click)="moveToPreviousPage()"
+            [disabled]="!totalCampaigns || page === 1">Previous</button>
+        <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+        <button class="pagination-button" (click)="moveToNextPage()"
+            [disabled]="!totalCampaigns || page === totalPages">Next</button>
+        <button class="pagination-button" (click)="moveToLastPage()"
+            [disabled]="!totalCampaigns || page === totalPages">Last</button>
+    </div>
+</div>

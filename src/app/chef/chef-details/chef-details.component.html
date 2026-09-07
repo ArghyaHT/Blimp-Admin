@@ -1,0 +1,91 @@
+<div class="panel">
+    <div class="mb-5 flex items-center justify-between">
+        <button type="submit" class="btn btn-success !mt-6" routerLink="/admin/chef/accept-reject_chef">Back</button>
+
+    </div>
+    <div class="mt-8 px-4">
+        <div class="flex flex-col justify-between lg:flex-row" *ngFor="let i of data">
+            <div class="mb-6 w-full lg:w-3/5 ltr:lg:mr-6 rtl:lg:ml-6">
+                <div class="text-lg font-bold mb-3">Chef Details</div>
+                <!-- <br> -->
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-name" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Name</label>
+                    <h4 id="chefName" class="form-input flex-1">{{i.chef_name}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-email" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Email</label>
+                    <h4 id="chefName" class="form-input flex-1">{{i.email}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-address" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Mobile Number</label>
+                    <h4 id="chefName" class="form-input flex-1">{{i.phone_no}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Profile Image</label>
+                    <img class="h-20 w-20 rounded-full object-cover ltr:mr-2 rtl:ml-2"
+                    [src]="'/assets/images/profile-' + '.jpeg'" />
+                </div>
+                
+              
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Location</label>
+                    <h4 id="chefName" class="form-input flex-1">{{i.location}}</h4>
+                </div>
+                
+            </div>
+
+            <div class="w-full lg:w-1/3 ltr:lg:mr-6 rtl:lg:ml-6">
+                <div class="text-lg font-bold mb-3">Chef Availability Details</div>
+                <div class="grid grid-cols-1 gap-4">
+                    <div *ngFor="let availability of i.avability">
+                        <div *ngIf="availability.is_active === 1" class="flex items-center">
+                            <span class="w-1/3 ltr:mr-2 rtl:ml-2">{{ availability.day_of_week }}:</span>
+                            <span class="flex-1">{{ availability.start_time }} - {{ availability.end_time }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chef Specialties Section -->
+            <div class="w-full lg:w-1/3 ltr:lg:mr-6 rtl:lg:ml-6">
+                <div class="text-lg font-bold mb-3">Chef Specialties</div>
+                <div class="space-y-4">
+                    <div *ngFor="let specialty of i.speciality" class="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
+                        <button
+                            type="button"
+                            class="flex w-full items-center p-4 text-white-dark dark:bg-[#1b2e4b]"
+                            [ngClass]="{ '!text-success': accordians1 === specialty.id }"
+                            (click)="accordians1 === specialty.id ? (accordians1 = null) : (accordians1 = specialty.id)"
+                        >
+                            {{ specialty.name }}
+                            <div class="ltr:ml-auto rtl:mr-auto" [ngClass]="{ 'rotate-180': accordians1 === specialty.id }">
+                                <icon-caret-down />
+                            </div>
+                        </button>
+                        <div [@slideDownUp]="accordians1 !== specialty.id" class="accordion-content">
+                            <div class="border-t border-[#d3d3d3] p-4 text-[13px] dark:border-[#1b2e4b]">
+                                <p>{{ specialty.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chef Official Details Section -->
+            <div class="w-full lg:w-1/3 ltr:lg:mr-6 rtl:lg:ml-6">
+                <div class="text-lg font-bold mb-3">Chef Official Details</div>
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <label class="w-1/3 ltr:mr-2 rtl:ml-2">Id proof:</label>
+                        <img class="h-20 w-20 rounded-full object-cover ltr:mr-2 rtl:ml-2" [src]="i.id_proof[0].id_picture" />
+                    </div>
+                    <div class="flex items-center">
+                        <label class="w-1/3 ltr:mr-2 rtl:ml-2">Bank name:</label>
+                        <span class="flex-1">{{ i.bankDetails[0].bank_name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

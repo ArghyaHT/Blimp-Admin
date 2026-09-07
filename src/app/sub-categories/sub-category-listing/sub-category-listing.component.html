@@ -1,0 +1,142 @@
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+  <h5 class="text-lg font-semibold dark:text-white-light">Manage Sub Category</h5>
+  <button type="button" class="btn btn-outline-success" (click)="addSubcategory()">+ Add</button>
+  <div class="ltr:ml-auto rtl:mr-auto">
+    <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..." (input)="searchData()" />
+  </div>
+</div>
+<!-- Category Table -->
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+  [footerHeight]="60" [rowHeight]="60" (sort)="onSort($event)" [count]="totalSubcategory" >
+
+
+  <ngx-datatable-column name="Category Name" [flexGrow]="2" [sortable]="true" prop="category">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row?.category }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Sub Category Name" [flexGrow]="2" [sortable]="true" prop="name">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row?.name }}
+    </ng-template>
+  </ngx-datatable-column>
+
+
+  <ngx-datatable-column name="Status Action" [flexGrow]="2" [sortable]="false">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+        <button *ngIf="row?.is_active == 1" type="button" class="btn btn-success"
+            (click)="toggleSubCategorytatus(row.id, true)">Active</button>
+        <button *ngIf="row?.is_active == 0" type="button" class="btn btn-danger"
+            (click)="toggleSubCategorytatus(row.id, false)">InActive</button>
+    </ng-template>
+</ngx-datatable-column>
+
+
+  <ngx-datatable-column name="Action" [flexGrow]="0" [sortable]="false">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      <div class="flex items-center">
+        <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="Edit" (click)="editSubcategoryButton(row.id)">
+          <icon-pencil-paper></icon-pencil-paper>
+        </button>
+        <button type="button" ngxTippy="Delete" (click)="DeleteSubcategory(row.id)">
+          <icon-trash-lines></icon-trash-lines>
+        </button>
+      </div>
+    </ng-template>
+  </ngx-datatable-column>
+
+</ngx-datatable>
+
+<!-- No Data Found Message -->
+<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
+
+<!-- Pagination Controls -->
+<div class="container">
+  <div class="pag-container">
+      <div class="pagination-info">{{ getRange() }}</div>
+      <select [(ngModel)]="per_page" (change)="changePerPage($event)" class="form-select">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+  </div>
+  
+  <div class="pagination-container">
+      <button class="pagination-button" (click)="moveToFirstPage()" [disabled]="!totalSubcategory || page === 1">First</button>
+      <button class="pagination-button" (click)="moveToPreviousPage()" [disabled]="!totalSubcategory || page === 1">Previous</button>
+      <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+      <button class="pagination-button" (click)="moveToNextPage()" [disabled]="!totalSubcategory || page === totalPages">Next</button>
+      <button class="pagination-button" (click)="moveToLastPage()" [disabled]="!totalSubcategory || page === totalPages">Last</button>
+  </div>
+</div>
+
+<modal #editsubcategory class="no-footer">
+  <ng-template #modalHeader>
+    <div class="font-medium text-xl text-white-dark">Update Subcategory</div>
+  </ng-template>
+  <ng-template #modalBody>
+    <form class="text-m" [formGroup]="EditSubcategoryForm" (ngSubmit)="Edit_Subcategory()">
+      <label for="edit_category_id">Category</label>
+      <div class="relative text-white-dark">
+        <select id="edit_category_id" formControlName="category_id" class="form-input">
+          <option value="" disabled>Select Category</option>
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
+
+      <label for="sub_category_name">Subcategory Name</label>
+      <div class="relative text-white-dark">
+        <input id="sub_category_name" type="text" formControlName="sub_category_name"
+          placeholder="Enter Subcategory name" class="form-input ps-10 placeholder:text-white-dark" />
+        <span class="absolute start-4 top-1/2 -translate-y-1/2">
+          <i class="fa fa-list-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+
+      <div class="mt-8 flex items-center justify-end">
+        <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="EditSubcategoryForm.invalid">Update</button>
+      </div>
+    </form>
+  </ng-template>
+</modal>
+
+
+<!-- Add Category Modal -->
+<modal #addsubcategory class="no-footer">
+  <ng-template #modalHeader>
+    <div class="font-medium text-xl text-white-dark">Add Sub Category</div>
+  </ng-template>
+  <ng-template #modalBody>
+    <form class="text-l" [formGroup]="AddSubcategoryForm" (ngSubmit)="Add_Subcategory()">
+      <label for="category_id">Category</label>
+      <div class="relative text-white-dark">
+        <select id="category_id" formControlName="category_id" class="form-input">
+          <option value="" disabled>Select Category</option>
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
+
+      <br />
+
+      <label for="name">Sub Category Name</label>
+      <div class="relative text-white-dark">
+        <input id="name" type="text" name="sub_category_name" formControlName="sub_category_name"
+          placeholder="Enter Sub Category name" class="form-input ps-10 placeholder:text-white-dark"
+          [disabled]="!AddSubcategoryForm.get('category_id').value" />
+        <span class="absolute start-4 top-1/2 -translate-y-1/2">
+          <i class="fa fa-list-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+
+      <div class="mt-8 flex items-center justify-end">
+        <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4"
+          [disabled]="AddSubcategoryForm.invalid || !AddSubcategoryForm.get('category_id').value">Add</button>
+      </div>
+    </form>
+  </ng-template>
+</modal>

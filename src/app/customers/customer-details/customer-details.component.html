@@ -1,0 +1,53 @@
+<div class="panel">
+    <div class="mb-5 flex items-center justify-between">
+        <button class="btn btn-success !mt-6" routerLink="/admin/customers">Back</button>
+    </div>
+    <div class="mt-8 px-4">
+        <div class="flex flex-col justify-between lg:flex-row" *ngIf="customerData">
+            <div class="mb-6 w-full lg:w-3/5 ltr:lg:mr-6 rtl:lg:ml-6">
+                <div class="text-lg font-bold mb-3">Customer Personal Details</div>
+               
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-email" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Full Name</label>
+                    <h4 id="name" class="form-input flex-1">{{customerData?.fullname}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-address" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Email</label>
+                    <h4 id="email" class="form-input flex-1">{{customerData?.email}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Country Code</label>
+                    <h4 id="code" class="form-input flex-1">{{customerData?.country_code}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Phone Number</label>
+                    <h4 id="number" class="form-input flex-1">{{customerData?.phone_number}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">User Type</label>
+                    <h4 id="userType" class="form-input flex-1">{{customerData?.user_type === 1 ? 'Donar' :
+                        'Campaigner'}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Account Type</label>
+                    <h4 id="accountType" class="form-input flex-1">{{ customerData?.account_type === 1 ? 'Independant' :
+                        'Organization'}}</h4>
+                </div>
+                <div class="mt-4 flex items-center" *ngIf="customerData?.user_type === 1">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Identity Type</label>
+                    <h4 id="identiytType" class="form-input flex-1">{{customerData?.identity_type === 1 ? 'Anonymous' :
+                        'Share Identity'}}</h4>
+                </div>
+                <div class="mt-4 flex items-center" *ngIf="customerData?.user_type === 1">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Donation Amount</label>
+                    <h4 id="amount" class="form-input flex-1">{{customerData?.donation_amount ? customerData?.donation_amount : 0 }}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Created Date</label>
+                    <h4 id="date" class="form-input flex-1">{{customerData?.createdAt | date}}</h4>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+</div>

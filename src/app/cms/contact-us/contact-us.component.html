@@ -1,0 +1,83 @@
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Manage Contact Details</h5>
+    <div class="ltr:ml-auto rtl:mr-auto">
+        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..." (input)="searchData()" />
+    </div>
+</div>
+<br>
+
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    [footerHeight]="60" [rowHeight]="60" [externalSorting]="false" [count]="totalContactInfo" >
+
+    <ngx-datatable-column name="First Name" [flexGrow]="2" [sortable]="true" prop="first_name">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.first_name }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Last Name" [flexGrow]="3" [sortable]="true" prop="last_name">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.last_name }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Email" [flexGrow]="2" [sortable]="true" prop="email">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="full-width-cell">{{ row?.email }}</div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Subject" [flexGrow]="4" [sortable]="true" prop="subject">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="multiline-cell">{{ row?.subject }}</div>
+        </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="Description" [flexGrow]="5" [sortable]="true" prop="description">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="full-width-cell">{{ row?.description }}</div>
+        </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="Created Date" [flexGrow]="6" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.createdAt | date: 'yyyy-MM-dd' }}
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Action" [flexGrow]="1" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="flex items-center">
+                <div>
+                    <button type="button" ngxTippy="View" [routerLink]="['/admin/cms/contact-details', row.id]" class="mr-2">
+                        <icon-eye />
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+    
+</ngx-datatable>
+
+<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
+
+<div class="container">
+    <div class="pag-container">
+        <div class="pagination-info">{{ getRange() }}</div>
+        <select [(ngModel)]="per_page" (change)="changePerPage()" class="form-select">
+            <option [selected] value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+
+    <div class="pagination-container">
+        <button class="pagination-button" (click)="moveToFirstPage()" [disabled]="!totalContactInfo || page === 1">First</button>
+        <button class="pagination-button" (click)="moveToPreviousPage()" [disabled]="!totalContactInfo || page === 1">Previous</button>
+        <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+        <button class="pagination-button" (click)="moveToNextPage()" [disabled]="!totalContactInfo || page === totalPages">Next</button>
+        <button class="pagination-button" (click)="moveToLastPage()" [disabled]="!totalContactInfo || page === totalPages">Last</button>
+    </div>
+</div>

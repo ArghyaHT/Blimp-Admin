@@ -1,0 +1,40 @@
+<div class="container">
+    <h2 class="blogs-heading">Add Blog</h2>
+    <form [formGroup]="addBlogsForm" (ngSubmit)="addBlogs()">
+        <label for="name">Blogs Image</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="file" accept="image/*" (change)="uploadProfileImage($event)" name="image"
+                formControlName="image" class="form-input" accept=".jpg,.jpeg,.png,.gif"  />
+                <img *ngIf="blogsImage" [src]="blogsImage" alt="Blog Image" style="width: 500px; height: 300px;"/>
+
+        </div>
+        <span class="errormsg"
+            *ngIf="is_submited && !addBlogsControl['image'].valid">
+            {{ addBlogsControl['image'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide blog image' }}
+        </span>
+        <br>
+        <label for="name">Blogs Title</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="text" name="title" formControlName="title" placeholder="Enter Blogs Title"
+                class="form-input" />
+        </div>
+        <span class="errormsg"
+            *ngIf="is_submited && !addBlogsControl['title'].valid">
+            {{ addBlogsControl['title'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide blog title' }}
+        </span>
+        <br>
+        <label for="description">Blogs Description</label>
+        <div class="relative text-white-dark">
+            <textarea id="description" name="description" formControlName="description"
+                placeholder="Enter Blogs Description" class="form-input" rows="9"></textarea>
+        </div>
+        <span class="errormsg"
+            *ngIf="is_submited && !addBlogsControl['description'].valid">
+            {{ addBlogsControl['description'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide blog description' }}
+        </span>
+        <div class="mt-8 flex items-center justify-center">
+            <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Add</button>
+        </div>
+    </form>
+</div>

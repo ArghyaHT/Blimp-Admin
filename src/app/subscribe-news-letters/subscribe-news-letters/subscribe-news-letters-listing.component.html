@@ -1,0 +1,54 @@
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Manage SubScribe NewsLetter</h5>
+    <div class="ltr:ml-auto rtl:mr-auto">
+        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
+            (input)="searchData()" />
+
+    </div>
+</div>
+
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    (sort)="onSort($event)" [footerHeight]="60" [rowHeight]="'auto'" [count]="totalSubscribNewsLetters" >
+
+    <ngx-datatable-column name="Email" [flexGrow]="4" [sortable]="true" prop="email">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.email }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Created Date" [flexGrow]="4" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.createdAt | date: 'yyyy-MM-dd' }}
+        </ng-template>
+    </ngx-datatable-column>
+
+
+</ngx-datatable>
+
+<div class="container">
+    <div class="pag-container">
+        <div class="pagination-info">{{ getRange() }}</div>
+        <select [(ngModel)]="per_page" (change)="changePerPage($event)" class="form-select">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+
+    <div class="pagination-container">
+        <button class="pagination-button" (click)="moveToFirstPage()"
+            [disabled]="!totalSubscribNewsLetters || page === 1">First</button>
+        <button class="pagination-button" (click)="moveToPreviousPage()"
+            [disabled]="!totalSubscribNewsLetters || page === 1">Previous</button>
+        <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+        <button class="pagination-button" (click)="moveToNextPage()"
+            [disabled]="!totalSubscribNewsLetters || page === totalPages">Next</button>
+        <button class="pagination-button" (click)="moveToLastPage()"
+            [disabled]="!totalSubscribNewsLetters || page === totalPages">Last</button>
+    </div>
+</div>
+

@@ -1,0 +1,106 @@
+
+<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Manage Transaction</h5>
+    <div class="ltr:ml-auto rtl:mr-auto">
+        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
+            (input)="searchData()" />
+    </div>
+</div>
+
+
+<div class="mb-2 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Filter: </h5>
+    <ng-select class="custom-dropdown" [items]="options" bindLabel="campaign_name" bindValue="id" placeholder="Select Campaign Name"
+        [(ngModel)]="selectedCampaignOption" (change)="fetchData()">
+    </ng-select>
+</div>
+
+<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    (sort)="onSort($event)" [footerHeight]="60" [rowHeight]="'auto'" [count]="totalTransaction" >
+
+    <ngx-datatable-column name="Campaign Title" [flexGrow]="2" [sortable]="true" prop="campaign_name">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="wrap-text">
+                {{ row?.campaignInfo?.campaign_name }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Total Amount" [flexGrow]="4" [sortable]="true" prop="final_amount">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                ${{ row?.final_amount }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Tip Amount" [flexGrow]="4" [sortable]="true" prop="tip_amount">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                ${{ row?.tip_amount ? row?.tip_amount : 0 }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Processing Fees" [flexGrow]="4" [sortable]="true" prop="processing_fees">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.processing_fees }}%
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+
+    <ngx-datatable-column name="Donor Name" [flexGrow]="4" [sortable]="true" prop="fullname">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.userInfo?.fullname }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Donor Email" [flexGrow]="4" [sortable]="true" prop="email">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.userInfo?.email }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Donation Date" [flexGrow]="4" [sortable]="true" prop="createdAt">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="truncate-text">
+                {{ row?.createdAt | date: 'yyyy-MM-dd' }}
+            </div>
+        </ng-template>
+    </ngx-datatable-column>
+
+
+</ngx-datatable>
+
+
+
+<div class="container">
+    <div class="pag-container">
+        <div class="pagination-info">{{ getRange() }}</div>
+        <select [(ngModel)]="per_page" (change)="changePerPage($event)" class="form-select">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+
+    <div class="pagination-container">
+        <button class="pagination-button" (click)="moveToFirstPage()"
+            [disabled]="!totalTransaction || page === 1">First</button>
+        <button class="pagination-button" (click)="moveToPreviousPage()"
+            [disabled]="!totalTransaction || page === 1">Previous</button>
+        <span class="pagination-info">Page {{ page }} of {{ totalPages }}</span>
+        <button class="pagination-button" (click)="moveToNextPage()"
+            [disabled]="!totalTransaction || page === totalPages">Next</button>
+        <button class="pagination-button" (click)="moveToLastPage()"
+            [disabled]="!totalTransaction || page === totalPages">Last</button>
+    </div>
+</div>

@@ -1,0 +1,106 @@
+<div class="container">
+    <h2 class="blogs-heading">Edit Teams</h2>
+
+    <form [formGroup]="editTeamForm" (ngSubmit)="editTeams()" class="form">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="max-w-xs md:max-w-none">
+                <label for="teams_image">Team Image</label>
+                <div class="relative text-white-dark" style="max-width: 500px;">
+                    <input id="teams_image" type="file" accept="image/*" (change)="uploadProfileImage($event)"
+                        name="teams_image" formControlName="teams_image" class="form-input"
+                        accept=".jpg,.jpeg,.png,.gif" />
+                    <img *ngIf="teamImageContent" [src]="teamImageContent" alt="Blog Image"
+                        class="mb-4 blog-image-preview" style="width: 500px; height: 300px;" />
+                </div>
+                <span class="errormsg"
+                    *ngIf="(is_submited && !editTeamForm.get('teams_image').valid) || (editTeamForm.get('teams_image').touched && !editTeamForm.get('teams_image').valid)">
+                    {{ editTeamForm.get('teams_image').hasError('pattern') ? 'Please provide a valid image' : 'Please upload an image' }}
+                </span>
+            </div>
+
+            <div class="flex-1">
+                <div class="form-group">
+                    <label for="name">Team Name</label>
+                    <div class="relative text-white-dark">
+                        <input id="name" type="text" name="name" formControlName="name" placeholder="Enter Team Name"
+                            class="form-input" />
+                    </div>
+                    <span class="errormsg"
+                        *ngIf="(is_submited && !editTeamForm.get('name').valid) || (editTeamForm.get('name').touched && !editTeamForm.get('name').valid)">
+                        {{ editTeamForm.get('name').hasError('pattern') ? 'Please provide a valid name' : 'Please provide a team name to update' }}
+                    </span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label for="email">Team Email</label>
+                    <div class="relative text-white-dark">
+                        <textarea id="email" name="email" formControlName="email" placeholder="Enter Team Email"
+                            class="form-input"></textarea>
+                    </div>
+                    <span class="errormsg"
+                        *ngIf="(is_submited && !editTeamForm.get('email').valid) || (editTeamForm.get('email').touched && !editTeamForm.get('email').valid)">
+                        {{ editTeamForm.get('email').hasError('pattern') ? 'Please provide a valid email' : 'Please provide a team email to update' }}
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="designation">Team Designation</label>
+                    <div class="relative text-white-dark">
+                        <input id="designation" type="text" name="designation" formControlName="designation"
+                            placeholder="Enter Team Designation" class="form-input" />
+                    </div>
+                    <span class="errormsg"
+                        *ngIf="(is_submited && !editTeamForm.get('designation').valid) || (editTeamForm.get('designation').touched && !editTeamForm.get('designation').valid)">
+                        {{ editTeamForm.get('designation').hasError('pattern') ? 'Please provide a valid designation' : 'Please provide a team designation to update' }}
+                    </span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label for="description">Team Description</label>
+                    <div class="relative text-white-dark">
+                        <textarea id="description" name="description" formControlName="description"
+                            placeholder="Enter Team Description" class="form-input" rows="9"></textarea>
+                    </div>
+                    <span class="errormsg"
+                        *ngIf="(is_submited && !editTeamForm.get('description').valid) || (editTeamForm.get('description').touched && !editTeamForm.get('description').valid)">
+                        {{ editTeamForm.get('description').hasError('pattern') ? 'Please provide a valid description' : 'Please provide a team description to update' }}
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="linkedin_profile">Team Linkedin Profile</label>
+                    <div class="relative text-white-dark">
+                        <input id="linkedin_profile" type="text" name="linkedin_profile"
+                            formControlName="linkedin_profile" placeholder="Enter Team Linkedin Profile"
+                            class="form-input" />
+                    </div>
+                    <span class="errormsg"
+                        *ngIf="(is_submited && !editTeamForm.get('linkedin_profile').valid) || (editTeamForm.get('linkedin_profile').touched && !editTeamForm.get('linkedin_profile').valid)">
+                        {{ editTeamForm.get('linkedin_profile').hasError('pattern') ? 'Please provide a valid linkedin profile' : 'Please provide a team linkedin profile to update' }}
+                    </span>
+                </div>
+
+                <label>Select Module Permission</label>
+                <ng-select [items]="modules" [(ngModel)]="selectedItems" [multiple]="true" [closeOnSelect]="false"
+                    [clearable]="false" [disabled]="disable" placeholder="Select Module Permission"
+                    formControlName="permission" bindLabel="label" bindValue="value">
+                </ng-select>
+                <span class="errormsg"
+                *ngIf="(is_submited && !editTeamForm.get('permission').valid) || (editTeamForm.get('permission').touched && !editTeamForm.get('permission').valid)">
+                {{ editTeamForm.get('permission').hasError('pattern') ? 'Please provide a valid permission' : 'Please provide a team permission to update' }}
+            </span>
+                <br />
+                <div>
+                    <input type="checkbox" [formControl]="selectAllChecked" (change)="toggleSelectAll()" />
+                    Select All
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-8 flex items-center justify-center">
+            <button type="button" class="btn btn-outline-danger" (click)="cancel()">Back</button>
+            <button type="submit" class="btn btn-success ml-4">Update</button>
+        </div>
+    </form>
+</div>

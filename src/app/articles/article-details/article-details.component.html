@@ -1,0 +1,122 @@
+<div class="panel">
+     <!-- <div class="mb-5 ">
+        <div class="w-100">
+            <div class="mt-4 flex items-center">
+                <div class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">
+                    <button class="btn btn-success" routerLink="/admin/article">Back</button>
+                </div>
+                <div class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">
+                    <h4 id="name" class="ViewArticleLink">View Article</h4>
+                </div>
+            </div>
+        </div>
+        
+    </div> -->
+
+    <div class="mb-5 flex items-center justify-between">
+            <button class="btn btn-success mt-6" routerLink="/admin/article">Back</button>
+        </div>
+    
+    <div class="mt-8 px-4">
+        <div class="flex flex-col lg:flex-row" *ngIf="articleData">
+            <div class="mb-6 w-full lg:w-3/5 ltr:lg:mr-6 rtl:lg:ml-6">
+                <div class="text-lg font-bold mb-3">Article Details
+
+                </div>
+             <!-- Category -->
+             <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Category</label>
+                <h4 id="name" class="form-input flex-1">{{articleData?.category?.name}}</h4>
+            </div>
+            
+            <!-- Sub Category -->
+            <!-- <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Sub Category</label>
+                <h4 id="name" class="form-input flex-1">{{articleData?.subCategory?.name}}</h4>
+            </div> -->
+
+             <!-- Article Title -->
+             <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Article Title</label>
+                <h4 id="title" class="form-input flex-1">{{articleData?.title}}</h4>
+            </div>
+
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Article Author Name</label>
+                <h4 id="author_name" class="form-input flex-1">{{articleData?.author_name}}</h4>
+            </div>
+
+             <!-- Article Image -->
+             <div class="mt-4 flex items-center" *ngIf="articleData">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Article Image</label>
+                <img *ngIf="articleData.image" [src]="articleData.image" alt="Article Image" class="form-input flex-1 article-image" />
+                <span *ngIf="!articleData.image" class="form-input flex-1 no-image">No Image Available</span>
+            </div>
+            
+            <!-- Article Description -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Article Description</label>
+                <h4 id="description" class="form-input flex-1">{{articleData?.description}}</h4>
+            </div>
+            
+            <!-- Peers -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Peer Title</label>
+                <h4 id="peers" class="form-input flex-1">{{articleData?.peers}}</h4>
+            </div>
+            
+            <!-- Peer Images -->
+            <div class="mt-4 flex items-center" *ngIf="articleData?.peer_images">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Peer Images</label>
+                <img [src]="articleData?.peer_images" alt="Peer Images" class="form-input flex-1 peer-image" />
+            </div>
+            
+            <!-- Video Title -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Video Title</label>
+                <h4 id="video_title" class="form-input flex-1">{{articleData?.video_title}}</h4>
+            </div>
+
+              <!-- Video URL -->
+              <div class="mt-4 flex items-center" *ngIf="articleData?.video_url">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Video URL</label>
+                <div class="video-container form-input flex-1">
+                    <video controls>
+                        <source [src]="articleData?.video_url" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+            
+            <!-- Video Description -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Video Description</label>
+                <h4 id="video_description" class="form-input flex-1">{{articleData?.video_description}}</h4>
+            </div>
+            
+          
+            <!-- Other Details -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Other Details</label>
+                <h4 id="other_details" class="form-input flex-1">{{articleData?.other_details}}</h4>
+            </div>
+
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Status</label>
+                <h4 id="createdAt" class="form-input flex-1">{{articleData?.is_active | Status  }}</h4>
+            </div>
+
+            <div class="mt-4 flex items-center" *ngIf="articleData?.adminProfile">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Update Employee Name</label>
+                <h4 id="name" class="form-input flex-1">{{articleData?.adminProfile?.firstname}}</h4>
+            </div>
+            
+            <!-- Created At -->
+            <div class="mt-4 flex items-center">
+                <label class="bold-label w-1/3 ltr:mr-2 rtl:ml-2">Created At</label>
+                <h4 id="createdAt" class="form-input flex-1">{{articleData?.createdAt | date: 'yyyy-MM-dd' }}</h4>
+            </div>
+
+        </div>
+    </div>
+</div>

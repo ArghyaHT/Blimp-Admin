@@ -1,0 +1,145 @@
+<div class="container">
+    <h2 class="article-heading">Edit Article</h2>
+    <form [formGroup]="editArticleForm" (ngSubmit)="updateArticleFunction()">
+        <!-- Category -->
+        <!-- Category -->
+        <label for="category_id" class="article-label">Category</label>
+        <div class="relative text-white-dark">
+           <!-- (change)="onCategoryChange($event)"-->
+            <select id="category_id" formControlName="category_id" class="form-input"
+               >
+                <option value="" disabled>Select Category</option>
+                <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+            </select>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['category_id'].valid">
+            {{ editArticleControl['category_id'].errors?.['required'] ? 'Please provide a category' : '' }}
+        </span>
+        <br />
+
+        <!-- Sub Category -->
+        <!-- <label for="sub_category_id" class="article-label">Sub Category</label>
+        <div class="relative text-white-dark">
+            <select id="sub_category_id" formControlName="sub_category_id" class="form-input">
+                <option value="" disabled>Select Sub Category</option>
+                <option *ngIf="!subcategories || subcategories.length === 0" value="">No Subcategories Available
+                </option>
+                <option *ngFor="let subcategory of subcategories" [value]="subcategory.id">{{ subcategory.name }}
+                </option>
+            </select>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['sub_category_id'].valid">
+            {{ editArticleControl['sub_category_id'].errors?.['required'] ? 'Please select a subcategory' : '' }}
+        </span>
+        <br /> -->
+
+        <label for="name" class="article-lable">Image</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="file" accept="image/*" (change)="uploadArticleImage($event)" name="image"
+                formControlName="image" class="form-input" accept=".jpg,.jpeg,.png,.gif" />
+            <img *ngIf="articleImage" [src]="articleImage" alt="Article Image" style="width: 500px; height: 300px;" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['image'].valid">
+            {{ editArticleControl['image'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide image' }}
+        </span>
+        <br>
+
+        <label for="name" class="article-lable">Title</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="text" name="title" formControlName="title" placeholder="Enter Title"
+                class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['title'].valid">
+            {{ editArticleControl['title'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide  title' }}
+        </span>
+        <br>
+
+        <label for="name" class="article-lable">Author Name</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="text" name="author_name" formControlName="author_name" placeholder="Enter Author Name"
+                class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['author_name'].valid">
+            {{ editArticleControl['author_name'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide  author name' }}
+        </span>
+        <br>
+
+        <label for="description" class="article-lable">Description</label>
+        <div class="relative text-white-dark">
+            <textarea id="description" name="description" formControlName="description" placeholder="Enter Description"
+                class="form-input" rows="6"></textarea>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['description'].valid">
+            {{ editArticleControl['description'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide description' }}
+        </span>
+        <br>
+
+        <label for="peer_image" class="article-lable">Peer Image</label>
+        <div class="relative text-white-dark">
+            <input id="peer_image" type="file" accept="image/*" (change)="uploadPeerImage($event)" name="peer_image"
+                formControlName="peer_image" class="form-input" accept=".jpg,.jpeg,.png,.gif" />
+            <img *ngIf="articlePeersImage" [src]="articlePeersImage" alt="Peer Image"
+                style="width: 500px; height: 300px;" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['peer_image'].valid">
+            {{ editArticleControl['peer_image'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide peer image' }}
+        </span>
+        <br>
+
+        <label for="name" class="article-lable">Peer Title</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="text" name="peers" formControlName="peers" placeholder="Enter Peer Title"
+                class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['peers'].valid">
+            {{ editArticleControl['peers'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide peer title' }}
+        </span>
+        <br>
+
+        <label for="name" class="article-lable">Video</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="file" accept="video/*" (change)="uploadArticleVideo($event)" name="video_url"
+                formControlName="video_url" class="form-input" />
+            <video *ngIf="articleVideo" [src]="articleVideo" controls style="width: 500px; height: auto;"></video>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['video_url'].valid">
+            {{ editArticleControl['video_url'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide video' }}
+        </span>
+        <br>
+
+        <label for="video_title" class="article-lable">Video Title</label>
+        <div class="relative text-white-dark">
+            <input id="name" type="text" name="video_title" formControlName="video_title"
+                placeholder="Enter Video Title" class="form-input" />
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['video_title'].valid">
+            {{ editArticleControl['video_title'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide video title' }}
+        </span>
+        <br>
+
+        <label for="video_description" class="article-lable">Video Description</label>
+        <div class="relative text-white-dark">
+            <textarea id="video_description" name="video_description" formControlName="video_description"
+                placeholder="Enter Video Description" class="form-input" rows="6"></textarea>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['video_description'].valid">
+            {{ editArticleControl['video_description'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide video description' }}
+        </span>
+        <br>
+
+        <label for="other_details" class="article-lable">Other Details</label>
+        <div class="relative text-white-dark">
+            <textarea id="other_details" name="other_details" formControlName="other_details"
+                placeholder="Enter Other Details" class="form-input" rows="6"></textarea>
+        </div>
+        <span class="errormsg" *ngIf="is_submited && !editArticleControl['other_details'].valid">
+            {{ editArticleControl['other_details'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide other details' }}
+        </span>
+        <br>
+
+        <div class="mt-8 flex items-center justify-center">
+            <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Update</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,55 @@
+<div class="container">
+    <h2 class="blogs-heading">Edit Blogs</h2>
+
+    <form [formGroup]="editBlogsForm" (ngSubmit)="editBlogs()" class="form">
+        <div class="flex flex-col md:flex-row gap-4">
+
+            <!-- Blogs Image Section -->
+            <div class="max-w-xs md:max-w-none">
+                <label for="blogs_image">Blogs Image</label>
+                <div class="relative text-white-dark" style="max-width: 500px;">
+                    <input id="blogs_image" type="file" accept="image/*" (change)="uploadProfileImage($event)"
+                        name="blogs_image" formControlName="blogs_image" class="form-input" accept=".jpg,.jpeg,.png,.gif"  />
+                        <img *ngIf="BlogImageContent" [src]="BlogImageContent" alt="Blog Image" class="mb-4 blog-image-preview" style="width: 500px; height: 300px;"/>
+                </div>
+                <span class="errormsg"
+                    *ngIf="(is_submited && !editBlogsForm.get('blogs_image').valid) || (editBlogsForm.get('blogs_image').touched && !editBlogsForm.get('blogs_image').valid)">
+                    {{ editBlogsForm.get('blogs_image').hasError('pattern') ? 'Please provide a valid image' : 'Please upload an image' }}
+                </span>
+            </div>
+
+            <!-- Blogs Title and Description Section -->
+            <div class="flex-1">
+                <div class="form-group">
+                    <label for="blogs_title">Blogs Title</label>
+                    <div class="relative text-white-dark">
+                        <input id="blogs_title" type="text" name="blogs_title" formControlName="blogs_title"
+                            placeholder="Enter Blogs Title" class="form-input" />
+                    </div>
+                    <span class="errormsg"
+                        *ngIf="(is_submited && !editBlogsForm.get('blogs_title').valid) || (editBlogsForm.get('blogs_title').touched && !editBlogsForm.get('blogs_title').valid)">
+                        {{ editBlogsForm.get('blogs_title').hasError('pattern') ? 'Please provide a valid title' : 'Please provide a blogs title to update' }}
+                    </span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label for="blogs_description">Blogs Description</label>
+                    <div class="relative text-white-dark">
+                        <textarea id="blogs_description" name="blogs_description" formControlName="blogs_description"
+                            placeholder="Enter Blogs Description" class="form-input" rows="9"></textarea>
+                    </div>
+                    <span class="errormsg"
+                        *ngIf="(is_submited && !editBlogsForm.get('blogs_description').valid) || (editBlogsForm.get('blogs_description').touched && !editBlogsForm.get('blogs_description').valid)">
+                        {{ editBlogsForm.get('blogs_description').hasError('pattern') ? 'Please provide a valid description' : 'Please provide a blogs description to update' }}
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-8 flex items-center justify-center">
+            <button type="button" class="btn btn-outline-danger" (click)="cancel()">Back</button>
+            <button type="submit" class="btn btn-success ml-4">Update</button>
+        </div>
+    </form>
+</div>

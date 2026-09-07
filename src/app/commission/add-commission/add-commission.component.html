@@ -1,0 +1,56 @@
+<div>
+
+    <div class="relative flex items-center justify-center ">
+        <div class="mx-auto w-full max-w-[550px]">
+            <div class="panel">
+                <div class="mb-7">
+                    <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">Add Or Update Commission
+                        Percentage</h1>
+
+                </div>
+                <form class="space-y-5 dark:text-white" [formGroup]="commissionForm" (ngSubmit)="submitForm()">
+                    <div>
+                        <label for="inputPasswordNew">Commission percentage(%)</label>
+                        <div class="relative text-white-dark">
+                            <input id="inputPasswordNew" type="text" placeholder="Enter Commission"
+                                class="form-input ps-10 placeholder:text-white-dark" formControlName="commission"
+                                (input)="onInputChange($event)" pattern="[0-9]*" />
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                <icon-lock-dots [fill]="true" />
+                            </span>
+                        </div>
+                        <span class="errormsg"
+                            *ngIf="(is_submited && !commissioncontrol['commission'].valid) || (!commissioncontrol['commission'].valid && commissioncontrol['commission'].touched)">
+                            {{ commissioncontrol['commission'].errors?.['pattern'] ? 'The commission must be in
+                            percenetage' : 'Please provide a Commission Percentage' }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <label for="inputPasswordNew">Stripe Processing Fees percentage(%)</label>
+                        <div class="relative text-white-dark">
+                            <input id="inputPasswordNew" type="text" placeholder="Enter Stripe Processing Fees"
+                                class="form-input ps-10 placeholder:text-white-dark" formControlName="stripe_commission"
+                                (input)="onInputChange($event)" pattern="[0-9]*" />
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                <icon-lock-dots [fill]="true" />
+                            </span>
+                        </div>
+                        <span class="errormsg"
+                            *ngIf="(is_submited && !commissioncontrol['stripe_commission'].valid) || (!commissioncontrol['stripe_commission'].valid && commissioncontrol['stripe_commission'].touched)">
+                            {{ commissioncontrol['stripe_commission'].errors?.['pattern'] ? 'The stripe commission must be in percenetage' : 'Please provide a Commission Percentage' }}
+                        </span>
+                    </div>
+
+                    <button type="submit"
+                        class="btn btn-success !mt-6 w-full border-0  shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                        Update
+                    </button>
+                </form>
+
+            </div>
+        </div>
+        <!-- </div> -->
+        <!-- </div> -->
+    </div>
+</div>

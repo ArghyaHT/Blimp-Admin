@@ -1,0 +1,47 @@
+<div class="panel">
+    <div class="mb-5 flex items-center justify-between">
+        <button class="btn btn-success !mt-6" routerLink="/admin/teams">Back</button>
+    </div>
+    <div class="mt-8 px-4">
+        <div class="flex flex-col justify-between lg:flex-row" *ngIf="teamData">
+            <div class="mb-6 w-full lg:w-3/5 ltr:lg:mr-6 rtl:lg:ml-6">
+                <div class="text-lg font-bold mb-3">Team Details</div>
+                <div class="mt-4 flex items-center">
+                    <label for="image" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Image</label>
+                    <img [src]="teamData?.image" alt="Blog Image" class="form-input flex-1 fixed-size-image" />
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="name" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Name</label>
+                    <h4 id="name" class="form-input flex-1">{{teamData?.name}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="email" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Email</label>
+                    <h4 id="email" class="form-input flex-1">{{teamData?.email}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="linkedin_profile" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Linkedin Profile</label>
+                    <h4 id="linkedin_profile" class="form-input flex-1">{{teamData?.linkedin_profile}}</h4>
+                </div>
+
+                <div class="mt-4 flex items-center">
+                    <label for="designation" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Designation</label>
+                    <h4 id="designation" class="form-input flex-1">{{teamData?.designation}}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="description" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Description</label>
+                    <h4 id="description" class="form-input flex-1">{{teamData?.description}}</h4>
+                </div>
+                <div class="mt-4 flex items-center" *ngIf="teamData?.admin?.permissions">
+                    <label for="designation" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Permission</label>
+                    <h4 id="designation" class="form-input flex-1">{{teamData?.admin?.permissions}}</h4>
+                </div>
+
+                <div class="mt-4 flex items-center">
+                    <label for="status" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Status</label>
+                    <h4 id="description" class="form-input flex-1">{{teamData?.is_active | Status }}</h4>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <label for="createdAt" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Created At</label>
+                    <h4 id="userType" class="form-input flex-1">{{teamData?.createdAt | date: 'yyyy-MM-dd'}}</h4>
+                </div>
+            </div>

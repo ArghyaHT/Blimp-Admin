@@ -1,0 +1,48 @@
+<div class="container">
+    <h2 class="faq-heading">FAQ Details</h2>
+  
+    <div *ngIf="faqData">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="question_en">Question (English)</label>
+          <textarea id="question_en" readonly class="form-textarea large-textarea">{{ faqData.question_en }}</textarea>
+        </div>
+        <div>
+          <label for="answer_en">Answer (English)</label>
+          <textarea id="answer_en" readonly class="form-textarea large-textarea">{{ faqData.answer_en }}</textarea>
+        </div>
+  
+        <div>
+          <label for="question_fr">Question (French)</label>
+          <textarea id="question_fr" readonly class="form-textarea large-textarea">{{ faqData.question_fr }}</textarea>
+        </div>
+        <div>
+          <label for="answer_fr">Answer (French)</label>
+          <textarea id="answer_fr" readonly class="form-textarea large-textarea">{{ faqData.answer_fr }}</textarea>
+        </div>
+  
+        <div>
+          <label for="question_de">Question (German)</label>
+          <textarea id="question_de" readonly class="form-textarea large-textarea">{{ faqData.question_de }}</textarea>
+        </div>
+        <div>
+          <label for="answer_de">Answer (German)</label>
+          <textarea id="answer_de" readonly class="form-textarea large-textarea">{{ faqData.answer_de }}</textarea>
+        </div>
+  
+        <div>
+          <label for="question_it">Question (Italian)</label>
+          <textarea id="question_it" readonly class="form-textarea large-textarea">{{ faqData.question_it }}</textarea>
+        </div>
+        <div>
+          <label for="answer_it">Answer (Italian)</label>
+          <textarea id="answer_it" readonly class="form-textarea large-textarea">{{ faqData.answer_it }}</textarea>
+        </div>
+      </div>
+    </div>
+  
+    <div class="mt-8 flex items-center justify-center">
+      <button type="button" class="btn btn-outline-danger" (click)="goBack()">Back</button>
+    </div>
+  </div>
+  
