@@ -28,56 +28,58 @@
 
 </div>
 
-<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode"  [headerHeight]="60"
-  [footerHeight]="60" [rowHeight]="60" >
+<div class="table-responsive w-full overflow-x-auto">
+  <ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    [footerHeight]="60" [rowHeight]="60" [scrollbarH]="true">
 
-  <ngx-datatable-column name="Id" [flexGrow]="2" [sortable]="true">
-    <ng-template let-row="row" ngx-datatable-cell-template>
-      {{(row?.id)}}
-    </ng-template>
-  </ngx-datatable-column>
+    <ngx-datatable-column name="Id" [flexGrow]="2" [sortable]="true">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{(row?.id)}}
+      </ng-template>
+    </ngx-datatable-column>
 
-  <ngx-datatable-column name="Title" [flexGrow]="2" [sortable]="true">
-    <ng-template let-row="row" ngx-datatable-cell-template>
-      {{ row?.customer_name }}
-    </ng-template>
-  </ngx-datatable-column>
-  
+    <ngx-datatable-column name="Title" [flexGrow]="2" [sortable]="true">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row?.customer_name }}
+      </ng-template>
+    </ngx-datatable-column>
+    
 
-  <ngx-datatable-column name="Description" [minWidth]="300" [flexGrow]="2" [sortable]="true">
-    <ng-template let-row="row" ngx-datatable-cell-template>
-      {{ row?.email }}
-    </ng-template>
-  </ngx-datatable-column>
+    <ngx-datatable-column name="Description" [minWidth]="300" [flexGrow]="2" [sortable]="true">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row?.email }}
+      </ng-template>
+    </ngx-datatable-column>
 
-  <ngx-datatable-column name="Created Date" [flexGrow]="2" [sortable]="true" prop="registered_at">
-    <ng-template let-row="row" ngx-datatable-cell-template>
-      {{ row?.registered_at }}
-    </ng-template>
-  </ngx-datatable-column>
-
-
-  <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
-    <ng-template let-row="row" ngx-datatable-cell-template>
-      <button *ngIf="row?.is_blocked === 0" type="button" class="btn btn-success"
-        (click)="Blockuser(row.id)">Block</button>
-      <button *ngIf="row?.is_blocked === 1" type="button" class="btn btn-danger"
-        (click)="UnBlockuser(row.id)">Unblock</button>
-    </ng-template>
-  </ngx-datatable-column>
+    <ngx-datatable-column name="Created Date" [flexGrow]="2" [sortable]="true" prop="registered_at">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row?.registered_at }}
+      </ng-template>
+    </ngx-datatable-column>
 
 
+    <ngx-datatable-column name="Action" [flexGrow]="2" [minWidth]="100" [sortable]="false">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <button *ngIf="row?.is_blocked === 0" type="button" class="btn btn-success btn-sm whitespace-nowrap"
+          (click)="Blockuser(row.id)">Block</button>
+        <button *ngIf="row?.is_blocked === 1" type="button" class="btn btn-danger btn-sm whitespace-nowrap"
+          (click)="UnBlockuser(row.id)">Unblock</button>
+      </ng-template>
+    </ngx-datatable-column>
 
-  <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
-    <ng-template let-row="row" ngx-datatable-cell-template>
-      <button type="button" ngxTippy="Delete" (click)="DeleteUser(row.id)">
-        <icon-trash-lines />
-      </button>
-    </ng-template>
-  </ngx-datatable-column>
 
 
-</ngx-datatable>
+    <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <button type="button" ngxTippy="Delete" (click)="DeleteUser(row.id)">
+          <icon-trash-lines />
+        </button>
+      </ng-template>
+    </ngx-datatable-column>
+
+
+  </ngx-datatable>
+</div>
 
 
 <!-- Display this message if no data is found -->

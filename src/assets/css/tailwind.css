@@ -274,13 +274,13 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 
     /* Buttons */
     .btn {
-        @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-sm font-semibold shadow-[0_10px_20px_-10px] outline-none transition duration-300 hover:shadow-none;
+        @apply relative inline-flex items-center justify-center whitespace-nowrap rounded-md border px-4 py-2 text-sm font-semibold shadow-sm outline-none transition duration-300 hover:shadow-none;
     }
     .btn-lg {
-        @apply px-7 py-2.5 text-base;
+        @apply px-6 py-2.5 text-base whitespace-nowrap;
     }
     .btn-sm {
-        @apply px-2.5 py-1.5 text-xs;
+        @apply px-2.5 py-1.5 text-xs whitespace-nowrap;
     }
     .btn[disabled] {
         @apply cursor-not-allowed opacity-60;
@@ -552,6 +552,31 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     }
     table.dataTable-table tbody tr:last-child td {
         @apply border-b-0;
+    }
+
+    /* Datatable and Table Cell Button Overrides */
+    ngx-datatable .btn,
+    table .btn {
+        @apply whitespace-nowrap text-xs px-3 py-1.5 shadow-none font-semibold rounded-md inline-flex items-center justify-center align-middle;
+        max-width: max-content;
+    }
+
+    ngx-datatable .datatable-body-cell {
+        @apply flex items-center;
+    }
+
+    ngx-datatable .datatable-body-cell-label {
+        @apply w-full flex items-center;
+    }
+
+    /* Datatable Horizontal Scroll Helper */
+    .table-responsive {
+        @apply w-full overflow-x-auto block;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    ngx-datatable.material {
+        @apply w-full overflow-x-auto block;
     }
 
     /* code hightlight */

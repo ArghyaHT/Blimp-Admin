@@ -73,11 +73,11 @@
     </ngx-datatable-column>
 
 
-    <ngx-datatable-column name="Status Action" [flexGrow]="2" [sortable]="false">
+    <ngx-datatable-column name="Status Action" [flexGrow]="2" [minWidth]="110" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <button *ngIf="row?.is_active == 1" type="button" class="btn btn-success"
+            <button *ngIf="row?.is_active == 1" type="button" class="btn btn-success btn-sm whitespace-nowrap"
                 (click)="toggleFAQStatus(row.id, true)">Active</button>
-            <button *ngIf="row?.is_active == 0" type="button" class="btn btn-danger"
+            <button *ngIf="row?.is_active == 0" type="button" class="btn btn-danger btn-sm whitespace-nowrap"
                 (click)="toggleFAQStatus(row.id, false)">InActive</button>
         </ng-template>
     </ngx-datatable-column>
