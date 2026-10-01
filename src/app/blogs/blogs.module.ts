@@ -13,7 +13,6 @@ import { AddBlogsComponent } from './add-blogs/add-blogs.component';
 import { EditBlogsComponent } from './edit-blogs/edit-blogs.component';
 import { UtilsModule } from '../utils/utils.module';
 
-
 const routes: Routes = [
   {
     path: '',
