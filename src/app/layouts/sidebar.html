@@ -1,4 +1,4 @@
-﻿<div [ngClass]="{ 'dark text-white-dark': store.semidark }">
+<div [ngClass]="{ 'dark text-white-dark': store.semidark }">
     <nav
         class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
         <div class="h-full bg-white dark:bg-[#0e1726]">
@@ -139,7 +139,7 @@
                         </a>
                     </li>
 
-                     <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('earning'))">
+                     <!-- <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('earning'))">
                         <a routerLink="/admin/earning"  class="group" routerLinkActive="active"
                             (click)="toggleMobileMenu()">
                             <div class="flex items-center">
@@ -150,9 +150,9 @@
                                     'Earnings' | translate }}</span>
                             </div>
                         </a>
-                    </li>
+                    </li> -->
 
-                    <li class="menu nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('transaction'))">
+                    <!-- <li class="menu nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('transaction'))">
                         <a routerLink="/admin/transaction" class="nav-link group" routerLinkActive="active">
                             <div class="flex items-center">
                                 <img src="./assets/logo/transaction.svg" style="width: 25px; height: 25px;" alt="" />
@@ -161,7 +161,7 @@
                                     'Transactions' | translate }}</span>
                             </div>
                         </a>
-                    </li> 
+                    </li> --> 
 
                     <li class="nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('notification'))">
                         <a routerLink="/admin/notification" class="group" routerLinkActive="active"
