@@ -1,7 +1,17 @@
 <div class="panel">
-    <div class="mb-6">
-        <h5 class="text-lg font-semibold dark:text-white-light">Edit Campaign</h5>
-        <p class="text-xs text-white-dark">Fields marked with <span class="required-mark" aria-hidden="true">*</span> are required.</p>
+    <a routerLink="/admin/campaign" class="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white-dark hover:text-primary">
+        <icon-arrow-left class="h-4 w-4 ltr:rotate-180"></icon-arrow-left>
+        Back to Campaigns
+    </a>
+    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+            <h5 class="text-lg font-semibold dark:text-white-light">Edit Campaign</h5>
+            <p class="text-xs text-white-dark">Fields marked with <span class="required-mark" aria-hidden="true">*</span> are required.</p>
+        </div>
+        <a *ngIf="campaignId" [routerLink]="['/admin/campaign/campaign-details', campaignId]" class="btn btn-outline-primary shrink-0 gap-2">
+            <icon-eye class="h-4 w-4"></icon-eye>
+            View Details
+        </a>
     </div>
 
     <!-- Every field: <div> with a global-style <label> (semibold, 6px below), the control, then a small error line.

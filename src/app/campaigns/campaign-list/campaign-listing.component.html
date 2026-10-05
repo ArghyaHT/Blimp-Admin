@@ -72,9 +72,10 @@
         <ngx-datatable-column name="Campaign Name" cellClass="sticky-col" headerClass="sticky-col" [width]="200" [minWidth]="180"
             [sortable]="true" prop="campaign_name">
             <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="truncate-text font-semibold" [title]="row?.campaign_name || ''">
+                <a class="truncate-text font-semibold text-black hover:text-primary hover:underline dark:text-white-light dark:hover:text-primary"
+                    [title]="row?.campaign_name || ''" [routerLink]="['/admin/campaign/campaign-details', row.id]">
                     {{ row?.campaign_name }}
-                </div>
+                </a>
             </ng-template>
         </ngx-datatable-column>
 
