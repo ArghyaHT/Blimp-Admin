@@ -11,6 +11,9 @@
             (click)="storeData.dispatch({ type: 'toggleSidebar' })"
         ></div>
 
+        <!-- page-change progress bar -->
+        <div *ngIf="navigating" class="route-progress"></div>
+
         <!-- screen loader -->
         <div
             *ngIf="store.isShowMainLoader"

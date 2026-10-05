@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Router, NavigationEnd, Event as RouterEvent } from '@angular/router';
+import { Router, NavigationCancel, NavigationEnd, NavigationError, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -14,9 +14,21 @@ export class AppLayout {
         this.initStore();
     }
     headerClass = '';
+    // Thin progress bar at the top while a page change takes noticeable time
+    navigating = false;
+    private navigationTimer: any;
     ngOnInit() {
         // this.initAnimation();
         this.toggleLoader();
+        this.router.events.subscribe((event) => {
+            if (event instanceof NavigationStart) {
+                clearTimeout(this.navigationTimer);
+                this.navigationTimer = setTimeout(() => (this.navigating = true), 150);
+            } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+                clearTimeout(this.navigationTimer);
+                this.navigating = false;
+            }
+        });
         window.addEventListener('scroll', () => {
             if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
                 this.showTopButton = true;

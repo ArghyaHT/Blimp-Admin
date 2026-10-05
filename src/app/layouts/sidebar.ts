@@ -39,8 +39,8 @@ export class SidebarComponent {
 
     setActiveDropdown() {
         const selector = document.querySelector('.sidebar ul a[routerLink="' + window.location.pathname + '"]');
+        // Highlighting is handled by routerLinkActive; here we only open the sub-menu that contains the current page
         if (selector) {
-            selector.classList.add('active');
             const ul: any = selector.closest('ul.sub-menu');
             if (ul) {
                 let ele: any = ul.closest('li.menu').querySelectorAll('.nav-link') || [];

@@ -20,7 +20,7 @@
                     <li class="nav-item">
                         <ul>
                             <li class="nav-item">
-                                <a routerLink="/admin" class="group" routerLinkActive="/"
+                                <a routerLink="/admin" class="group" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
                                     (click)="toggleMobileMenu()">
                                     <div class="flex items-center">
                                         <img src="./assets/logo/dashboard.svg" style="width: 25px; height: 25px;" alt="" />

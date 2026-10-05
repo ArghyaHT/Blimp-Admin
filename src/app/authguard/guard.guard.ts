@@ -31,7 +31,7 @@ export const guardGuard: CanActivateFn = (
   };
 
   // Session restoration on page reload: the saved token is kept unless the server explicitly rejects it
-  return authService.getPermission().pipe(
+  const serverCheck = authService.getPermission().pipe(
     timeout(10000),
     retry({ count: 1, delay: 1500 }),
     map((response) => {
@@ -54,5 +54,18 @@ export const guardGuard: CanActivateFn = (
       return of(cached ? checkAccess(cached) : true);
     })
   );
+
+  // Fast path: open the page immediately with the last confirmed access and re-check with the server
+  // in the background; if access was revoked or the session ended, redirect then.
+  const cachedAccess = authService.getCachedAccess();
+  if (cachedAccess) {
+    serverCheck.subscribe((result) => {
+      if (result instanceof UrlTree) {
+        router.navigateByUrl(result);
+      }
+    });
+    return checkAccess(cachedAccess);
+  }
+  return serverCheck;
 
 };

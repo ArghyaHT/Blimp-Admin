@@ -817,3 +817,29 @@ pre code.hljs {
     width: 100px;
     height: auto;
 }
+
+/* Page-change progress bar (app-layout): indeterminate bar at the top of the screen */
+.route-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 70;
+    overflow: hidden;
+    background-color: rgba(67, 97, 238, 0.15);
+}
+.route-progress::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 40%;
+    background-color: #4361ee;
+    animation: route-progress-slide 1s ease-in-out infinite;
+}
+@keyframes route-progress-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(250%); }
+}
