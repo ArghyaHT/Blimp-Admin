@@ -92,7 +92,10 @@ export class CountryListingComponent extends BaseComponent {
 
     this.service.country_list(this.token, requestData).subscribe((response: any) => {
       if (response.code === 200) {
-        this.rows = response.data.country;
+        this.rows = response.data.country.map((row: any) => ({
+          ...row,
+          iconUrl: this.cloudinaryService.getImageUrl(row.country_icon, 'country'),
+        }));
         this.totalCountry = response.data.total_record_count;
         this.totalPages = Math.ceil(this.totalCountry / this.per_page);
       } else {
@@ -162,7 +165,7 @@ export class CountryListingComponent extends BaseComponent {
         name: country.name,
         phone_code: country.phone_code
       });
-      this.countryIconContent = country.country_icon;
+      this.countryIconContent = country.iconUrl;
       this.editCountryModal.open();
     } else {
       console.error(`Country with id ${id} not found.`);
