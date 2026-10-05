@@ -1,71 +1,74 @@
-<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-    <h5 class="text-lg font-semibold dark:text-white-light">Manage Contact Details</h5>
-    <div class="ltr:ml-auto rtl:mr-auto">
-        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..." (input)="searchData()" />
+<div class="panel">
+<!-- Toolbar: title and search -->
+<div class="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+        <h5 class="text-lg font-semibold dark:text-white-light">Contact Us</h5>
+        <p *ngIf="!(loading && !rows.length); else countLoading" class="text-xs text-white-dark">{{ totalContactInfo }} {{ totalContactInfo === 1 ? 'message' : 'messages' }}</p>
+        <ng-template #countLoading><p class="text-xs text-white-dark">Loading…</p></ng-template>
+    </div>
+    <div class="relative sm:w-64">
+        <input [(ngModel)]="search" type="text" class="form-input ltr:pl-9 rtl:pr-9" placeholder="Search messages..."
+            (input)="searchData()" />
+        <icon-search class="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-white-dark ltr:left-3 rtl:right-3"></icon-search>
     </div>
 </div>
-<br>
 
-<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
-    [footerHeight]="60" [rowHeight]="60" [externalSorting]="false" [count]="totalContactInfo" >
+<!-- Skeleton while the first page of data loads; on later reloads the current rows are dimmed instead -->
+<app-table-skeleton *ngIf="loading && !rows.length" [columns]="6"></app-table-skeleton>
+<div class="table-responsive w-full overflow-x-auto transition-opacity" [class.table-is-loading]="loading && !rows.length"
+    [class.opacity-50]="loading && rows.length">
+<ngx-datatable class="material striped datatable-compact" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="50"
+    [footerHeight]="50" [rowHeight]="'auto'" [externalSorting]="false" [count]="totalContactInfo" [scrollbarH]="true">
 
-    <ngx-datatable-column name="First Name" [flexGrow]="2" [sortable]="true" prop="first_name">
+    <!-- First and last name together -->
+    <ngx-datatable-column name="Name" [width]="170" [minWidth]="140" [sortable]="true" prop="first_name">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            {{ row?.first_name }}
+            <a class="break-words font-semibold text-black hover:text-primary hover:underline dark:text-white-light dark:hover:text-primary"
+                [title]="fullName(row)" [routerLink]="['/admin/cms/contact-details', row.id]">{{ fullName(row) || '—' }}</a>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Last Name" [flexGrow]="3" [sortable]="true" prop="last_name">
+    <ngx-datatable-column name="Email" [width]="210" [minWidth]="170" [sortable]="true" prop="email">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            {{ row?.last_name }}
+            <span class="break-all" [title]="row?.email || ''">{{ row?.email }}</span>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Email" [flexGrow]="2" [sortable]="true" prop="email">
+    <ngx-datatable-column name="Subject" [width]="200" [minWidth]="150" [sortable]="true" prop="subject">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="full-width-cell">{{ row?.email }}</div>
+            <span class="line-clamp-2" [title]="row?.subject || ''">{{ row?.subject }}</span>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Subject" [flexGrow]="4" [sortable]="true" prop="subject">
+    <ngx-datatable-column name="Message" [width]="320" [minWidth]="200" [sortable]="true" prop="description">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="multiline-cell">{{ row?.subject }}</div>
+            <span class="line-clamp-2" [title]="row?.description || ''">{{ row?.description }}</span>
         </ng-template>
     </ngx-datatable-column>
-    
-    <ngx-datatable-column name="Description" [flexGrow]="5" [sortable]="true" prop="description">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="full-width-cell">{{ row?.description }}</div>
-        </ng-template>
-    </ngx-datatable-column>
-    
-    <ngx-datatable-column name="Created Date" [flexGrow]="6" [sortable]="false">
+
+    <ngx-datatable-column name="Received" [width]="120" [canAutoResize]="false" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.createdAt | date: 'yyyy-MM-dd' }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Action" [flexGrow]="1" [sortable]="false">
+    <ngx-datatable-column name="Action" [width]="80" [canAutoResize]="false" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="flex items-center">
-                <div>
-                    <button type="button" ngxTippy="View" [routerLink]="['/admin/cms/contact-details', row.id]" class="mr-2">
-                        <icon-eye />
-                    </button>
-                </div>
-            </div>
+            <button type="button" ngxTippy="View" [routerLink]="['/admin/cms/contact-details', row.id]">
+                <icon-eye></icon-eye>
+            </button>
         </ng-template>
     </ngx-datatable-column>
-    
+
 </ngx-datatable>
+</div>
 
-<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
-
+<!-- Pagination Controls -->
 <div class="container">
     <div class="pag-container">
         <div class="pagination-info">{{ getRange() }}</div>
         <select [(ngModel)]="per_page" (change)="changePerPage()" class="form-select">
-            <option [selected] value="10">10</option>
+            <option value="10">10</option>
             <option value="20">20</option>
             <option value="30">30</option>
             <option value="50">50</option>
@@ -80,4 +83,5 @@
         <button class="pagination-button" (click)="moveToNextPage()" [disabled]="!totalContactInfo || page === totalPages">Next</button>
         <button class="pagination-button" (click)="moveToLastPage()" [disabled]="!totalContactInfo || page === totalPages">Last</button>
     </div>
+</div>
 </div>

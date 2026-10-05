@@ -1,10 +1,11 @@
 ﻿import { animate, style, transition, trigger } from '@angular/animations';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { slideDownUp } from '../shared/animations';
 import { AuthService } from '../service/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     moduleId: module.id,
@@ -12,7 +13,8 @@ import { AuthService } from '../service/auth.service';
     templateUrl: './sidebar.html',
     animations: [slideDownUp],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnDestroy {
+    private routerEvents?: Subscription;
     active = false;
     store: any;
     userPermission:any;
@@ -37,21 +39,32 @@ export class SidebarComponent {
         this.getPermission();
     }
 
+    // Open the CMS sub-menu whenever a CMS page is shown (also its details/add/edit pages and after a refresh).
+    // Decided from the URL, because the menu items are not rendered yet when this first runs.
     setActiveDropdown() {
-        const selector = document.querySelector('.sidebar ul a[routerLink="' + window.location.pathname + '"]');
-        // Highlighting is handled by routerLinkActive; here we only open the sub-menu that contains the current page
-        if (selector) {
-            const ul: any = selector.closest('ul.sub-menu');
-            if (ul) {
-                let ele: any = ul.closest('li.menu').querySelectorAll('.nav-link') || [];
-                if (ele.length) {
-                    ele = ele[0];
-                    setTimeout(() => {
-                        ele.click();
-                    });
-                }
+        this.openSectionFor(window.location.pathname);
+        this.routerEvents = this.router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+                this.openSectionFor(event.urlAfterRedirects);
             }
+        });
+    }
+
+    ngOnDestroy() {
+        this.routerEvents?.unsubscribe();
+    }
+
+    private openSectionFor(url: string) {
+        if (url.startsWith('/admin/cms/') && !this.activeDropdown.includes('pages')) {
+            this.activeDropdown.push('pages');
         }
+    }
+
+    // CMS sub-links whose pages live next to each other (/admin/cms/faq, /admin/cms/faq-details/5, …),
+    // which routerLinkActive does not treat as the same section
+    isCmsLinkActive(paths: string[]): boolean {
+        const url = this.router.url.split(/[?#]/)[0];
+        return paths.some((path) => url === path || url.startsWith(path + '/'));
     }
 
     toggleMobileMenu() {

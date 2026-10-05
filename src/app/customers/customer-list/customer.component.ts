@@ -124,7 +124,8 @@ export class customerListingComponent extends BaseComponent {
     this.fetchData();
   }
 
-  fetchData(searchTerm: string = '') {
+  // onComplete runs once the list has been refreshed (used to close the "Please wait..." loader)
+  fetchData(searchTerm: string = '', onComplete?: () => void) {
     const requestData: any = {
       page: this.page,
       search_text: this.search,
@@ -145,7 +146,10 @@ export class customerListingComponent extends BaseComponent {
     }
 
     this.loading = true;
-    this.service.customer_listing(this.token, requestData).pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
+    this.service.customer_listing(this.token, requestData).pipe(finalize(() => {
+      this.loading = false;
+      onComplete?.();
+    })).subscribe((response: any) => {
       if (response.code == 200) {
         this.options = response.data.customersList.map((customer: any) => ({ id: customer.id, name: customer.fullname, email: customer.email, user_type: customer.user_type }));
         this.rows = response.data.customersList;
@@ -207,8 +211,8 @@ export class customerListingComponent extends BaseComponent {
 
   toggleCustomerStatus(id: number, isActive: boolean) {
     const requestBody = { user_id: id };
-    const actionText = isActive ? 'Block ' : 'Unblock';
-    const confirmationText = isActive ? 'Block' : 'Unblock';
+    const actionText = isActive ? 'Block' : 'Unblock';
+    const confirmationText = isActive ? 'Blocked' : 'Unblocked';
     Swal.fire({
       title: 'Are you sure?',
       text: `You are about to ${actionText} this Customer!`,
@@ -219,28 +223,38 @@ export class customerListingComponent extends BaseComponent {
       confirmButtonText: `Yes, ${actionText} it!`
     }).then((result) => {
       if (result.isConfirmed) {
-        this.service.block_Unblock_Customer(this.token, requestBody).subscribe((response: any) => {
-          console.log(response);
-          if (response.code === 200) {
-            this.fetchData();
-            Swal.fire({
-              icon: 'success',
-              title: `Customer ${confirmationText} Successfully!`,
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: response.message,
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-          }
+        // Full-screen "Please wait..." loader until the update and the list refresh are done (same as Campaigns)
+        this.spinner.show();
+        this.service.block_Unblock_Customer(this.token, requestBody).subscribe({
+          next: (response: any) => {
+            if (response.code === 200) {
+              this.fetchData(this.search, () => {
+                this.spinner.hide();
+                Swal.fire({
+                  icon: 'success',
+                  title: `Customer ${confirmationText} Successfully!`,
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 3000
+                });
+              });
+            } else {
+              this.spinner.hide();
+              Swal.fire({
+                icon: 'error',
+                title: response.message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+              });
+            }
+          },
+          error: () => {
+            this.spinner.hide();
+            this.showToast('error', 'Something went wrong. Please check your internet connection and try again.');
+          },
         });
       }
     });
@@ -358,7 +372,7 @@ export class customerListingComponent extends BaseComponent {
 
           // Apply mapping for 'status' (is_active)
           if (column.prop === 'is_active') {
-            return value === 1 ? 'UnBlock' : 'Block';
+            return value === 1 ? 'Unblock' : 'Block';
           }
 
           // Return the value (or empty string if undefined)

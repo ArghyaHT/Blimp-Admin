@@ -25,17 +25,39 @@ export class ContactDetailsComponent extends BaseComponent {
     this.fetchData();
   }
 
+  loading = true;
+
   fetchData() {
     const body = {
       "contact_id": this.id
     }
-    this.service.contact_details(this.token, body).subscribe((response: any) => {
-      if (response.code === 200) {
-        this.contactData = response.data;
-      } else {
-        this.handleError(response.code, response.message); 
-      }
+    this.loading = true;
+    this.service.contact_details(this.token, body).subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        if (response.code === 200) {
+          this.contactData = response.data;
+        } else {
+          this.handleError(response.code, response.message);
+        }
+      },
+      error: () => { this.loading = false; },
     });
+  }
+
+  get fullName(): string {
+    return [this.contactData?.first_name, this.contactData?.last_name].filter((part) => String(part || '').trim()).join(' ');
+  }
+
+  get initials(): string {
+    const parts = this.fullName.split(/\s+/).filter(Boolean);
+    return ((parts[0]?.[0] || '') + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase() || '?';
+  }
+
+  // opens the admin's mail app with the sender and "Re: <subject>" filled in
+  get replyLink(): string {
+    const subject = this.contactData?.subject ? 'Re: ' + this.contactData.subject : '';
+    return 'mailto:' + this.contactData?.email + (subject ? '?subject=' + encodeURIComponent(subject) : '');
   }
 
 }

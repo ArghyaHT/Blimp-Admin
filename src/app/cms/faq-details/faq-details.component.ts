@@ -28,17 +28,39 @@ export class FaqDetailsComponent extends BaseComponent {
     this.fetchData();
   }
 
+  loading = true;
+  languages = [
+    { code: 'en', label: 'English' },
+    { code: 'fr', label: 'French' },
+    { code: 'de', label: 'German' },
+    { code: 'it', label: 'Italian' },
+  ];
+
   fetchData() {
     const body = {
       "faq_id": this.id
     }
-    this.service.faq_details(this.token, body).subscribe((response: any) => {
-      if (response.code === 200) {
-        this.faqData = response.data;
-      } else {
-        this.handleError(response.code, response.message);
-      }
+    this.loading = true;
+    this.service.faq_details(this.token, body).subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        if (response.code === 200) {
+          this.faqData = response.data;
+        } else {
+          this.handleError(response.code, response.message);
+        }
+      },
+      error: () => { this.loading = false; },
     });
+  }
+
+  // a language is complete when both its question and answer are filled in
+  isComplete(code: string): boolean {
+    return !!String(this.faqData?.['question_' + code] || '').trim() && !!String(this.faqData?.['answer_' + code] || '').trim();
+  }
+
+  get completeCount(): number {
+    return this.languages.filter((language) => this.isComplete(language.code)).length;
   }
 
   goBack() {

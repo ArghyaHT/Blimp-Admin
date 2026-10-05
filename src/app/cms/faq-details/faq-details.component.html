@@ -1,48 +1,57 @@
-<div class="container">
-    <h2 class="faq-heading">FAQ Details</h2>
-  
-    <div *ngIf="faqData">
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label for="question_en">Question (English)</label>
-          <textarea id="question_en" readonly class="form-textarea large-textarea">{{ faqData.question_en }}</textarea>
-        </div>
-        <div>
-          <label for="answer_en">Answer (English)</label>
-          <textarea id="answer_en" readonly class="form-textarea large-textarea">{{ faqData.answer_en }}</textarea>
-        </div>
-  
-        <div>
-          <label for="question_fr">Question (French)</label>
-          <textarea id="question_fr" readonly class="form-textarea large-textarea">{{ faqData.question_fr }}</textarea>
-        </div>
-        <div>
-          <label for="answer_fr">Answer (French)</label>
-          <textarea id="answer_fr" readonly class="form-textarea large-textarea">{{ faqData.answer_fr }}</textarea>
-        </div>
-  
-        <div>
-          <label for="question_de">Question (German)</label>
-          <textarea id="question_de" readonly class="form-textarea large-textarea">{{ faqData.question_de }}</textarea>
-        </div>
-        <div>
-          <label for="answer_de">Answer (German)</label>
-          <textarea id="answer_de" readonly class="form-textarea large-textarea">{{ faqData.answer_de }}</textarea>
-        </div>
-  
-        <div>
-          <label for="question_it">Question (Italian)</label>
-          <textarea id="question_it" readonly class="form-textarea large-textarea">{{ faqData.question_it }}</textarea>
-        </div>
-        <div>
-          <label for="answer_it">Answer (Italian)</label>
-          <textarea id="answer_it" readonly class="form-textarea large-textarea">{{ faqData.answer_it }}</textarea>
-        </div>
-      </div>
+<!-- ============ Header ============ -->
+<div class="panel mb-5">
+    <a routerLink="/admin/cms/faq" class="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white-dark hover:text-primary">
+        <icon-arrow-left class="h-4 w-4 ltr:rotate-180"></icon-arrow-left>
+        Back to FAQ
+    </a>
+
+    <div *ngIf="loading" class="space-y-2">
+        <div class="h-6 w-2/3 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+        <div class="h-4 w-40 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
     </div>
-  
-    <div class="mt-8 flex items-center justify-center">
-      <button type="button" class="btn btn-outline-danger" (click)="goBack()">Back</button>
+
+    <div *ngIf="!loading && faqData" class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div class="min-w-0">
+            <h1 class="text-xl font-semibold text-black dark:text-white-light">{{ faqData?.question_en || 'FAQ' }}</h1>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+                <span *ngIf="faqData?.is_active != null" class="badge"
+                    [ngClass]="faqData?.is_active == 1 ? 'badge-outline-success' : 'badge-outline-danger'">
+                    {{ faqData?.is_active == 1 ? 'Active' : 'Inactive' }}
+                </span>
+                <span class="text-xs text-white-dark">
+                    ID #{{ faqData?.id ?? id }} · {{ completeCount }} of {{ languages.length }} languages complete
+                </span>
+            </div>
+        </div>
+        <a [routerLink]="['/admin/cms/edit-faq', faqData?.id ?? id]" class="btn btn-primary shrink-0 gap-2">
+            <icon-pencil class="h-4 w-4"></icon-pencil>
+            Edit FAQ
+        </a>
     </div>
-  </div>
-  
+
+    <p *ngIf="!loading && !faqData" class="text-white-dark">FAQ details could not be loaded.</p>
+</div>
+
+<!-- ============ One card per language ============ -->
+<div *ngIf="!loading && faqData" class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+    <section *ngFor="let language of languages" class="panel">
+        <div class="mb-4 flex items-center justify-between gap-3 border-b border-white-light pb-3 dark:border-[#1b2e4b]">
+            <h2 class="text-base font-semibold text-black dark:text-white-light">{{ language.label }}</h2>
+            <span class="badge" [ngClass]="isComplete(language.code) ? 'badge-outline-success' : 'badge-outline-warning'">
+                {{ isComplete(language.code) ? 'Complete' : 'Missing' }}
+            </span>
+        </div>
+
+        <h3 class="faq-label">Question</h3>
+        <p class="mb-4 whitespace-pre-line break-words font-semibold text-black dark:text-white-light"
+            [ngClass]="{ '!font-normal italic !text-white-dark': !faqData?.['question_' + language.code] }">
+            {{ faqData?.['question_' + language.code] || 'Not provided' }}
+        </p>
+
+        <h3 class="faq-label">Answer</h3>
+        <p class="whitespace-pre-line break-words leading-relaxed text-[#3b3f5c] dark:text-[#bfc9d4]"
+            [ngClass]="{ '!font-normal italic !text-white-dark': !faqData?.['answer_' + language.code] }">
+            {{ faqData?.['answer_' + language.code] || 'Not provided' }}
+        </p>
+    </section>
+</div>

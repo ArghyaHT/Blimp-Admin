@@ -19,6 +19,7 @@ export class AddNotificationComponent extends BaseComponent {
   selectAllChecked = new FormControl(false);
   disable = false;
   adminId: any
+  today = new Date();
 
   constructor(
     injector: Injector,
@@ -108,7 +109,7 @@ export class AddNotificationComponent extends BaseComponent {
   }
 
   cancel() {
-    this.router.navigate(['/admin/admin']);
+    this.router.navigate(['/admin']);
   }
 
 

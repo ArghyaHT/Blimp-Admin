@@ -876,3 +876,108 @@ pre code.hljs {
     margin-left: 0;
     margin-right: 0.125rem;
 }
+
+/* Error line directly under a form field (shared by the admin forms) */
+.field-error {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: #e7515a;
+}
+
+/* ng-select (dropdown / multi-select) in dark mode: the library theme is white-only, so match .form-input's
+   dark colours. Applies to every picker; the listing filter bar keeps its own .filter-select style. */
+.dark .ng-select .ng-select-container {
+    background-color: #121e32;
+    border-color: #17263c;
+    color: #e0e6ed;
+}
+.dark .ng-select.ng-select-disabled > .ng-select-container {
+    background-color: #1b2e4b;
+}
+.dark .ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+    border-color: #4361ee;
+    box-shadow: none;
+}
+.dark .ng-select .ng-select-container .ng-value-container .ng-placeholder {
+    color: #888ea8;
+}
+.dark .ng-select .ng-select-container .ng-value-container .ng-input > input {
+    color: inherit;
+}
+.dark .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+    background-color: #1b2e4b;
+    border: 1px solid #253b5c;
+    color: #e0e6ed;
+}
+.dark .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value .ng-value-icon.left {
+    border-right-color: #253b5c;
+}
+.dark .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value .ng-value-icon:hover {
+    background-color: #253b5c;
+}
+.dark .ng-dropdown-panel {
+    background-color: #121e32;
+    border-color: #17263c;
+}
+.dark .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+    background-color: #121e32;
+    color: #e0e6ed;
+}
+.dark .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+    background-color: #1b2e4b;
+}
+.dark .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
+.dark .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
+    color: #e0e6ed;
+}
+
+/* Rich-text editor (@kolkov/angular-editor) in dark mode, via the library's --ae-* variables.
+   Some toolbar icons have a hard-coded black fill inside the sprite, so all icons are drawn dark
+   and inverted to light. */
+.dark angular-editor {
+    --ae-toolbar-bg-color: #1b2e4b;
+    --ae-toolbar-border-radius: 1px solid #17263c;
+    --ae-button-bg-color: #121e32;
+    --ae-button-border: 1px solid #253b5c;
+    --ae-button-hover-bg-color: #253b5c;
+    --ae-button-active-bg-color: #4361ee;
+    --ae-button-active-hover-bg-color: #3a54d6;
+    --ae-button-disabled-bg-color: #1b2e4b;
+    --ae-picker-color: #e0e6ed;
+    --ae-picker-label-color: #121e32;
+    --ae-picker-option-bg-color: #121e32;
+    --ae-picker-option-active-bg-color: #253b5c;
+    --ae-picker-option-focused-bg-color: #1b2e4b;
+    --ae-picker-option-hover-bg-color: #1b2e4b;
+    --ae-text-area-border: 1px solid #17263c;
+}
+.dark angular-editor .angular-editor-toolbar .angular-editor-button {
+    color: #0e1726;
+}
+.dark angular-editor .angular-editor-toolbar .angular-editor-button svg {
+    filter: invert(1);
+}
+.dark angular-editor .ae-picker,
+.dark angular-editor .ae-picker-label {
+    border-color: #253b5c;
+}
+.dark angular-editor .angular-editor-textarea {
+    background-color: #121e32;
+    color: #e0e6ed;
+}
+
+/* Language tabs (CMS content pages, Add/Edit FAQ) */
+.lang-tab {
+    margin-bottom: -1px;
+    padding: 0.625rem 1rem;
+    border-bottom: 2px solid transparent;
+    font-weight: 600;
+    color: #888ea8;
+}
+.lang-tab:hover {
+    color: #4361ee;
+}
+.lang-tab-active {
+    border-bottom-color: #4361ee;
+    color: #4361ee;
+}

@@ -1,37 +1,71 @@
-<div class="panel">
-    <div class="mb-5 flex items-center justify-between">
-        <button class="btn btn-success !mt-6" routerLink="/admin/cms/contact-us">Back</button>
+<!-- ============ Header ============ -->
+<div class="panel mb-5">
+    <a routerLink="/admin/cms/contact-us" class="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white-dark hover:text-primary">
+        <icon-arrow-left class="h-4 w-4 ltr:rotate-180"></icon-arrow-left>
+        Back to Contact Us
+    </a>
 
-    </div>
-    <div class="mt-8 px-4">
-        <div class="flex flex-col justify-between lg:flex-row" *ngIf="contactData">
-            <div class="mb-6 w-full lg:w-3/5 ltr:lg:mr-6 rtl:lg:ml-6">
-                <div class="text-lg font-bold mb-3">Customer Contact Details</div>
-                <!-- <div class="mt-4 flex items-center">
-                    <label for="reciever-name" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Id</label>
-                    <h4 id="id" class="form-input flex-1">{{contactData?.id}}</h4>
-                </div> -->
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-email" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">First Name</label>
-                    <h4 id="name" class="form-input flex-1">{{contactData?.first_name}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Last Name</label>
-                    <h4 id="code" class="form-input flex-1">{{contactData?.last_name}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-address" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Email</label>
-                    <h4 id="email" class="form-input flex-1">{{contactData?.email}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Subject</label>
-                    <h4 id="number" class="form-input flex-1">{{contactData?.subject}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2 bold-label">Description</label>
-                    <h4 id="userType" class="form-input flex-1">{{contactData?.description}}</h4>
-                </div>
-            </div>
+    <div *ngIf="loading" class="flex items-center gap-4">
+        <div class="h-14 w-14 animate-pulse rounded-full bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+        <div class="space-y-2">
+            <div class="h-5 w-48 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+            <div class="h-4 w-32 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
         </div>
     </div>
+
+    <div *ngIf="!loading && contactData" class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div class="flex min-w-0 items-center gap-4">
+            <div class="avatar" aria-hidden="true">{{ initials }}</div>
+            <div class="min-w-0">
+                <h1 class="truncate text-xl font-semibold text-black dark:text-white-light">{{ fullName || 'Unknown sender' }}</h1>
+                <p class="text-xs text-white-dark">
+                    Message #{{ contactData?.id ?? id }}
+                    <ng-container *ngIf="contactData?.createdAt"> · Received {{ contactData?.createdAt | date: 'dd MMM yyyy, h:mm a' }}</ng-container>
+                </p>
+            </div>
+        </div>
+        <a *ngIf="contactData?.email" [href]="replyLink" class="btn btn-primary shrink-0 gap-2">
+            <icon-mail class="h-4 w-4"></icon-mail>
+            Reply by Email
+        </a>
+    </div>
+
+    <p *ngIf="!loading && !contactData" class="text-white-dark">Message could not be loaded.</p>
 </div>
+
+<div *ngIf="!loading && contactData" class="grid grid-cols-1 gap-5 xl:grid-cols-3">
+
+    <!-- Message -->
+    <section class="panel xl:col-span-2">
+        <h2 class="card-title">Message</h2>
+        <dl>
+            <dt>Subject</dt>
+            <dd class="mb-5 break-words text-base font-semibold">{{ contactData?.subject || '—' }}</dd>
+            <dt>Message</dt>
+            <dd class="whitespace-pre-line break-words leading-relaxed">{{ contactData?.description || '—' }}</dd>
+        </dl>
+    </section>
+
+    <!-- Sender -->
+    <section class="panel">
+        <h2 class="card-title">Contact</h2>
+        <dl class="space-y-4">
+            <div>
+                <dt>First Name</dt>
+                <dd>{{ contactData?.first_name || '—' }}</dd>
+            </div>
+            <div>
+                <dt>Last Name</dt>
+                <dd>{{ contactData?.last_name || '—' }}</dd>
+            </div>
+            <div>
+                <dt>Email</dt>
+                <dd class="break-all">
+                    <a *ngIf="contactData?.email; else dash" [href]="'mailto:' + contactData?.email" class="text-primary hover:underline">{{ contactData?.email }}</a>
+                </dd>
+            </div>
+        </dl>
+    </section>
+</div>
+
+<ng-template #dash>—</ng-template>

@@ -65,7 +65,8 @@
 
     <ngx-datatable-column name="Name" [width]="110" [minWidth]="110" [sortable]="true" prop="fullname">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <span class="break-words py-2" [title]="row?.fullname || ''">{{ row?.fullname }}</span>
+            <a class="break-words py-2 font-semibold text-black hover:text-primary hover:underline dark:text-white-light dark:hover:text-primary"
+                [title]="row?.fullname || ''" [routerLink]="['/admin/customers/customer-details', row.id]">{{ row?.fullname }}</a>
         </ng-template>
     </ngx-datatable-column>
 
@@ -102,7 +103,7 @@
 
     <ngx-datatable-column name="Account Type" [width]="85" [minWidth]="85" [sortable]="true" prop="account_type" >
         <ng-template let-row="row" ngx-datatable-cell-template>
-            {{ row?.account_type === 1 ? 'Independant' : 'Organization' }}
+            {{ row?.account_type === 1 ? 'Independent' : 'Organization' }}
         </ng-template>
     </ngx-datatable-column>
 
@@ -116,7 +117,7 @@
         <ng-template let-row="row" ngx-datatable-cell-template>
             <button type="button" class="btn" [ngClass]="row?.is_active === 1 ? 'btn-success' : 'btn-danger'"
                 (click)="toggleCustomerStatus(row.id, row?.is_active === 1 ? true : false)">
-                {{ row?.is_active === 1 ? 'UnBlock' : 'Block' }}
+                {{ row?.is_active === 1 ? 'Unblock' : 'Block' }}
             </button>
         </ng-template>
     </ngx-datatable-column>

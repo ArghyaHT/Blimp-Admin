@@ -1,6 +1,71 @@
-.blogs-heading {
-    font-weight: bold;
-    font-size: 1.5em; 
-    margin-bottom: 20px; 
-  }
-  
+/* Phone mock-up used for the live notification preview */
+.phone {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 280px;
+    padding: 10px;
+    border-radius: 2.5rem;
+    background-color: #1b1f2b;
+    box-shadow: 0 10px 30px rgba(14, 23, 38, 0.18);
+}
+:host-context(.dark) .phone {
+    box-shadow: 0 0 0 1px #253b5c, 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+.phone-screen {
+    position: relative;
+    min-height: 460px;
+    padding: 2.75rem 0.75rem 1rem;
+    border-radius: 2rem;
+    background: linear-gradient(160deg, #4361ee 0%, #805dca 55%, #e7515a 100%);
+    overflow: hidden;
+}
+.phone-notch {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 84px;
+    height: 22px;
+    border-radius: 9999px;
+    background-color: #1b1f2b;
+    transform: translateX(-50%);
+}
+.phone-clock {
+    margin-bottom: 1.5rem;
+    color: #fff;
+    text-align: center;
+}
+
+.phone-notification {
+    padding: 0.75rem;
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+.app-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #e0e6ed;
+}
+.app-icon img {
+    width: 100%;
+    height: auto;
+}
+/* long messages are cut after 5 lines, like on a lock screen */
+.preview-message {
+    margin-top: 0.125rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: pre-line;
+}
+.preview-placeholder {
+    color: #888ea8 !important;
+    font-style: italic;
+}

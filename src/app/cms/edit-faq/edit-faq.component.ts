@@ -76,6 +76,7 @@ export class EditFaqComponent extends BaseComponent {
 
   editFAQ() {
     this.is_submited = true;
+    this.showFirstLanguageWithError();
     if (this.editFaqForm.valid) {
       const requestBody = {
         faq_id: this.faqId,
@@ -108,5 +109,29 @@ export class EditFaqComponent extends BaseComponent {
 
   cancel() {
     this.router.navigate(['/admin/cms/faq']);
+  }
+
+  // Language tabs: one question + answer per language
+  faqLanguages = [
+    { code: 'en', label: 'English' },
+    { code: 'fr', label: 'French' },
+    { code: 'de', label: 'German' },
+    { code: 'it', label: 'Italian' },
+  ];
+  activeLang = 'en';
+
+  langHasError(code: string): boolean {
+    return ['question_', 'answer_'].some((prefix) => {
+      const control = this.editFaqF[prefix + code];
+      return control.invalid && (this.is_submited || control.touched);
+    });
+  }
+
+  // after a failed save, open the first language that still has missing fields
+  private showFirstLanguageWithError() {
+    const first = this.faqLanguages.find((language) => this.langHasError(language.code));
+    if (first && !this.langHasError(this.activeLang)) {
+      this.activeLang = first.code;
+    }
   }
 }

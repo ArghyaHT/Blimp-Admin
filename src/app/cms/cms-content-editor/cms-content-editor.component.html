@@ -1,0 +1,54 @@
+<div class="panel">
+    <div class="mb-6">
+        <h5 class="text-lg font-semibold dark:text-white-light">{{ pageName }}</h5>
+        <p class="text-xs text-white-dark">
+            Page content shown on the website, edited and saved separately for each language.
+            Fields marked with <span class="required-mark" aria-hidden="true">*</span> are required.
+        </p>
+    </div>
+
+    <!-- Language tabs -->
+    <div class="mb-6 flex flex-wrap gap-1 border-b border-white-light dark:border-[#1b2e4b]" role="tablist" aria-label="Language">
+        <button *ngFor="let language of languages" type="button" role="tab" class="lang-tab"
+            [id]="'tab-' + language.code" [attr.aria-controls]="'panel-' + language.code"
+            [attr.aria-selected]="activeCode === language.code" [class.lang-tab-active]="activeCode === language.code"
+            (click)="activeCode = language.code">
+            {{ language.label }}
+            <span *ngIf="hasErrors(language)" class="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-danger align-middle" title="Has errors"></span>
+        </button>
+    </div>
+
+    <div *ngIf="loading" class="space-y-4">
+        <div class="h-4 w-24 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+        <div class="h-10 w-full animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+        <div class="h-4 w-24 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+        <div class="h-64 w-full animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+    </div>
+
+    <!-- One panel per language; kept in the page (hidden) so each editor keeps its text when switching tabs -->
+    <ng-container *ngIf="!loading">
+        <div *ngFor="let language of languages" role="tabpanel" [id]="'panel-' + language.code"
+            [attr.aria-labelledby]="'tab-' + language.code" [hidden]="activeCode !== language.code">
+            <div class="grid grid-cols-1 gap-y-5">
+                <div>
+                    <label [for]="'title-' + language.code">Title ({{ language.label }})<span class="required-mark" aria-hidden="true">*</span></label>
+                    <input [id]="'title-' + language.code" type="text" class="form-input" [(ngModel)]="language.title"
+                        [placeholder]="'Title in ' + language.label" aria-required="true" />
+                    <p class="field-error" *ngIf="language.submitted && titleMissing(language)">Please provide title</p>
+                </div>
+
+                <div>
+                    <label [id]="'content-label-' + language.code">Content ({{ language.label }})<span class="required-mark" aria-hidden="true">*</span></label>
+                    <angular-editor [attr.data-labelledby]="'content-label-' + language.code" [(ngModel)]="language.content" [config]="config"></angular-editor>
+                    <p class="field-error" *ngIf="language.submitted && contentMissing(language)">Please provide content</p>
+                </div>
+            </div>
+
+            <div class="mt-8 flex items-center justify-end border-t border-white-light pt-5 dark:border-[#1b2e4b]">
+                <button type="button" class="btn btn-success" [disabled]="language.saving" (click)="save(language)">
+                    {{ language.saving ? 'Saving…' : 'Save ' + language.label }}
+                </button>
+            </div>
+        </div>
+    </ng-container>
+</div>

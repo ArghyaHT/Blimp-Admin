@@ -1,11 +1,9 @@
-.large-textarea {
-    width: 100%;
-    height: 100px;
-  }
-
-  .faq-heading {
-    font-weight: bold;
-    font-size: 1.5em; 
-    margin-bottom: 20px; 
-  }
-  
+/* Small "QUESTION" / "ANSWER" captions, same style as the label/value pairs on the other details pages */
+.faq-label {
+    margin-bottom: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #888ea8;
+}

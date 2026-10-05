@@ -52,7 +52,7 @@
                      <li class="menu nav-item" *ngIf="userPermission?.role === 1 || (userPermission?.role === 2 && userPermission?.permissions.includes('campaign'))">
                         <a routerLink="/admin/campaign" class="nav-link group" routerLinkActive="active">
                             <div class="flex items-center">
-                                <img  src="./assets/logo/mannage country.svg" style="width: 25px; height: 25px;" alt="" />
+                                <img src="./assets/logo/campaign.svg" style="width: 25px; height: 25px;" alt="" />
                                 <span
                                     class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
                                     'Manage Campaigns' | translate }}</span>
@@ -241,11 +241,13 @@
                                 </li>
 
                                 <li>
-                                    <a routerLink="/admin/cms/faq" routerLinkActive="active">{{ 'FAQ' | translate }}</a>
+                                    <a routerLink="/admin/cms/faq"
+                                        [class.active]="isCmsLinkActive(['/admin/cms/faq', '/admin/cms/faq-details', '/admin/cms/add-faq', '/admin/cms/edit-faq'])">{{ 'FAQ' | translate }}</a>
                                 </li>
 
                                 <li>
-                                    <a routerLink="/admin/cms/contact-us" routerLinkActive="active">{{ 'Contact Us' |
+                                    <a routerLink="/admin/cms/contact-us"
+                                        [class.active]="isCmsLinkActive(['/admin/cms/contact-us', '/admin/cms/contact-details'])">{{ 'Contact Us' |
                                         translate }}</a>
                                 </li>
 

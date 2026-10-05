@@ -1,79 +1,56 @@
-<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-    <h5 class="text-lg font-semibold dark:text-white-light">FAQ</h5>
-  
-    <button type="button" class="btn btn-outline-success" (click)="navigateToAddFaq()">+ Add FAQ</button>
-    <div class="ltr:ml-auto rtl:mr-auto">
-      <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..." (input)="searchData()" />
+<div class="panel">
+<!-- Toolbar: title, search and add -->
+<div class="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+        <h5 class="text-lg font-semibold dark:text-white-light">FAQ</h5>
+        <p *ngIf="!(loading && !rows.length); else countLoading" class="text-xs text-white-dark">{{ totalFaq }} {{ totalFaq === 1 ? 'question' : 'questions' }}</p>
+        <ng-template #countLoading><p class="text-xs text-white-dark">Loading…</p></ng-template>
     </div>
-  </div>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div class="relative sm:w-64">
+            <input [(ngModel)]="search" type="text" class="form-input ltr:pl-9 rtl:pr-9" placeholder="Search FAQs..."
+                (input)="searchData()" />
+            <icon-search class="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-white-dark ltr:left-3 rtl:right-3"></icon-search>
+        </div>
+        <button type="button" class="btn btn-success gap-2" (click)="navigateToAddFaq()">
+            <icon-plus class="h-4 w-4"></icon-plus>
+            Add FAQ
+        </button>
+    </div>
+</div>
 
-<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
-    (sort)="onSort($event)" [footerHeight]="60" [rowHeight]="60" [count]="totalFaq" >
+<!-- English question/answer, plus one badge per language showing which translations are complete -->
+<!-- Skeleton while the first page of data loads; on later reloads the current rows are dimmed instead -->
+<app-table-skeleton *ngIf="loading && !rows.length" [columns]="5"></app-table-skeleton>
+<div class="table-responsive w-full overflow-x-auto transition-opacity" [class.table-is-loading]="loading && !rows.length"
+    [class.opacity-50]="loading && rows.length">
+<ngx-datatable class="material striped datatable-compact" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="50"
+    [footerHeight]="50" [rowHeight]="'auto'" (sort)="onSort($event)" [count]="totalFaq" [scrollbarH]="true">
 
-    <ngx-datatable-column name="Question English" [flexGrow]="2" [sortable]="true" prop="question_en">
+    <ngx-datatable-column name="Question" [width]="280" [minWidth]="200" [sortable]="true" prop="question_en">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="answer-column">
-                {{ row?.question_en }}
+            <a class="line-clamp-2 font-semibold text-black hover:text-primary hover:underline dark:text-white-light dark:hover:text-primary"
+                [title]="row?.question_en || ''" [routerLink]="['/admin/cms/faq-details', row.id]">{{ row?.question_en || '—' }}</a>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Answer" [width]="360" [minWidth]="220" [sortable]="true" prop="answer_en">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <span class="line-clamp-2" [title]="row?.answer_en || ''">{{ row?.answer_en || '—' }}</span>
+        </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Translations" [width]="170" [canAutoResize]="false" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="flex flex-wrap gap-1">
+                <span *ngFor="let language of translations(row)" class="badge !my-0 !px-1.5"
+                    [ngClass]="language.done ? 'badge-outline-success' : 'badge-outline-secondary opacity-60'"
+                    [title]="language.code + (language.done ? ': question and answer added' : ': missing')">{{ language.code }}</span>
             </div>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Answer English" [flexGrow]="2" [sortable]="true" prop="answer_en">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="answer-column">
-                {{ row?.answer_en }}
-            </div>
-        </ng-template>
-    </ngx-datatable-column>
-
-    <ngx-datatable-column name="Question French" [flexGrow]="2" [sortable]="true" prop="question_fr">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="answer-column">
-                {{ row?.question_fr }}
-            </div>
-        </ng-template>
-    </ngx-datatable-column>
-
-    <ngx-datatable-column name="Answer French" [flexGrow]="2" [sortable]="true" prop="answer_fr">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="answer-column">
-                {{ row?.answer_fr }}
-            </div>
-        </ng-template>
-    </ngx-datatable-column>
-
-    <ngx-datatable-column name="Question German" [flexGrow]="2" [sortable]="true" prop="question_de">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="answer-column">
-                {{ row?.question_de }}
-            </div>
-        </ng-template>
-    </ngx-datatable-column>
-
-    <ngx-datatable-column name="Answer German" [flexGrow]="2" [sortable]="true" prop="answer_de">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="answer-column">
-                {{ row?.answer_de }}
-            </div>
-        </ng-template>
-    </ngx-datatable-column>
-
-    <ngx-datatable-column name="Question Italian" [flexGrow]="2" [sortable]="true" prop="question_it">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="answer-column">{{ row?.question_it }}</div> 
-        </ng-template>
-    </ngx-datatable-column>
-
-    <ngx-datatable-column name="Answer Italian" [flexGrow]="2" [sortable]="true" prop="answer_it">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="answer-column">
-                {{ row?.answer_it }}
-            </div>
-        </ng-template>
-    </ngx-datatable-column>
-
-
-    <ngx-datatable-column name="Status Action" [flexGrow]="2" [minWidth]="110" [sortable]="false">
+    <ngx-datatable-column name="Status Action" [width]="130" [canAutoResize]="false" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <button *ngIf="row?.is_active == 1" type="button" class="btn btn-success btn-sm whitespace-nowrap"
                 (click)="toggleFAQStatus(row.id, true)">Active</button>
@@ -82,37 +59,26 @@
         </ng-template>
     </ngx-datatable-column>
 
-
-    <ngx-datatable-column name="Action" [flexGrow]="0" [sortable]="false">
+    <ngx-datatable-column name="Action" [width]="120" [canAutoResize]="false" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="flex items-center">
-                <div>
-                    <button type="button" ngxTippy="View" [routerLink]="['/admin/cms/faq-details', row.id]"
-                        class="mr-2">
-                        <icon-eye />
-                    </button>
-                </div>
-
-                <div>
-                    <button type="button" ngxTippy="Edit" (click)="navigateToEditFaq(row.id)" class="mr-2">
-                        <icon-pencil-paper />
-                    </button>
-                </div> 
-                <div>
-                    <button type="button" ngxTippy="Delete" (click)="deleteFAQ(row.id)">
-                        <icon-trash-lines />
-                    </button>
-                </div>
+            <div class="flex items-center gap-3">
+                <button type="button" ngxTippy="View" [routerLink]="['/admin/cms/faq-details', row.id]">
+                    <icon-eye></icon-eye>
+                </button>
+                <button type="button" ngxTippy="Edit" (click)="navigateToEditFaq(row.id)">
+                    <icon-pencil-paper></icon-pencil-paper>
+                </button>
+                <button type="button" ngxTippy="Delete" (click)="deleteFAQ(row.id)">
+                    <icon-trash-lines></icon-trash-lines>
+                </button>
             </div>
         </ng-template>
     </ngx-datatable-column>
 
-
 </ngx-datatable>
+</div>
 
-<!-- Display this message if no data is found -->
-<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
-
+<!-- Pagination Controls -->
 <div class="container">
     <div class="pag-container">
         <div class="pagination-info">{{ getRange() }}</div>
@@ -136,4 +102,5 @@
         <button class="pagination-button" (click)="moveToLastPage()"
             [disabled]="!totalFaq || page === totalPages">Last</button>
     </div>
+</div>
 </div>

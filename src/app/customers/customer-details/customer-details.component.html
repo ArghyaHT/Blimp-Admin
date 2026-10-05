@@ -1,53 +1,124 @@
-<div class="panel">
-    <div class="mb-5 flex items-center justify-between">
-        <button class="btn btn-success !mt-6" routerLink="/admin/customers">Back</button>
-    </div>
-    <div class="mt-8 px-4">
-        <div class="flex flex-col justify-between lg:flex-row" *ngIf="customerData">
-            <div class="mb-6 w-full lg:w-3/5 ltr:lg:mr-6 rtl:lg:ml-6">
-                <div class="text-lg font-bold mb-3">Customer Personal Details</div>
-               
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-email" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Full Name</label>
-                    <h4 id="name" class="form-input flex-1">{{customerData?.fullname}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-address" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Email</label>
-                    <h4 id="email" class="form-input flex-1">{{customerData?.email}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Country Code</label>
-                    <h4 id="code" class="form-input flex-1">{{customerData?.country_code}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Phone Number</label>
-                    <h4 id="number" class="form-input flex-1">{{customerData?.phone_number}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">User Type</label>
-                    <h4 id="userType" class="form-input flex-1">{{customerData?.user_type === 1 ? 'Donar' :
-                        'Campaigner'}}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Account Type</label>
-                    <h4 id="accountType" class="form-input flex-1">{{ customerData?.account_type === 1 ? 'Independant' :
-                        'Organization'}}</h4>
-                </div>
-                <div class="mt-4 flex items-center" *ngIf="customerData?.user_type === 1">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Identity Type</label>
-                    <h4 id="identiytType" class="form-input flex-1">{{customerData?.identity_type === 1 ? 'Anonymous' :
-                        'Share Identity'}}</h4>
-                </div>
-                <div class="mt-4 flex items-center" *ngIf="customerData?.user_type === 1">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Donation Amount</label>
-                    <h4 id="amount" class="form-input flex-1">{{customerData?.donation_amount ? customerData?.donation_amount : 0 }}</h4>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <label for="reciever-number" class="mb-0 w-1/3 ltr:mr-2 rtl:ml-2">Created Date</label>
-                    <h4 id="date" class="form-input flex-1">{{customerData?.createdAt | date}}</h4>
-                </div>
-            </div>
-          
+<!-- ============ Header ============ -->
+<div class="panel mb-5">
+    <a routerLink="/admin/customers" class="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white-dark hover:text-primary">
+        <icon-arrow-left class="h-4 w-4 ltr:rotate-180"></icon-arrow-left>
+        Back to Customers
+    </a>
+
+    <div *ngIf="loading" class="flex items-center gap-4">
+        <div class="h-16 w-16 animate-pulse rounded-full bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+        <div class="space-y-2">
+            <div class="h-5 w-48 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
+            <div class="h-4 w-32 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]"></div>
         </div>
     </div>
+
+    <div *ngIf="!loading && customerData" class="flex items-center gap-4">
+        <div class="avatar" aria-hidden="true">{{ initials }}</div>
+        <div class="min-w-0">
+            <h1 class="truncate text-xl font-semibold text-black dark:text-white-light">{{ customerData?.fullname || 'Unnamed customer' }}</h1>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+                <span class="badge" [ngClass]="isDonor ? 'badge-outline-primary' : 'badge-outline-info'">{{ isDonor ? 'Donor' : 'Campaigner' }}</span>
+                <span class="badge"
+                    [ngClass]="isBlocked ? 'badge-outline-danger' : 'badge-outline-success'">
+                    {{ isBlocked ? 'Blocked' : 'Unblocked' }}
+                </span>
+                <span class="text-xs text-white-dark">
+                    ID #{{ customerData?.id ?? id }}
+                    <ng-container *ngIf="customerData?.createdAt"> · Joined {{ customerData?.createdAt | date: 'dd MMM yyyy' }}</ng-container>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <p *ngIf="!loading && !customerData" class="text-white-dark">Customer details could not be loaded.</p>
 </div>
+
+<div *ngIf="!loading && customerData" class="grid grid-cols-1 gap-5 xl:grid-cols-3">
+
+    <!-- ============ Main column ============ -->
+    <div class="space-y-5 xl:col-span-2">
+
+        <!-- Contact -->
+        <section class="panel">
+            <h2 class="card-title">Contact</h2>
+            <dl class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+                <div>
+                    <dt>Email</dt>
+                    <dd class="break-all">
+                        <a *ngIf="customerData?.email; else dash" [href]="'mailto:' + customerData?.email" class="text-primary hover:underline">{{ customerData?.email }}</a>
+                    </dd>
+                </div>
+                <div>
+                    <dt>Phone Number</dt>
+                    <dd>
+                        <span *ngIf="customerData?.phone_number; else dash" class="inline-flex items-center gap-2">
+                            <img *ngIf="flagUrl && !flagError; else flagPlaceholder" [src]="flagUrl" alt=""
+                                class="h-5 w-5 shrink-0 rounded-full object-cover" (error)="flagError = true" />
+                            <ng-template #flagPlaceholder>
+                                <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white-light text-white-dark dark:bg-[#1b2e4b]">
+                                    <icon-globe class="h-3.5 w-3.5"></icon-globe>
+                                </span>
+                            </ng-template>
+                            <a [href]="'tel:' + (customerData?.country_code || '') + customerData?.phone_number" class="hover:text-primary">
+                                {{ customerData?.country_code }} {{ customerData?.phone_number }}
+                            </a>
+                        </span>
+                    </dd>
+                </div>
+            </dl>
+        </section>
+
+        <!-- Account -->
+        <section class="panel">
+            <h2 class="card-title">Account</h2>
+            <dl class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                    <dt>User Type</dt>
+                    <dd>{{ isDonor ? 'Donor' : 'Campaigner' }}</dd>
+                </div>
+                <div>
+                    <dt>Account Type</dt>
+                    <dd>{{ customerData?.account_type === 1 ? 'Independent' : 'Organization' }}</dd>
+                </div>
+                <div>
+                    <dt>Identity Type</dt>
+                    <dd>{{ identityLabel }}</dd>
+                </div>
+                <div>
+                    <dt>Status</dt>
+                    <dd>
+                        <span class="badge"
+                            [ngClass]="isBlocked ? 'badge-outline-danger' : 'badge-outline-success'">
+                            {{ isBlocked ? 'Blocked' : 'Unblocked' }}
+                        </span>
+                    </dd>
+                </div>
+            </dl>
+        </section>
+    </div>
+
+    <!-- ============ Sidebar ============ -->
+    <div class="space-y-5">
+
+        <!-- Donations (donors only) -->
+        <section *ngIf="isDonor" class="panel">
+            <h2 class="card-title">Donations</h2>
+            <dl>
+                <dt>Total Donated</dt>
+                <dd class="text-2xl font-semibold">{{ (customerData?.donation_amount || 0) | number }}</dd>
+            </dl>
+        </section>
+
+        <!-- Record -->
+        <section class="panel">
+            <h2 class="card-title">Record</h2>
+            <dl>
+                <dt>Joined On</dt>
+                <dd>{{ customerData?.createdAt ? (customerData?.createdAt | date: 'dd MMM yyyy, h:mm a') : '—' }}</dd>
+            </dl>
+        </section>
+    </div>
+</div>
+
+<ng-template #dash>—</ng-template>

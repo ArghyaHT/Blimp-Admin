@@ -18,13 +18,6 @@
   color: #e0e6ed;
 }
 
-/* Error line under a field: small, sits right under the control */
-.field-error {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  color: #e7515a;
-}
-
 /* Banner image / video preview */
 .media-preview {
   display: block;

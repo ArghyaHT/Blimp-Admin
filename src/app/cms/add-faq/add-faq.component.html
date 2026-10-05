@@ -1,80 +1,55 @@
-<div class="container">
-  <h2 class="faq-heading"> Add FAQ</h2> 
-
-  <form [formGroup]="addFaqForm" (ngSubmit)="submitFaq()">
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label for="question_en">Question (English)</label>
-        <textarea id="question_en" name="question_en" formControlName="question_en" placeholder="Enter Your Question"
-          class="form-textarea" rows="6"></textarea>
-        <span class="errormsg" *ngIf="(is_submited && !faqF['question_en'].valid) || (!faqF['question_en'].valid && faqF['question_en'].touched)">
-          {{ faqF['question_en'].errors?.['required'] ? 'Please provide a question in English' : '' }}
-        </span>
-      </div>
-      <div>
-        <label for="answer_en">Answer (English)</label>
-        <textarea id="answer_en" name="answer_en" formControlName="answer_en" placeholder="Enter Your Answer"
-          class="form-textarea" rows="6"></textarea>
-        <span class="errormsg" *ngIf="(is_submited && !faqF['answer_en'].valid) || (!faqF['answer_en'].valid && faqF['answer_en'].touched)">
-          {{ faqF['answer_en'].errors?.['required'] ? 'Please provide an answer in English' : '' }}
-        </span>
-      </div>
-
-      <div>
-        <label for="question_fr">Question (French)</label>
-        <textarea id="question_fr" name="question_fr" formControlName="question_fr" placeholder="Enter Your Question"
-          class="form-textarea" rows="6"></textarea>
-        <span class="errormsg" *ngIf="(is_submited && !faqF['question_fr'].valid) || (!faqF['question_fr'].valid && faqF['question_fr'].touched)">
-          {{ faqF['question_fr'].errors?.['required'] ? 'Please provide a question in French' : '' }}
-        </span>
-      </div>
-      <div>
-        <label for="answer_fr">Answer (French)</label>
-        <textarea id="answer_fr" name="answer_fr" formControlName="answer_fr" placeholder="Enter Your Answer"
-          class="form-textarea" rows="6"></textarea>
-        <span class="errormsg" *ngIf="(is_submited && !faqF['answer_fr'].valid) || (!faqF['answer_fr'].valid && faqF['answer_fr'].touched)">
-          {{ faqF['answer_fr'].errors?.['required'] ? 'Please provide an answer in French' : '' }}
-        </span>
-      </div>
-
-      <div>
-        <label for="question_de">Question (German)</label>
-        <textarea id="question_de" name="question_de" formControlName="question_de" placeholder="Enter Your Question"
-          class="form-textarea" rows="6"></textarea>
-        <span class="errormsg" *ngIf="(is_submited && !faqF['question_de'].valid) || (!faqF['question_de'].valid && faqF['question_de'].touched)">
-          {{ faqF['question_de'].errors?.['required'] ? 'Please provide a question in German' : '' }}
-        </span>
-      </div>
-      <div>
-        <label for="answer_de">Answer (German)</label>
-        <textarea id="answer_de" name="answer_de" formControlName="answer_de" placeholder="Enter Your Answer"
-          class="form-textarea" rows="6"></textarea>
-        <span class="errormsg" *ngIf="(is_submited && !faqF['answer_de'].valid) || (!faqF['answer_de'].valid && faqF['answer_de'].touched)">
-          {{ faqF['answer_de'].errors?.['required'] ? 'Please provide an answer in German' : '' }}
-        </span>
-      </div>
-
-      <div>
-        <label for="question_it">Question (Italian)</label>
-        <textarea id="question_it" name="question_it" formControlName="question_it" placeholder="Enter Your Question"
-          class="form-textarea" rows="6"></textarea>
-        <span class="errormsg" *ngIf="(is_submited && !faqF['question_it'].valid) || (!faqF['question_it'].valid && faqF['question_it'].touched)">
-          {{ faqF['question_it'].errors?.['required'] ? 'Please provide a question in Italian' : '' }}
-        </span>
-      </div>
-      <div>
-        <label for="answer_it">Answer (Italian)</label>
-        <textarea id="answer_it" name="answer_it" formControlName="answer_it" placeholder="Enter Your Answer"
-          class="form-textarea" rows="6"></textarea>
-        <span class="errormsg" *ngIf="(is_submited && !faqF['answer_it'].valid) || (!faqF['answer_it'].valid && faqF['answer_it'].touched)">
-          {{ faqF['answer_it'].errors?.['required'] ? 'Please provide an answer in Italian' : '' }}
-        </span>
-      </div>
+<div class="panel">
+    <a routerLink="/admin/cms/faq" class="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white-dark hover:text-primary">
+        <icon-arrow-left class="h-4 w-4 ltr:rotate-180"></icon-arrow-left>
+        Back to FAQ
+    </a>
+    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+            <h5 class="text-lg font-semibold dark:text-white-light">Add FAQ</h5>
+            <p class="text-xs text-white-dark">
+                Add the question and answer in every language.
+                Fields marked with <span class="required-mark" aria-hidden="true">*</span> are required.
+            </p>
+        </div>
     </div>
 
-    <div class="mt-8 flex items-center justify-center">
-      <button type="button" class="btn btn-outline-danger" (click)="cancel()">Back</button>
-      <button type="submit" class="btn btn-success ml-4"> Add</button>
-    </div>
-  </form>
+    <form [formGroup]="addFaqForm" (ngSubmit)="submitFaq()">
+        <!-- Language tabs; a red dot marks a language with missing fields -->
+        <div class="mb-6 flex flex-wrap gap-1 border-b border-white-light dark:border-[#1b2e4b]" role="tablist" aria-label="Language">
+            <button *ngFor="let language of faqLanguages" type="button" role="tab" class="lang-tab"
+                [id]="'tab-' + language.code" [attr.aria-controls]="'panel-' + language.code"
+                [attr.aria-selected]="activeLang === language.code" [class.lang-tab-active]="activeLang === language.code"
+                (click)="activeLang = language.code">
+                {{ language.label }}
+                <span *ngIf="langHasError(language.code)" class="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-danger align-middle" title="Has missing fields"></span>
+            </button>
+        </div>
+
+        <div *ngFor="let language of faqLanguages" role="tabpanel" [id]="'panel-' + language.code"
+            [attr.aria-labelledby]="'tab-' + language.code" [hidden]="activeLang !== language.code">
+            <div class="grid grid-cols-1 gap-y-5">
+                <div>
+                    <label [for]="'question_' + language.code">Question ({{ language.label }})<span class="required-mark" aria-hidden="true">*</span></label>
+                    <textarea [id]="'question_' + language.code" [formControlName]="'question_' + language.code"
+                        [placeholder]="'Question in ' + language.label" class="form-textarea" rows="2" aria-required="true"></textarea>
+                    <p class="field-error" *ngIf="faqF['question_' + language.code].invalid && (is_submited || faqF['question_' + language.code].touched)">
+                        Please provide a question in {{ language.label }}
+                    </p>
+                </div>
+                <div>
+                    <label [for]="'answer_' + language.code">Answer ({{ language.label }})<span class="required-mark" aria-hidden="true">*</span></label>
+                    <textarea [id]="'answer_' + language.code" [formControlName]="'answer_' + language.code"
+                        [placeholder]="'Answer in ' + language.label" class="form-textarea" rows="7" aria-required="true"></textarea>
+                    <p class="field-error" *ngIf="faqF['answer_' + language.code].invalid && (is_submited || faqF['answer_' + language.code].touched)">
+                        Please provide an answer in {{ language.label }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 flex items-center justify-end gap-3 border-t border-white-light pt-5 dark:border-[#1b2e4b]">
+            <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn btn-success">Add FAQ</button>
+        </div>
+    </form>
 </div>

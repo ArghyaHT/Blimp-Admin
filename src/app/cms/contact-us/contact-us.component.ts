@@ -3,6 +3,7 @@ import { ColumnMode } from '@swimlane/ngx-datatable';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import { BaseComponent } from 'src/app/utils/components/base/base.component';
 import Swal from 'sweetalert2';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contact-us',
@@ -22,8 +23,13 @@ export class ContactUsComponent extends BaseComponent {
   per_page: any = 10;
   totalPages: number = 0;
   totalContactInfo = 0;
-  rows: any;
+  rows: any[] = [];
   token: any
+  loading = false; // true while the list is being fetched (shows the table skeleton)
+
+  fullName(row: any): string {
+    return [row?.first_name, row?.last_name].filter((part) => String(part || '').trim()).join(' ');
+  }
 
   columns = [
   
@@ -90,14 +96,17 @@ export class ContactUsComponent extends BaseComponent {
       record_count: parseInt(this.per_page),
     };
 
-    this.service.contactInfo(this.token, requestData).subscribe((response: any) => {
+    this.loading = true;
+    this.service.contactInfo(this.token, requestData).pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code == 200) {
-        this.rows = response.data.contactList;
+        this.rows = response.data.contactList || [];
         this.totalContactInfo = response.data.total_record_count;
-        console.log(this.totalContactInfo)
         this.totalPages = Math.ceil(this.totalContactInfo / this.per_page);
       } else {
-        this.handleError(response.code, response.message); 
+        this.handleError(response.code, response.message);
+        this.rows = [];
+        this.totalContactInfo = 0;
+        this.totalPages = 0;
       }
     });
   }

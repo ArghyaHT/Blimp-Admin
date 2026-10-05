@@ -21,6 +21,8 @@ import { HttpClient } from '@angular/common/http';
 import { ContactDetailsComponent } from './contact-details/contact-details.component';
 import { AddFaqComponent } from './add-faq/add-faq.component';
 import { EditFaqComponent } from './edit-faq/edit-faq.component';
+import { CmsContentEditorComponent } from './cms-content-editor/cms-content-editor.component';
+import { UtilsModule } from '../utils/utils.module';
 
 
 
@@ -64,6 +66,7 @@ const routes: Routes = [
     ContactUsComponent,
     FaqDetailsComponent,
     ContactDetailsComponent,
+    CmsContentEditorComponent,
   ],
   imports: [
     RouterModule.forChild(routes),
@@ -77,6 +80,7 @@ const routes: Routes = [
     Ng2FlatpickrModule,
     ReactiveFormsModule,
     NgSelectModule,
+    UtilsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

@@ -7,6 +7,7 @@ import { ColumnMode } from '@swimlane/ngx-datatable';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BaseComponent } from 'src/app/utils/components/base/base.component';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-faq',
@@ -35,6 +36,16 @@ export class FaqComponent extends BaseComponent {
   rows: any[] = [];
   token: any;
   editFaqId: any;
+  loading = false; // true while the list is being fetched (shows the table skeleton)
+
+  // EN / FR / DE / IT badges: a language counts as done when both its question and answer are filled in
+  private readonly languageCodes = ['en', 'fr', 'de', 'it'];
+  translations(row: any): { code: string; done: boolean }[] {
+    return this.languageCodes.map((code) => ({
+      code: code.toUpperCase(),
+      done: !!String(row?.['question_' + code] || '').trim() && !!String(row?.['answer_' + code] || '').trim(),
+    }));
+  }
 
   columns = [
     { prop: 'id', name: 'Id', sortable: true },
@@ -59,7 +70,8 @@ export class FaqComponent extends BaseComponent {
       search_text: this.search,
       record_count: parseInt(this.per_page),
     };
-    this.service.faqQuestionAnswerList(this.token, requestData).subscribe((response: any) => {
+    this.loading = true;
+    this.service.faqQuestionAnswerList(this.token, requestData).pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code == 200) {
         this.rows = response.data.Faq;
         this.totalFaq = response.data.total_record_count;
