@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { CloudinaryService } from 'src/app/service/cloudinary.service';
@@ -12,12 +12,13 @@ import Swal from 'sweetalert2';
   templateUrl: './edit-campaign.component.html',
   styleUrls: ['./edit-campaign.component.css']
 })
-export class EditCampaignComponent extends BaseComponent {
+export class EditCampaignComponent extends BaseComponent implements AfterViewInit {
   editCampaignForm: FormGroup | any;
   is_submited = false;
   selectedBannerImage: any;
   bannerImageName: any;
   bannerImage: any;
+  bannerImageError = false;
   campaignVideo: any;
   campaignCategories: any[] = [];
   subcategories: any[] = [];
@@ -42,7 +43,7 @@ export class EditCampaignComponent extends BaseComponent {
     // private s3Service: S3Service,
     private cloudinaryService: CloudinaryService,
     private service: DashboardService,
-
+    private elementRef: ElementRef<HTMLElement>,
   ) {
     super(injector);
   }
@@ -126,6 +127,18 @@ export class EditCampaignComponent extends BaseComponent {
 
 
 
+  // the rich-text editor renders its own editable <div> without an id, so <label for> can't reach it;
+  // name it from the visible label instead
+  ngAfterViewInit(): void {
+    this.elementRef.nativeElement.querySelectorAll<HTMLElement>('angular-editor[data-labelledby]').forEach((editor) => {
+      const textarea = editor.querySelector('.angular-editor-textarea');
+      textarea?.setAttribute('role', 'textbox');
+      textarea?.setAttribute('aria-multiline', 'true');
+      textarea?.setAttribute('aria-required', 'true');
+      textarea?.setAttribute('aria-labelledby', editor.getAttribute('data-labelledby')!);
+    });
+  }
+
   ngOnInit(): void {
     this.token = localStorage.getItem('token');
     this.adminId = localStorage.getItem('adminId');
@@ -160,13 +173,13 @@ export class EditCampaignComponent extends BaseComponent {
       name: ['', Validators.required],
       email: ['', [Validators.required, this.validationService.emailValidator]],
       beneficiary_details: ['', Validators.required],
-      patient_relation: [null, Validators.required],
-      education_status: [null, Validators.required],
-      employee_status: [null, Validators.required],
-      contact_method: [null, Validators.required],
+      // optional: older campaigns were saved without these, which blocked updating them
+      patient_relation: [''],
+      education_status: [''],
+      employee_status: [''],
+      contact_method: [''],
       request_for_donor: [null, Validators.required],
       rasing_funds_decription: ['', Validators.required],
-      team_memeber_name: ['', Validators.required],
     });
   }
 
@@ -228,19 +241,26 @@ export class EditCampaignComponent extends BaseComponent {
           name: campaign?.name,
           email: campaign?.email,
           beneficiary_details: campaign?.beneficiary_details,
-          patient_relation: campaign?.patient_relation,
-          education_status: campaign?.education_status,
-          employee_status: campaign?.employee_status,
-          contact_method: campaign?.contact_method,
+          patient_relation: campaign?.patient_relation ?? '',
+          education_status: campaign?.education_status ?? '',
+          employee_status: campaign?.employee_status ?? '',
+          contact_method: campaign?.contact_method ?? '',
           request_for_donor: campaign?.request_for_donor,
           rasing_funds_decription: campaign?.rasing_funds_decription,
-          team_memeber_name: campaign?.team_memeber_name,
           youtube_link: campaign?.youtube_link,
         });
 
-        this.existingProductImages = campaign.campaignsImages || [];
-        this.bannerImage = campaign.banner_image;
-        this.campaignVideo = campaign.campaign_video;
+        // the API returns "cloudinary://…" values (or bare ids) that a browser can't load;
+        // turn them into public Cloudinary URLs, using the folders this page uploads to
+        this.existingProductImages = (campaign.campaignsImages || []).map((img: any) => ({
+          ...img,
+          url: this.cloudinaryService.getImageUrl(img?.image, 'multipleImages'),
+        }));
+        this.bannerImage = this.cloudinaryService.getImageUrl(campaign.banner_image, 'bannerImages');
+        this.bannerImageError = false;
+        this.campaignVideo = this.cloudinaryService
+          .getImageUrl(campaign.campaign_video, 'bannerVideo')
+          .replace('/image/upload/', '/video/upload/');
         this.youtubeLink = campaign?.youtube_link
         //  this.onCategoryChange({ target: { value: campaign?.categories?.id }
         //  }
@@ -271,7 +291,8 @@ export class EditCampaignComponent extends BaseComponent {
     this.bannerImageName = this.selectedBannerImage;
     const reader = new FileReader();
     reader.onload = () => {
-      this.bannerImage = reader.result
+      this.bannerImage = reader.result;
+      this.bannerImageError = false;
     };
     reader.readAsDataURL(this.selectedBannerImage);
   }
@@ -446,13 +467,12 @@ export class EditCampaignComponent extends BaseComponent {
           name: this.editCampaignForm.value.name,
           email: this.editCampaignForm.value.email,
           beneficiary_details: this.editCampaignForm.value.beneficiary_details,
-          patient_relation: this.editCampaignForm.value.patient_relation,
-          education_status: this.editCampaignForm.value.education_status,
-          employee_status: this.editCampaignForm.value.employee_status,
-          contact_method: this.editCampaignForm.value.contact_method,
+          patient_relation: this.editCampaignForm.value.patient_relation || null,
+          education_status: this.editCampaignForm.value.education_status || null,
+          employee_status: this.editCampaignForm.value.employee_status || null,
+          contact_method: this.editCampaignForm.value.contact_method || null,
           request_for_donor: this.editCampaignForm.value.request_for_donor,
           rasing_funds_decription: this.editCampaignForm.value.rasing_funds_decription,
-          team_memeber_name: this.editCampaignForm.value.team_memeber_name,
           loggedInUserId: this.adminId,
           uploaded_images: uploadedImageKeys
         };

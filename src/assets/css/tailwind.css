@@ -866,3 +866,13 @@ pre code.hljs {
 .skip-link:focus {
     top: 1rem;
 }
+
+/* Red star after the label of a required form field */
+.required-mark {
+    margin-left: 0.125rem;
+    color: #e7515a;
+}
+[dir='rtl'] .required-mark {
+    margin-left: 0;
+    margin-right: 0.125rem;
+}

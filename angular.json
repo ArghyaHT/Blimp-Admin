@@ -23,7 +23,12 @@
                         "assets": [
                             "src/assets",
                             "src/demo-prepare.html",
-                            "src/_redirects"
+                            "src/_redirects",
+                            {
+                                "glob": "**/*",
+                                "input": "node_modules/@kolkov/angular-editor/assets/icons",
+                                "output": "assets/ae-icons/"
+                            }
                         ],
                         "styles": [
                             "src/assets/css/app.css",

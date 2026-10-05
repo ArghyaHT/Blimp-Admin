@@ -1,288 +1,249 @@
-<div class="container">
-    <h2 class="article-heading">Edit Campaign</h2>
+<div class="panel">
+    <div class="mb-6">
+        <h5 class="text-lg font-semibold dark:text-white-light">Edit Campaign</h5>
+        <p class="text-xs text-white-dark">Fields marked with <span class="required-mark" aria-hidden="true">*</span> are required.</p>
+    </div>
+
+    <!-- Every field: <div> with a global-style <label> (semibold, 6px below), the control, then a small error line.
+         Spacing comes from the grid gaps only (no <br>), so all fields sit the same distance apart. -->
     <form [formGroup]="editCampaignForm" (ngSubmit)="updateCampaignFunction()">
-        <!-- Category -->
-        <!-- Category -->
-        <label for="category_id" class="article-label">Category</label>
-        <div class="relative text-white-dark">
-            <select id="category_id" formControlName="category_id" class="form-input">
-                <option value="" disabled>Select Category</option>
-                <option *ngFor="let category of campaignCategories" [value]="category.id">{{ category.name }}</option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['category_id'].valid">
-            {{ editCampaignControl['category_id'].errors?.['required'] ? 'Please provide a category' : '' }}
-        </span>
-        <br />
 
-        <!-- Sub Category -->
-        <!-- <label for="sub_category_id" class="article-label">Sub Category</label>
-        <div class="relative text-white-dark">
-            <select id="sub_category_id" formControlName="sub_category_id" class="form-input">
-                <option value="" disabled>Select Sub Category</option>
-                <option *ngIf="!subcategories || subcategories.length === 0" value="">No Subcategories Available
-                </option>
-                <option *ngFor="let subcategory of subcategories" [value]="subcategory.id">{{ subcategory.name }}
-                </option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['sub_category_id'].valid">
-            {{ editCampaignControl['sub_category_id'].errors?.['required'] ? 'Please select a subcategory' : '' }}
-        </span>
-        <br /> -->
+        <!-- ============ Campaign ============ -->
+        <section>
+            <h6 class="form-section-title">Campaign</h6>
+            <div class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
+                <div>
+                    <label for="campaign_name">Campaign Name<span class="required-mark" aria-hidden="true">*</span></label>
+                    <input id="campaign_name" aria-required="true" type="text" name="campaign_name" formControlName="campaign_name"
+                        placeholder="Enter Campaign Name" class="form-input" />
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['campaign_name'].valid">
+                        {{ editCampaignControl['campaign_name'].errors?.['pattern'] ? 'Please provide valid campaign name' : 'Please provide campaign name' }}
+                    </p>
+                </div>
 
-        <label for="country" class="article-label">Country</label>
-        <div class="relative text-white-dark">
-            <select class="form-select" aria-label="Default select example" formControlName="country">
-                <option value="" disabled>Select Country</option>
-                <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['country'].valid">
-            {{ editCampaignControl['country'].errors?.['required'] ? 'Please select a country' : '' }}
-        </span>
-        <br />
+                <div>
+                    <label for="category_id">Category<span class="required-mark" aria-hidden="true">*</span></label>
+                    <select id="category_id" aria-required="true" formControlName="category_id" class="form-select">
+                        <option value="" disabled>Select Category</option>
+                        <option *ngFor="let category of campaignCategories" [value]="category.id">{{ category.name }}</option>
+                    </select>
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['category_id'].valid">
+                        {{ editCampaignControl['category_id'].errors?.['required'] ? 'Please provide a category' : '' }}
+                    </p>
+                </div>
 
-        <label for="target_amount" class="article-lable">Target Amount</label>
-        <div class="relative text-white-dark">
-            <input id="name" type="text" name="target_amount" formControlName="target_amount"
-                placeholder="Enter Target Amount" class="form-input" readonly />
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['target_amount'].valid">
-            {{ editCampaignControl['target_amount'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide target amount' }}
-        </span>
-        <br>
+                <div>
+                    <label for="country">Country<span class="required-mark" aria-hidden="true">*</span></label>
+                    <select id="country" aria-required="true" class="form-select" formControlName="country">
+                        <option value="" disabled>Select Country</option>
+                        <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+                    </select>
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['country'].valid">
+                        {{ editCampaignControl['country'].errors?.['required'] ? 'Please select a country' : '' }}
+                    </p>
+                </div>
 
-        <label for="campaign_details" class="article-lable">Campaign Details</label>
-        <div class="relative text-black-dark">
-            <angular-editor formControlName="campaign_details" [config]="config" placeholder="Enter Campaign Details">
-            </angular-editor>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['campaign_details'].valid">
-            {{ editCampaignControl['campaign_details'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide title' }}
-        </span>
-        <br>
+                <div>
+                    <label for="target_amount">Target Amount</label>
+                    <!-- display only: target_amount is not sent on update -->
+                    <input id="target_amount" type="text" name="target_amount" readonly
+                        [value]="editCampaignControl['target_amount'].value | number"
+                        class="form-input cursor-not-allowed bg-[#eee] dark:bg-[#1b2e4b]" />
+                </div>
 
-        <label for="campaign_name" class="article-lable">Campaign Name</label>
-        <div class="relative text-white-dark">
-            <input id="campaign_name" name="campaign_name" formControlName="campaign_name"
-                placeholder="Enter Campaign Name" class="form-input" />
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['campaign_name'].valid">
-            {{ editCampaignControl['campaign_name'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide description' }}
-        </span>
-        <br>
+                <div>
+                    <label for="purpose">Purpose<span class="required-mark" aria-hidden="true">*</span></label>
+                    <select id="purpose" aria-required="true" class="form-select" formControlName="purpose">
+                        <option value="" disabled>Select Purpose</option>
+                        <option *ngFor="let option of purposes" [value]="option.id">{{ option.name }}</option>
+                    </select>
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['purpose'].valid">
+                        {{ editCampaignControl['purpose'].errors?.['required'] ? 'Please select a purpose' : '' }}
+                    </p>
+                </div>
 
-        <label for="description" class="article-lable">Description</label>
-        <div class="relative text-black-dark">
-            <angular-editor formControlName="description" [config]="config" placeholder="Enter Description">
-            </angular-editor>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['description'].valid">
-            {{ editCampaignControl['description'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide description' }}
-        </span>
+                <div>
+                    <label for="hear_about_blimp">Hear About Blimp<span class="required-mark" aria-hidden="true">*</span></label>
+                    <input id="hear_about_blimp" aria-required="true" type="text" name="hear_about_blimp" formControlName="hear_about_blimp"
+                        placeholder="Enter Hear About Blimp" class="form-input" />
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['hear_about_blimp'].valid">
+                        {{ editCampaignControl['hear_about_blimp'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide hear about blimp' }}
+                    </p>
+                </div>
 
-        <br>
+                <div class="md:col-span-2">
+                    <label for="campaign_details" id="campaign_details_label">Campaign Details<span class="required-mark" aria-hidden="true">*</span></label>
+                    <angular-editor data-labelledby="campaign_details_label" formControlName="campaign_details" [config]="config"
+                        placeholder="Enter Campaign Details">
+                    </angular-editor>
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['campaign_details'].valid">
+                        {{ editCampaignControl['campaign_details'].errors?.['pattern'] ? 'Please provide valid campaign details' : 'Please provide campaign details' }}
+                    </p>
+                </div>
 
-        <label for="hear_about_blimp" class="article-lable">Hear About Blimp</label>
-        <div class="relative text-white-dark">
-            <input id="name" type="text" name="hear_about_blimp" formControlName="hear_about_blimp"
-                placeholder="Enter Hear About Blimp" class="form-input" />
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['hear_about_blimp'].valid">
-            {{ editCampaignControl['hear_about_blimp'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide hear about blimp' }}
-        </span>
-        <br>
+                <div class="md:col-span-2">
+                    <label for="description" id="description_label">Description<span class="required-mark" aria-hidden="true">*</span></label>
+                    <angular-editor data-labelledby="description_label" formControlName="description" [config]="config"
+                        placeholder="Enter Description">
+                    </angular-editor>
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['description'].valid">
+                        {{ editCampaignControl['description'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide description' }}
+                    </p>
+                </div>
+            </div>
+        </section>
 
-        <label for="purpose" class="article-label">Purpose</label>
-        <div class="relative text-white-dark">
-            <select class="form-select" aria-label="Default select example" formControlName="purpose">
-                <option value="" disabled>Select Patient Relation</option>
-                <option *ngFor="let option of purposes" [value]="option.id">{{ option.name }}</option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['purpose'].valid">
-            {{ editCampaignControl['purpose'].errors?.['required'] ? 'Please select a purpose' : '' }}
-        </span>
-        <br />
+        <!-- ============ Beneficiary ============ -->
+        <section class="form-section">
+            <h6 class="form-section-title">Beneficiary</h6>
+            <div class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
+                <div>
+                    <label for="name">Name<span class="required-mark" aria-hidden="true">*</span></label>
+                    <input id="name" aria-required="true" type="text" name="name" formControlName="name" placeholder="Enter Name" class="form-input" />
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['name'].valid">
+                        {{ editCampaignControl['name'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide name' }}
+                    </p>
+                </div>
 
-        <label for="patient_relation" class="article-label">Patient Relation</label>
-        <div class="relative text-white-dark">
-            <select class="form-select" aria-label="Default select example" formControlName="patient_relation">
-                <option value="" disabled>Select Patient Relation</option>
-                <option *ngFor="let option of educationStatus" [value]="option.id">{{ option.name }}</option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['patient_relation'].valid">
-            {{ editCampaignControl['patient_relation'].errors?.['required'] ? 'Please select a patient relation' : '' }}
-        </span>
-        <br />
+                <div>
+                    <label for="email">Email<span class="required-mark" aria-hidden="true">*</span></label>
+                    <input id="email" aria-required="true" type="text" name="email" formControlName="email" placeholder="Enter Email" class="form-input" />
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['email'].valid">
+                        {{ editCampaignControl['email'].errors?.['pattern'] ? 'Please provide valid email' : 'Please provide email' }}
+                    </p>
+                </div>
 
-        <label for="education_status" class="article-label">Purpose</label>
-        <div class="relative text-white-dark">
-            <select class="form-select" aria-label="Default select example" formControlName="education_status">
-                <option value="" disabled>Select Purpose</option>
-                <option *ngFor="let option of educationStatus" [value]="option.id">{{ option.name }}</option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['education_status'].valid">
-            {{ editCampaignControl['education_status'].errors?.['required'] ? 'Please select a education status' : '' }}
-        </span>
-        <br />
+                <div>
+                    <label for="patient_relation">Patient Relation</label>
+                    <select id="patient_relation" class="form-select" formControlName="patient_relation">
+                        <option value="">Select Patient Relation</option>
+                        <option *ngFor="let option of patientRelation" [value]="option.id">{{ option.name }}</option>
+                    </select>
+                </div>
 
-        <label for="employee_status" class="article-label">Employee Status</label>
-        <div class="relative text-white-dark">
-            <select class="form-select" aria-label="Default select example" formControlName="employee_status">
-                <option value="" disabled>Select Employee Status</option>
-                <option *ngFor="let option of employmentStatus" [value]="option.id">{{ option.name }}</option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['employee_status'].valid">
-            {{ editCampaignControl['employee_status'].errors?.['required'] ? 'Please select a employee status' : '' }}
-        </span>
-        <br />
+                <div>
+                    <label for="education_status">Education Status</label>
+                    <select id="education_status" class="form-select" formControlName="education_status">
+                        <option value="">Select Education Status</option>
+                        <option *ngFor="let option of educationStatus" [value]="option.id">{{ option.name }}</option>
+                    </select>
+                </div>
 
-        <label for="contact_method" class="article-label">Contact Method</label>
-        <div class="relative text-white-dark">
-            <select class="form-select" aria-label="Default select example" formControlName="contact_method">
-                <option value="" disabled>Select Contact Method</option>
-                <option *ngFor="let option of contactMethod" [value]="option.id">{{ option.name }}</option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['contact_method'].valid">
-            {{ editCampaignControl['contact_method'].errors?.['required'] ? 'Please select a contact method' : '' }}
-        </span>
-        <br />
+                <div>
+                    <label for="employee_status">Employee Status</label>
+                    <select id="employee_status" class="form-select" formControlName="employee_status">
+                        <option value="">Select Employee Status</option>
+                        <option *ngFor="let option of employmentStatus" [value]="option.id">{{ option.name }}</option>
+                    </select>
+                </div>
 
-        <label for="request_for_donor" class="article-label">Request For Donor</label>
-        <div class="relative text-white-dark">
-            <select class="form-select" aria-label="Default select example" formControlName="request_for_donor">
-                <option value="" disabled>Select Request For Donor</option>
-                <option *ngFor="let option of contactMethod" [value]="option.id">{{ option.name }}</option>
-            </select>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['request_for_donor'].valid">
-            {{ editCampaignControl['request_for_donor'].errors?.['required'] ? 'Please select a request for donor' : '' }}
-        </span>
-        <br />
+                <div>
+                    <label for="contact_method">Contact Method</label>
+                    <select id="contact_method" class="form-select" formControlName="contact_method">
+                        <option value="">Select Contact Method</option>
+                        <option *ngFor="let option of contactMethod" [value]="option.id">{{ option.name }}</option>
+                    </select>
+                </div>
 
-        <label for="bannerImage" class="article-lable">Banner Image</label>
-        <div class="relative text-white-dark">
-            <input id="name" type="file" accept="image/*" (change)="uploadCampaignImage($event)" name="banner_image"
-                formControlName="banner_image" class="form-input" accept=".jpg,.jpeg,.png,.gif" />
-            <img *ngIf="bannerImage" [src]="bannerImage" alt="Banner Image" style="width: 300px; height: 200px;" />
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['banner_image'].valid">
-            {{ editCampaignControl['banner_image'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide banner image' }}
-        </span>
-        <br>
+                <div>
+                    <label for="request_for_donor">Request For Donor<span class="required-mark" aria-hidden="true">*</span></label>
+                    <select id="request_for_donor" aria-required="true" class="form-select" formControlName="request_for_donor">
+                        <option value="" disabled>Select Request For Donor</option>
+                        <option *ngFor="let option of requestForDonor" [value]="option.id">{{ option.name }}</option>
+                    </select>
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['request_for_donor'].valid">
+                        {{ editCampaignControl['request_for_donor'].errors?.['required'] ? 'Please select a request for donor' : '' }}
+                    </p>
+                </div>
 
-        <label for="name" class="article-lable">Name</label>
-        <div class="relative text-white-dark">
-            <input id="name" type="text" name="name" formControlName="name" placeholder="Enter Name"
-                class="form-input" />
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['name'].valid">
-            {{ editCampaignControl['name'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide name' }}
-        </span>
-        <br>
+                <div class="md:col-span-2">
+                    <label for="beneficiary_details" id="beneficiary_details_label">Beneficiary Details<span class="required-mark" aria-hidden="true">*</span></label>
+                    <angular-editor data-labelledby="beneficiary_details_label" formControlName="beneficiary_details" [config]="config"
+                        placeholder="Enter Beneficiary Details">
+                    </angular-editor>
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['beneficiary_details'].valid">
+                        {{ editCampaignControl['beneficiary_details'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide beneficiary details' }}
+                    </p>
+                </div>
 
-        <label for="email" class="article-lable">Email</label>
-        <div class="relative text-white-dark">
-            <input id="email" type="text" name="email" formControlName="email" placeholder="Enter Email"
-                class="form-input" />
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['email'].valid">
-            {{ editCampaignControl['email'].errors?.['pattern'] ? 'Please provide valid email' : 'Please provide email' }}
-        </span>
-        <br>
+                <div class="md:col-span-2">
+                    <label for="rasing_funds_decription" id="rasing_funds_decription_label">Raising Funds Description<span class="required-mark" aria-hidden="true">*</span></label>
+                    <angular-editor data-labelledby="rasing_funds_decription_label" formControlName="rasing_funds_decription" [config]="config"
+                        placeholder="Enter Raising Funds Description">
+                    </angular-editor>
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['rasing_funds_decription'].valid">
+                        {{ editCampaignControl['rasing_funds_decription'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide raising funds description' }}
+                    </p>
+                </div>
+            </div>
+        </section>
 
-        <label for="beneficiary_details" class="article-lable">Beneficiary Details</label>
-        <div class="relative text-black-dark">
-            <angular-editor formControlName="beneficiary_details" [config]="config"
-                placeholder="Enter Beneficiary Details">
-            </angular-editor>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['beneficiary_details'].valid">
-            {{ editCampaignControl['beneficiary_details'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide beneficiary details' }}
-        </span>
-        <br>
+        <!-- ============ Media ============ -->
+        <section class="form-section">
+            <h6 class="form-section-title">Media</h6>
+            <div class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
+                <div>
+                    <label for="bannerImage">Banner Image</label>
+                    <input id="bannerImage" type="file" (change)="uploadCampaignImage($event)" name="banner_image"
+                        formControlName="banner_image" class="form-input" accept=".jpg,.jpeg,.png,.gif" />
+                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['banner_image'].valid">
+                        {{ editCampaignControl['banner_image'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide banner image' }}
+                    </p>
+                    <ng-container *ngIf="bannerImage">
+                        <img *ngIf="!bannerImageError" [src]="bannerImage" alt="Banner image" class="media-preview"
+                            (error)="bannerImageError = true" />
+                        <div *ngIf="bannerImageError" class="media-preview image-unavailable">Image unavailable</div>
+                    </ng-container>
+                </div>
 
-        <label for="rasing_funds_decription" class="article-lable">Raising Funds Description</label>
-        <div class="relative text-black-dark">
-            <angular-editor formControlName="rasing_funds_decription" [config]="config"
-                placeholder="Enter Raising Funds Description">
-            </angular-editor>
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['rasing_funds_decription'].valid">
-            {{ editCampaignControl['rasing_funds_decription'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide raising funds description' }}
-        </span>
-        <br>
+                <div *ngIf="campaignVideo">
+                    <label for="campaign_video">Campaign Video</label>
+                    <input id="campaign_video" type="file" accept="video/*" (change)="uploadCampaignVideo($event)" class="form-input" />
+                    <p class="field-error" *ngIf="is_submited && editCampaignControl['campaign_video'].invalid">
+                        {{ editCampaignControl['campaign_video'].hasError('required') ? 'Please provide a campaign video' : '' }}
+                    </p>
+                    <video [src]="campaignVideo" controls class="media-preview"></video>
+                </div>
 
-        <label for="team_memeber_name" class="article-lable">Team Memeber Name</label>
-        <div class="relative text-white-dark">
-            <input id="team_memeber_name" type="text" name="team_memeber_name" formControlName="team_memeber_name"
-                placeholder="Enter Memeber Name" class="form-input" />
-        </div>
-        <span class="errormsg" *ngIf="is_submited && !editCampaignControl['team_memeber_name'].valid">
-            {{ editCampaignControl['team_memeber_name'].errors?.['pattern'] ? 'Please provide valid team_memeber_name' : 'Please provide team memeber name' }}
-        </span>
-        <br>
+                <div *ngIf="youtubeLink">
+                    <label for="youtube_link">Campaign YouTube Link</label>
+                    <input id="youtube_link" type="text" formControlName="youtube_link"
+                        placeholder="Enter YouTube Embed Link" class="form-input" />
+                    <p class="field-error" *ngIf="is_submited && editCampaignForm.get('youtube_link').invalid">
+                        {{ editCampaignForm.get('youtube_link').hasError('required') ? 'Please provide a youtube link' : '' }}
+                        {{ editCampaignForm.get('youtube_link').hasError('youtubeLink') ? 'Please provide a valid YouTube embed link' : '' }}
+                    </p>
+                </div>
 
-        
-        <label for="campaign_video" class="article-lable" *ngIf="campaignVideo">Campaign Video</label>
-        <div class="relative text-white-dark"  *ngIf="campaignVideo">
-         
-            <input id="name" type="file" accept="video/*" (change)="uploadCampaignVideo($event)" class="form-input" />
-            <video *ngIf="campaignVideo" [src]="campaignVideo" controls style="width: 500px; height: auto;"></video>
-        </div>
-        <span class="errormsg" *ngIf="campaignVideo && is_submited && editCampaignControl['campaign_video'].valid">
-            {{ editCampaignControl['campaign_video'].hasError('required') ? 'Please provide a campaign video' : '' }}
-        </span>
-        
+                <div class="md:col-span-2">
+                    <label>Campaign Images</label>
+                    <div class="preloaded-images">
+                        <div *ngFor="let image of existingProductImages; let i = index" class="preloaded-image">
+                            <img *ngIf="image.url && !image.broken" [src]="image.url" [alt]="'Campaign image ' + (i + 1)"
+                                (error)="image.broken = true">
+                            <div *ngIf="!image.url || image.broken" class="image-unavailable">Image unavailable</div>
+                            <button type="button" class="remove-icon" [attr.aria-label]="'Remove campaign image ' + (i + 1)" (click)="removePreloadedImage(image)">X</button>
+                        </div>
+                    </div>
+                    <p *ngIf="!existingProductImages?.length" class="text-xs text-white-dark">No images uploaded yet.</p>
+                </div>
 
-        <label for="youtube_link" class="article-lable" *ngIf="youtubeLink">Campaign You Tube Link</label>
-        <div  class="relative text-white-dark" *ngIf="youtubeLink">
-            <input id="youtube_link" type="text" formControlName="youtube_link"
-                placeholder="Enter YouTube Embed Link"  class="form-input"  />
-        </div>
-        <span class="errormsg" *ngIf="youtubeLink && is_submited && editCampaignForm.get('youtube_link').invalid">
-            {{ editCampaignForm.get('youtube_link').hasError('required') ? 'Please provide a youtube link' : '' }}
-            {{ editCampaignForm.get('youtube_link').hasError('youtubeLink') ? 'Please provide a valid YouTube embed link' : '' }}
-        </span>
-        <br>
-
-
-        <div class="row mb-4">
-            <label class="col-md-3 form-label mb-4">Campaign Images <span class="text-danger">*</span></label>
-            <div class="col-md-9">
-                <div class="preloaded-images">
-                    <div *ngFor="let image of existingProductImages; let i = index" class="preloaded-image">
-                        <img [src]="image?.image" alt="Preloaded image">
-                        <button type="button" class="remove-icon" (click)="removePreloadedImage(image)">X</button>
+                <div class="md:col-span-2">
+                    <label>Upload More Images</label>
+                    <div class="custom-dropzone" ngx-dropzone [accept]="'image/*'" (change)="onSelect($event)">
+                        <ngx-dropzone-label>Drop images here, or click to browse</ngx-dropzone-label>
+                        <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files" [file]="f"
+                            [removable]="true" (removed)="onRemove(f)">
+                            <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                        </ngx-dropzone-image-preview>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="row mb-4">
-            <label class="col-md-3 form-label mb-4">Multiple Images Upload <span class="text-danger">*</span></label>
-            <div class="col-md-9">
-                <div class="custom-dropzone" ngx-dropzone [accept]="'image/*'" (change)="onSelect($event)">
-                    <ngx-dropzone-label>
-                        Drop it, Here!
-                    </ngx-dropzone-label>
-                    <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files" [file]="f"
-                        [removable]="true" (removed)="onRemove(f)">
-                        <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
-                    </ngx-dropzone-image-preview>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-8 flex items-center justify-center">
+        <div class="form-section flex items-center justify-end gap-3">
             <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-            <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Update</button>
+            <button type="submit" class="btn btn-success">Update</button>
         </div>
     </form>
 </div>

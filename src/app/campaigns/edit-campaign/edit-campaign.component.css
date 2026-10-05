@@ -1,28 +1,62 @@
-.article-heading {
-  font-weight: bold;
-  font-size: 1.5em;
-  margin-bottom: 20px;
+/* Section split: same spacing and divider between Campaign / Beneficiary / Media / buttons */
+.form-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e6ed;
+}
+:host-context(.dark) .form-section {
+  border-top-color: #1b2e4b;
 }
 
-.article-lable {
-  font-weight: bold;
-  margin-bottom: 20px;
+.form-section-title {
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0e1726;
+}
+:host-context(.dark) .form-section-title {
+  color: #e0e6ed;
+}
+
+/* Error line under a field: small, sits right under the control */
+.field-error {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #e7515a;
+}
+
+/* Banner image / video preview */
+.media-preview {
+  display: block;
+  margin-top: 0.75rem;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 0.375rem;
+  border: 1px solid #e0e6ed;
+}
+video.media-preview {
+  object-fit: contain;
+  background: #000;
 }
 
 .preloaded-images {
   display: flex;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .preloaded-image {
   position: relative;
-  margin: 10px;
 }
 
 .preloaded-image img {
-  width: 300px;
-  height: 200px;
-  border: 1px solid #ddd;
+  width: 240px;
+  height: 160px;
+  object-fit: cover;
+  border: 1px solid #e0e6ed;
+  border-radius: 0.375rem;
 }
 
 .remove-icon {
@@ -40,11 +74,15 @@
 }
 
 .custom-dropzone {
-  border: 2px dashed #007bff; /* Change border color */
-  padding: 20px; /* Add padding for aesthetics */
-  border-radius: 10px; /* Rounded corners */
-  text-align: center; /* Center align text */
-  background-color: #f9f9f9; /* Light background color */
+  border: 2px dashed #e0e6ed;
+  padding: 20px;
+  border-radius: 0.375rem;
+  text-align: center;
+  background-color: #fafafa;
+}
+:host-context(.dark) .custom-dropzone {
+  border-color: #1b2e4b;
+  background-color: #121c2c;
 }
 
 .ngx-dropzone-image-preview {
@@ -68,4 +106,27 @@
   display: block; /* Display label as block for better spacing */
   margin-bottom: 10px; /* Space below label */
   font-weight: bold; /* Bold text for visibility */
+}
+
+/* Shown instead of a broken image when a stored image cannot be loaded */
+.image-unavailable {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  height: 160px;
+  border: 1px dashed #e0e6ed;
+  border-radius: 0.375rem;
+  background-color: #f1f2f3;
+  color: #888ea8;
+  font-size: 0.75rem;
+}
+.media-preview.image-unavailable {
+  width: 100%;
+  height: auto;
+}
+:host-context(.dark) .image-unavailable {
+  border-color: #1b2e4b;
+  background-color: #1b2e4b;
+  color: #888ea8;
 }
