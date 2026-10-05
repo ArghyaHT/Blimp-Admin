@@ -48,11 +48,6 @@
   padding-right: 25px !important;
 }
 
-/* Custom dropdown styling */
-.ng-select.custom-dropdown {
-  width: 300px; /* Customize the width as needed */
-}
-
 /* Dropdown options styling */
 .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
   padding: 10px 15px;

@@ -44,6 +44,15 @@
     <ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
         (sort)="onSort($event)" [footerHeight]="60" [rowHeight]="'auto'" [count]="totalCampaigns" [scrollbarH]="true">
 
+        <!-- Pinned to the left so the campaign stays visible while scrolling to the action columns -->
+        <ngx-datatable-column name="Campaign Name" [frozenLeft]="true" [width]="200" [minWidth]="180" [sortable]="true" prop="campaign_name">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div class="truncate-text font-semibold" [title]="row?.campaign_name || ''">
+                    {{ row?.campaign_name }}
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+
         <ngx-datatable-column name="Country" [flexGrow]="2" [width]="120" [minWidth]="100" [sortable]="true" prop="country_id">
             <ng-template let-row="row" ngx-datatable-cell-template>
                 <div class="truncate-text">
@@ -56,14 +65,6 @@
             <ng-template let-row="row" ngx-datatable-cell-template>
                 <div class="image-container">
                     <img [src]="row?.banner_image" alt="Image" class="datatable-image" />
-                </div>
-            </ng-template>
-        </ngx-datatable-column>
-
-        <ngx-datatable-column name="Campaign Name" [flexGrow]="3" [width]="180" [minWidth]="160" [sortable]="true" prop="campaign_name">
-            <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="truncate-text">
-                    {{ row?.campaign_name }}
                 </div>
             </ng-template>
         </ngx-datatable-column>

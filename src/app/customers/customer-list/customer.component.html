@@ -1,101 +1,114 @@
-<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-    <h5 class="text-lg font-semibold dark:text-white-light">Manage Customer</h5>
-
-    
-    <button type="button" class="btn btn-success btn-sm m-1" (click)="exportTable('excel')">
-        <icon-code-file class="ltr:mr-2 rtl:ml-2" />
-        EXCEL
-    </button>
-
-    <div class="ltr:ml-auto rtl:mr-auto">
-        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
-            (input)="searchData()" />
+<div class="panel">
+<!-- Toolbar: title, search and export -->
+<div class="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+        <h5 class="text-lg font-semibold dark:text-white-light">Manage Customer</h5>
+        <p class="text-xs text-white-dark">{{ totalCustomer }} {{ totalCustomer === 1 ? 'customer' : 'customers' }}</p>
+    </div>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div class="relative sm:w-64">
+            <input [(ngModel)]="search" type="text" class="form-input ltr:pl-9 rtl:pr-9" placeholder="Search customers..."
+                (input)="searchData()" />
+            <icon-search class="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-white-dark ltr:left-3 rtl:right-3"></icon-search>
+        </div>
+        <button type="button" class="btn btn-success gap-2" (click)="exportTable('excel')">
+            <icon-code-file class="h-4 w-4" />
+            Export Excel
+        </button>
     </div>
 </div>
 
-<!-- Filter row ke liye -->
-<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-    <h5 class="text-lg font-semibold dark:text-white-light">Filter: </h5>
-    <ng-select class="custom-dropdown" [items]="options" bindLabel="name" bindValue="id" placeholder="Select Name"
-        [(ngModel)]="selectedOption" (change)="fetchData()">
-    </ng-select>
-    <ng-select class="custom-dropdown" [items]="options" bindLabel="email" bindValue="email" placeholder="Select Email"
-        [(ngModel)]="selectedEmailOption" (change)="fetchData()">
-    </ng-select>
-
-    <!-- New User Type Filter Dropdown -->
-    <ng-select class="custom-dropdown" [items]="userTypeOptions" bindLabel="label" bindValue="value"
-        placeholder="Select User Type" [(ngModel)]="selectedUserType" (change)="fetchData()">
-    </ng-select>
-
-
-</div>
-
-<form [formGroup]="form1">
-    <fieldset class="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
-        <div>
-            <label for="start_date" class="mr-2">Start Date:</label>
-            <ng2-flatpickr [config]="basic" formControlName="start_date" addClass="form-input" placeholder="dd/mm/yy"
-                (ngModelChange)="fetchData()"></ng2-flatpickr>
-        </div>
-        <div>
-            <label for="end_date" class="mr-2">End Date:</label>
-            <ng2-flatpickr [config]="basic" formControlName="end_date" addClass="form-input" placeholder="dd/mm/yy"
-                (ngModelChange)="fetchData()"></ng2-flatpickr>
-        </div>
-    </fieldset>
+<!-- Filters -->
+<form [formGroup]="form1" class="mb-5 grid grid-cols-1 gap-4 border-b border-white-light pb-5 dark:border-[#1b2e4b] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+    <div>
+        <label class="filter-label">Name</label>
+        <ng-select class="filter-select" [items]="options" bindLabel="name" bindValue="id" placeholder="All names"
+            [(ngModel)]="selectedOption" [ngModelOptions]="{ standalone: true }" (change)="fetchData()">
+        </ng-select>
+    </div>
+    <div>
+        <label class="filter-label">Email</label>
+        <ng-select class="filter-select" [items]="options" bindLabel="email" bindValue="email" placeholder="All emails"
+            [(ngModel)]="selectedEmailOption" [ngModelOptions]="{ standalone: true }" (change)="fetchData()">
+        </ng-select>
+    </div>
+    <div>
+        <label class="filter-label">User Type</label>
+        <ng-select class="filter-select" [items]="userTypeOptions" bindLabel="label" bindValue="value" placeholder="All types"
+            [(ngModel)]="selectedUserType" [ngModelOptions]="{ standalone: true }" (change)="fetchData()">
+        </ng-select>
+    </div>
+    <div>
+        <label class="filter-label">Start Date</label>
+        <ng2-flatpickr [config]="basic" formControlName="start_date" addClass="form-input" placeholder="YYYY-MM-DD"
+            (ngModelChange)="fetchData()"></ng2-flatpickr>
+    </div>
+    <div>
+        <label class="filter-label">End Date</label>
+        <ng2-flatpickr [config]="basic" formControlName="end_date" addClass="form-input" placeholder="YYYY-MM-DD"
+            (ngModelChange)="fetchData()"></ng2-flatpickr>
+    </div>
+    <div class="flex items-end">
+        <button type="button" class="btn btn-outline-secondary w-full" [disabled]="!hasActiveFilters" (click)="resetFilters()">
+            Reset Filters
+        </button>
+    </div>
 </form>
 
-<br/>
+<div class="table-responsive w-full overflow-x-auto">
+<ngx-datatable class="material striped datatable-compact" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
+    [footerHeight]="60" [rowHeight]="'auto'" [externalSorting]="false" [scrollbarH]="true">
 
-
-
-<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
-    [footerHeight]="60" [rowHeight]="60" [externalSorting]="false">
-
-    <ngx-datatable-column name="Name" [flexGrow]="1" [sortable]="true" prop="fullname">
+    <ngx-datatable-column name="Name" [width]="140" [minWidth]="120" [sortable]="true" prop="fullname">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            {{ row?.fullname }}
+            <span class="break-words py-2" [title]="row?.fullname || ''">{{ row?.fullname }}</span>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Email" [flexGrow]="2" [sortable]="true" prop="email">
+    <ngx-datatable-column name="Email" [width]="210" [minWidth]="180" [sortable]="true" prop="email">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            {{ row?.email }}
+            <span class="break-all py-2" [title]="row?.email || ''">{{ row?.email }}</span>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Country Code" [flexGrow]="2" [sortable]="true" prop="country_code">
+    <ngx-datatable-column name="Phone" [width]="165" [minWidth]="155" [sortable]="true" prop="phone_number">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            {{ row?.country_code ? row?.country_code : '-' }}
+            <span *ngIf="row?.country_code || row?.phone_number; else noPhone" class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <ng-container *ngIf="phoneCodeDigits(row?.country_code) as code">
+                    <img *ngIf="countryFlags[code] && !row?.flagError; else flagPlaceholder" [src]="countryFlags[code]" alt=""
+                        class="h-5 w-5 shrink-0 rounded-full object-cover" (error)="row.flagError = true" />
+                    <ng-template #flagPlaceholder>
+                        <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white-light text-white-dark">
+                            <icon-globe class="h-3.5 w-3.5"></icon-globe>
+                        </span>
+                    </ng-template>
+                    <span class="text-white-dark">+{{ code }}</span>
+                </ng-container>
+                {{ row?.phone_number }}
+            </span>
+            <ng-template #noPhone>-</ng-template>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Phone Number" [flexGrow]="2" [sortable]="true" prop="phone_number">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-            {{ row?.phone_number ? row?.phone_number : '-' }}
-        </ng-template>
-    </ngx-datatable-column>
-
-    <ngx-datatable-column name="User Type" [flexGrow]="2" [sortable]="true" prop="user_type">
+    <ngx-datatable-column name="User Type" [width]="90" [minWidth]="85" [sortable]="true" prop="user_type">
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.user_type === 1 ? 'Donor' : 'Campaigner' }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Account Type" [flexGrow]="2" [sortable]="true" prop="account_type" >
+    <ngx-datatable-column name="Account Type" [width]="100" [minWidth]="90" [sortable]="true" prop="account_type" >
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.account_type === 1 ? 'Independant' : 'Organization' }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Identity Type" [flexGrow]="2" [sortable]="true" prop="identity_type">
+    <ngx-datatable-column name="Identity Type" [width]="105" [minWidth]="95" [sortable]="true" prop="identity_type">
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.identity_type === 1 ? 'Anonymous' : (row?.identity_type === 2 ? 'Share Identity' : 'Not Defined') }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Status Action" [sortable]="false">
+    <ngx-datatable-column name="Status Action" [width]="95" [minWidth]="90" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <button type="button" class="btn" [ngClass]="row?.is_active === 1 ? 'btn-success' : 'btn-danger'"
                 (click)="toggleCustomerStatus(row.id, row?.is_active === 1 ? true : false)">
@@ -104,25 +117,27 @@
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Created Date" [flexGrow]="6" [sortable]="false">
+    <ngx-datatable-column name="Created Date" [width]="95" [minWidth]="90" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.createdAt | date: 'yyyy-MM-dd' }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Action" [flexGrow]="2" [sortable]="false">
+    <ngx-datatable-column name="Action" [width]="75" [minWidth]="70" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <button type="button" ngxTippy="View" [routerLink]="['/admin/customers/customer-details', row.id]">
-                <icon-eye />
-            </button>
-            &nbsp;  &nbsp; 
-            <button type="button" ngxTippy="Delete" (click)="deleteCustomer(row.id)">
-                <icon-trash-lines />
-            </button>
+            <div class="flex items-center gap-3">
+                <button type="button" ngxTippy="View" [routerLink]="['/admin/customers/customer-details', row.id]">
+                    <icon-eye />
+                </button>
+                <button type="button" ngxTippy="Delete" (click)="deleteCustomer(row.id)">
+                    <icon-trash-lines />
+                </button>
+            </div>
         </ng-template>
     </ngx-datatable-column>
 
 </ngx-datatable>
+</div>
 
 <!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
 
@@ -145,4 +160,5 @@
         <button class="pagination-button" (click)="moveToNextPage()" [disabled]="page === totalPages">Next</button>
         <button class="pagination-button" (click)="moveToLastPage()" [disabled]="page === totalPages">Last</button>
     </div>
+</div>
 </div>

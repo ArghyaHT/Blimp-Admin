@@ -1,5 +1,5 @@
 
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, Injector, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import Swal from 'sweetalert2';
 import { ColumnMode } from '@swimlane/ngx-datatable';
@@ -8,8 +8,9 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BaseComponent } from 'src/app/utils/components/base/base.component';
-import { FlatpickrOptions } from 'ng2-flatpickr';
+import { FlatpickrOptions, Ng2FlatpickrComponent } from 'ng2-flatpickr';
 import * as ExcelJS from 'exceljs'
+import { CloudinaryService } from 'src/app/service/cloudinary.service';
 
 
 // (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
@@ -22,9 +23,14 @@ import * as ExcelJS from 'exceljs'
 })
 export class customerListingComponent extends BaseComponent {
 
-  constructor(injector: Injector, private service: DashboardService, public fb: FormBuilder) {
+  constructor(injector: Injector, private service: DashboardService, public fb: FormBuilder, private cloudinaryService: CloudinaryService) {
     super(injector);
   }
+
+  // Phone code (digits only) -> flag image URL, from the countries managed in Manage Country
+  countryFlags: Record<string, string> = {};
+
+  @ViewChildren(Ng2FlatpickrComponent) datePickers!: QueryList<Ng2FlatpickrComponent>;
 
   form1!: FormGroup;
   columnMode = ColumnMode.force;
@@ -78,6 +84,41 @@ export class customerListingComponent extends BaseComponent {
     });
 
 
+    this.loadCountryFlags();
+    this.fetchData();
+  }
+
+  loadCountryFlags() {
+    this.service.getCountry({}).subscribe((response: any) => {
+      if (response.code === 200) {
+        for (const country of response.data || []) {
+          const code = this.phoneCodeDigits(country.phone_code);
+          if (code && !this.countryFlags[code]) {
+            this.countryFlags[code] = this.cloudinaryService.getImageUrl(country.country_icon, 'country');
+          }
+        }
+      }
+    });
+  }
+
+  phoneCodeDigits(code: any): string {
+    return String(code ?? '').replace(/\D/g, '');
+  }
+
+  get hasActiveFilters(): boolean {
+    const { start_date, end_date } = this.form1?.value || {};
+    return !!(this.search || this.selectedOption || this.selectedEmailOption || this.selectedUserType || start_date || end_date);
+  }
+
+  resetFilters() {
+    this.search = '';
+    this.selectedOption = undefined;
+    this.selectedEmailOption = undefined;
+    this.selectedUserType = undefined;
+    // ng2-flatpickr doesn't clear its input on form reset, so clear the pickers directly (without firing change events)
+    this.datePickers.forEach((picker: any) => picker.flatpickr?.clear(false));
+    this.form1.reset();
+    this.page = 1;
     this.fetchData();
   }
 
