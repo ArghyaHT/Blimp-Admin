@@ -849,3 +849,20 @@ pre code.hljs {
     height: 0 !important;
     overflow: hidden !important;
 }
+
+/* "Skip to main content" link: invisible until a keyboard user tabs to it */
+.skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -100px;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    background: #fff;
+    color: #0e1726;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.skip-link:focus {
+    top: 1rem;
+}

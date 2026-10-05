@@ -2,6 +2,9 @@
     class="main-section relative font-nunito text-sm font-normal antialiased"
     [ngClass]="[store.sidebar ? 'toggle-sidebar' : '', store.menu, store.layout, store.rtlClass]"
 >
+    <!-- keyboard users can jump straight past the sidebar and top bar -->
+    <a href="#main-content" class="skip-link" (click)="skipToMain($event)">Skip to main content</a>
+
     <!--  BEGIN MAIN CONTAINER  -->
     <div class="relative">
         <!-- sidebar menu overlay -->
@@ -72,9 +75,9 @@
                 <!--  END TOP NAVBAR  -->
 
                 <!--  BEGIN CONTENT AREA (flex-1 fills the free height so the footer stays at the bottom) -->
-                <div class="animation flex-1 p-6">
+                <main id="main-content" tabindex="-1" class="animation flex-1 p-6 outline-none">
                     <router-outlet></router-outlet>
-                </div>
+                </main>
                 <!--  END CONTENT AREA  -->
 
                 <!-- BEGIN FOOTER -->

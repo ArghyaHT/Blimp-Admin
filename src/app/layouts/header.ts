@@ -12,6 +12,7 @@ import { CloudinaryService } from 'src/app/service/cloudinary.service';
     moduleId: module.id,
     selector: 'header',
     templateUrl: './header.html',
+    host: { role: 'banner' },
     animations: [
         trigger('toggleAnimation', [
             transition(':enter', [style({ opacity: 0, transform: 'scale(0.95)' }), animate('100ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))]),

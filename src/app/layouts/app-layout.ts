@@ -75,4 +75,10 @@ export class AppLayout {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
     }
+
+    // a plain "#main-content" link would be resolved against <base href="/"> and leave the page
+    skipToMain(event: Event) {
+        event.preventDefault();
+        document.getElementById('main-content')?.focus();
+    }
 }
