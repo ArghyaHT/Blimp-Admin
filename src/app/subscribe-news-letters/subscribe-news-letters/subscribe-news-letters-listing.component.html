@@ -1,31 +1,36 @@
-<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-    <h5 class="text-lg font-semibold dark:text-white-light">Manage SubScribe NewsLetter</h5>
-    <div class="ltr:ml-auto rtl:mr-auto">
-        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
+<div class="panel">
+<!-- Toolbar: title and search -->
+<div class="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+        <h5 class="text-lg font-semibold dark:text-white-light">Newsletter Subscribers</h5>
+        <p class="text-xs text-white-dark">{{ totalSubscribNewsLetters }} {{ totalSubscribNewsLetters === 1 ? 'subscriber' : 'subscribers' }}</p>
+    </div>
+    <div class="relative sm:w-64">
+        <input [(ngModel)]="search" type="text" class="form-input ltr:pl-9 rtl:pr-9" placeholder="Search by email..."
             (input)="searchData()" />
-
+        <icon-search class="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-white-dark ltr:left-3 rtl:right-3"></icon-search>
     </div>
 </div>
 
-<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
-    (sort)="onSort($event)" [footerHeight]="60" [rowHeight]="'auto'" [count]="totalSubscribNewsLetters" >
+<!-- Email takes the remaining space; date column is fixed -->
+<div class="table-responsive w-full overflow-x-auto">
+<ngx-datatable class="material striped datatable-compact" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="50"
+    (sort)="onSort($event)" [footerHeight]="50" [rowHeight]="'auto'" [count]="totalSubscribNewsLetters" [scrollbarH]="true">
 
-    <ngx-datatable-column name="Email" [flexGrow]="4" [sortable]="true" prop="email">
+    <ngx-datatable-column name="Email" [width]="300" [minWidth]="220" [sortable]="true" prop="email">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="truncate-text">
-                {{ row?.email }}
-            </div>
+            <span class="break-all" [title]="row?.email || ''">{{ row?.email }}</span>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Created Date" [flexGrow]="4" [sortable]="false">
+    <ngx-datatable-column name="Subscribed On" [width]="150" [canAutoResize]="false" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.createdAt | date: 'yyyy-MM-dd' }}
         </ng-template>
     </ngx-datatable-column>
 
-
 </ngx-datatable>
+</div>
 
 <div class="container">
     <div class="pag-container">
@@ -51,4 +56,4 @@
             [disabled]="!totalSubscribNewsLetters || page === totalPages">Last</button>
     </div>
 </div>
-
+</div>

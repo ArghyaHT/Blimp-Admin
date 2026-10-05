@@ -633,8 +633,9 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply px-2 py-2 text-xs leading-tight;
         white-space: normal;
     }
+    /* display:flex here also beats the library's "display: inline-block", so text, icons and buttons share one vertical centre */
     .ngx-datatable.material.datatable-compact .datatable-body .datatable-body-row .datatable-body-cell {
-        @apply px-2 py-2 text-[13px] leading-snug;
+        @apply flex items-center px-2 py-2 text-[13px] leading-snug;
     }
 
     /* code hightlight */

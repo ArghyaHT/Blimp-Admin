@@ -1,24 +1,35 @@
-<!-- Country List Header -->
-<div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-    <h5 class="text-lg font-semibold dark:text-white-light">Manage Country</h5>
-    <button type="button" class="btn btn-outline-success" (click)="addCountryModalOpen()">+ Add</button>
-    <div class="ltr:ml-auto rtl:mr-auto">
-        <input [(ngModel)]="search" type="text" class="form-input w-auto" placeholder="Search..."
-            (input)="searchData()" />
+<div class="panel">
+<!-- Toolbar: title, search and add -->
+<div class="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+        <h5 class="text-lg font-semibold dark:text-white-light">Manage Country</h5>
+        <p class="text-xs text-white-dark">{{ totalCountry }} {{ totalCountry === 1 ? 'country' : 'countries' }}</p>
+    </div>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div class="relative sm:w-64">
+            <input [(ngModel)]="search" type="text" class="form-input ltr:pl-9 rtl:pr-9" placeholder="Search countries..."
+                (input)="searchData()" />
+            <icon-search class="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-white-dark ltr:left-3 rtl:right-3"></icon-search>
+        </div>
+        <button type="button" class="btn btn-success gap-2" (click)="addCountryModalOpen()">
+            <icon-plus class="h-4 w-4"></icon-plus>
+            Add Country
+        </button>
     </div>
 </div>
 
-<!-- Country Table -->
-<ngx-datatable class="material striped" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
-    [footerHeight]="60" [rowHeight]="60" (sort)="onSort($event)" [count]="totalCountry" >
+<!-- Country Table: fixed-width columns, Country Name takes the remaining space -->
+<div class="table-responsive w-full overflow-x-auto">
+<ngx-datatable class="material striped datatable-compact" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="50"
+    [footerHeight]="50" [rowHeight]="'auto'" (sort)="onSort($event)" [count]="totalCountry" [scrollbarH]="true">
 
-    <ngx-datatable-column name="Country Code" [flexGrow]="2" [sortable]="false" prop="phone_code">
+    <ngx-datatable-column name="Country Code" [width]="120" [canAutoResize]="false" [sortable]="false" prop="phone_code">
         <ng-template let-row="row" ngx-datatable-cell-template>
             +{{ row?.phone_code }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Country Icon" [flexGrow]="2" [sortable]="false">
+    <ngx-datatable-column name="Country Icon" [width]="110" [canAutoResize]="false" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <img *ngIf="row?.iconUrl && !row?.iconError; else noIcon" [src]="row.iconUrl" [alt]="row?.name + ' icon'"
                 class="fixed-image" (error)="row.iconError = true" />
@@ -30,13 +41,13 @@
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Country Name" [flexGrow]="2" [sortable]="false" prop="name">
+    <ngx-datatable-column name="Country Name" [width]="260" [minWidth]="200" [sortable]="false" prop="name">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            {{ row?.name }}
+            <span class="break-words" [title]="row?.name || ''">{{ row?.name }}</span>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Status Action" [flexGrow]="2" [minWidth]="110" [sortable]="false">
+    <ngx-datatable-column name="Status Action" [width]="130" [canAutoResize]="false" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <button *ngIf="row?.is_active == 1" type="button" class="btn btn-success btn-sm whitespace-nowrap"
                 (click)="toggleCountryStatus(row.id, true)">Active</button>
@@ -45,10 +56,10 @@
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Action" [flexGrow]="0" [sortable]="false">
+    <ngx-datatable-column name="Action" [width]="100" [canAutoResize]="false" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="flex items-center">
-                <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="Edit" (click)="editCountryButton(row.id)">
+            <div class="flex items-center gap-3">
+                <button type="button" ngxTippy="Edit" (click)="editCountryButton(row.id)">
                     <icon-pencil-paper></icon-pencil-paper>
                 </button>
                 <button type="button" ngxTippy="Delete" (click)="deleteCountryFunction(row.id)">
@@ -59,9 +70,7 @@
     </ngx-datatable-column>
 
 </ngx-datatable>
-
-<!-- No Data Found Message -->
-<!-- <div *ngIf="rows?.length === 0 && search !== ''" class="no-data-found-message">No data found</div> -->
+</div>
 
 <!-- Pagination Controls -->
 <div class="container">
@@ -87,6 +96,7 @@
         <button class="pagination-button" (click)="moveToLastPage()"
             [disabled]="!totalCountry || page === totalPages">Last</button>
     </div>
+</div>
 </div>
 
 <!-- Edit Category Modal -->

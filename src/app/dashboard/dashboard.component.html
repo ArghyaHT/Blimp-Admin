@@ -1,88 +1,51 @@
-<div class="filter-section">
-    <label for="filter">Select Filter:</label>
-    <select class="filter-select" [(ngModel)]="selectedFilterType" (change)="onFilterChange()">
-        <!-- <option value="" disabled>Select Filter</option> -->
-        <option *ngFor="let option of filterOptions" [value]="option.value">{{ option.label }}</option>
-    </select>
-
-    <div *ngIf="selectedFilterType === 'custom'" class="custom-date-range">
-        <label for="startDate">Start Date:</label>
-        <input type="date" class="date-input" [(ngModel)]="startDate" />
-        
-        <label for="endDate">End Date:</label>
-        <input type="date" class="date-input" [(ngModel)]="endDate" />
+<!-- Page header: title + period filter -->
+<div class="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div>
+        <h5 class="text-xl font-semibold dark:text-white-light">Dashboard</h5>
+        <p class="text-sm text-white-dark">Overview of customers, campaigns and funds</p>
     </div>
 
-    <button class="apply-button" (click)="fetchDashboardData()">Apply Filter</button> 
-</div>
-
-
-
-<div class="row">
-    <div class="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="panel h-auto sm:col-span-2 lg:col-span-1 p-4" (click)="checkPermission('independent-customers')">
-            <div class="mb-3 flex items-center justify-between dark:text-white-light">
-                <h5 class="text-lg font-semibold">Total Independent Customers</h5>
-                <i class="fas fa-users text-xl text-[#054B05]"></i>
-            </div>
-            <div class="my-6 text-3xl font-bold text-[#054B05]">
-                <span class="ltr:mr-2 rtl:ml-2">{{dashboardData?.totalIndependentCustomers}}</span>
-            </div>
+    <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+        <div>
+            <label for="filter" class="filter-label">Period</label>
+            <select id="filter" class="form-select sm:w-44" [(ngModel)]="selectedFilterType" (change)="onFilterChange()">
+                <option *ngFor="let option of filterOptions" [value]="option.value">{{ option.value ? option.label : 'All time' }}</option>
+            </select>
         </div>
 
-        <div class="panel h-auto p-4" (click)="checkPermission('organization-customers')">
-            <div class="mb-3 flex items-center justify-between dark:text-white-light">
-                <h5 class="text-lg font-semibold">Total Organization Customers</h5>
-                <i class="fas fa-users text-xl text-[#054B05]"></i>
+        <ng-container *ngIf="selectedFilterType === 'custom'">
+            <div>
+                <label for="startDate" class="filter-label">Start Date</label>
+                <input id="startDate" type="date" class="form-input sm:w-44" [(ngModel)]="startDate" />
             </div>
-            <div class="my-6 text-3xl font-bold text-[#054B05]">
-                <span class="ltr:mr-2 rtl:ml-2">{{dashboardData?.totalOrganizationCustomers}}</span>
+            <div>
+                <label for="endDate" class="filter-label">End Date</label>
+                <input id="endDate" type="date" class="form-input sm:w-44" [(ngModel)]="endDate" />
             </div>
-        </div>
+        </ng-container>
 
-        <div class="panel h-auto p-4" (click)="checkPermission('donors')">
-            <div class="mb-3 flex items-center justify-between dark:text-white-light">
-                <h5 class="text-lg font-semibold">Total Donors</h5>
-                <i class="fas fa-list-alt text-xl text-[#054B05]"></i>
-            </div>
-            <div class="my-6 text-3xl font-bold text-[#054B05]">
-                <span class="ltr:mr-2 rtl:ml-2">{{dashboardData?.totalDonors}}</span>
-            </div>
-        </div>
+        <button type="button" class="btn btn-primary" (click)="fetchDashboardData()">Apply Filter</button>
     </div>
 </div>
 
-<div class="row">
-    <div class="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="panel h-auto sm:col-span-2 lg:col-span-1 p-4" (click)="checkPermission('campaign')">
-            <div class="mb-3 flex items-center justify-between dark:text-white-light">
-                <h5 class="text-lg font-semibold">Total Campaigners</h5>
-                <i class="fas fa-shopping-cart text-xl text-[#054B05]"></i>
+<!-- Stat cards, grouped -->
+<ng-container *ngFor="let group of statGroups">
+    <h6 class="mb-3 text-xs font-semibold uppercase tracking-wider text-white-dark">{{ group.title }}</h6>
+    <div class="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div *ngFor="let card of group.cards" class="panel flex items-center justify-between gap-4"
+            [class.stat-card]="card.route" [class.cursor-pointer]="card.route" [attr.role]="card.route ? 'button' : null"
+            [attr.tabindex]="card.route ? 0 : null" (click)="openCard(card.route)" (keydown.enter)="openCard(card.route)">
+            <div class="min-w-0">
+                <p class="text-sm font-semibold text-white-dark">{{ card.label }}</p>
+                <!-- Short form (e.g. 1.3K, 1.3M); exact value on hover -->
+                <p class="mt-2 truncate text-3xl font-bold text-black dark:text-white-light"
+                    [title]="dashboardData ? (dashboardData[card.key] ?? 0 | number: card.format) : ''">
+                    {{ dashboardData ? compactNumber(dashboardData[card.key]) : '—' }}
+                </p>
             </div>
-            <div class="my-6 text-3xl font-bold text-[#054B05]">
-                <span class="ltr:mr-2 rtl:ml-2">{{dashboardData?.totalCampaigners}}</span>
-            </div>
-        </div>
-
-        <div class="panel h-auto p-4" (click)="checkPermission('campaign')">
-            <div class="mb-3 flex items-center justify-between dark:text-white-light">
-                <h5 class="text-lg font-semibold">Total Campaigns</h5>
-                <i class="fas fa-money-bill text-xl text-[#054B05]"></i>
-            </div>
-            <div class="my-6 text-3xl font-bold text-[#054B05]">
-                <span class="ltr:mr-2 rtl:ml-2">{{dashboardData?.totalCampaigns}}</span>
-            </div>
-        </div>
-
-        <div class="panel h-auto p-4" (click)="checkPermission('earnings')">
-            <div class="mb-3 flex items-center justify-between dark:text-white-light">
-                <h5 class="text-lg font-semibold">Total Earning</h5>
-                <i class="fas fa-money-check-alt text-xl text-[#054B05]"></i>
-            </div>
-            <div class="my-6 text-3xl font-bold text-[#054B05]">
-                <span class="ltr:mr-2 rtl:ml-2">{{dashboardData?.totalFundsRaised}}</span>
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl" [ngClass]="card.iconClass">
+                <i class="fas" [ngClass]="card.icon"></i>
             </div>
         </div>
     </div>
-</div>
-
+</ng-container>

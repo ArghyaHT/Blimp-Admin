@@ -1,6 +1,7 @@
 
 import { Component, Injector } from '@angular/core';
 import { DashboardService } from 'src/app/service/dashboard.service';
+import { CloudinaryService } from 'src/app/service/cloudinary.service';
 import Swal from 'sweetalert2';
 import { ColumnMode } from '@swimlane/ngx-datatable';
 import { FormBuilder } from '@angular/forms';
@@ -14,7 +15,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
 })
 export class ArticleListingComponent extends BaseComponent {
 
-  constructor(injector: Injector, private service: DashboardService, private formBuilder: FormBuilder) {
+  constructor(injector: Injector, private service: DashboardService, private formBuilder: FormBuilder, private cloudinaryService: CloudinaryService) {
     super(injector);
   }
 
@@ -36,6 +37,11 @@ export class ArticleListingComponent extends BaseComponent {
     // { prop: 'action', name: 'Action', sortable: false }
   ];
 
+
+  // Turns the stored image value into a loadable URL (same handling as country icons)
+  articleImageUrl(value: string | null | undefined, folder: string): string {
+    return this.cloudinaryService.getImageUrl(value, folder);
+  }
 
   ngOnInit() {
     this.token = localStorage.getItem('token');

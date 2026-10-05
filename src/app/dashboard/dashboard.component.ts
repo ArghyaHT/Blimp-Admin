@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,15 +24,42 @@ export class DashboardComponent {
   dashboardData: any;
   adminId:any
   token: any
-  userPermission: string[] = [];
-  constructor(private service: DashboardService, private router: Router,private Auth: AuthService) { }
+  constructor(private service: DashboardService, private router: Router) { }
   dashboard_count: any;
 
+  // Dashboard stat cards: key = field in the dashboard API response, route = page opened on click
+  // (access is checked by the route guard; route null = not clickable)
+  statGroups = [
+    {
+      title: 'Customers',
+      cards: [
+        { label: 'Independent Customers', key: 'totalIndependentCustomers', route: '/admin/customers', format: '1.0-0', icon: 'fa-user', iconClass: 'bg-primary/10 text-primary' },
+        { label: 'Organization Customers', key: 'totalOrganizationCustomers', route: '/admin/customers', format: '1.0-0', icon: 'fa-building', iconClass: 'bg-info/10 text-info' },
+        { label: 'Donors', key: 'totalDonors', route: '/admin/customers', format: '1.0-0', icon: 'fa-hand-holding-heart', iconClass: 'bg-danger/10 text-danger' },
+      ],
+    },
+    {
+      title: 'Campaigns & Funds',
+      cards: [
+        { label: 'Campaigners', key: 'totalCampaigners', route: '/admin/customers', format: '1.0-0', icon: 'fa-bullhorn', iconClass: 'bg-warning/10 text-warning' },
+        { label: 'Campaigns', key: 'totalCampaigns', route: '/admin/campaign', format: '1.0-0', icon: 'fa-flag', iconClass: 'bg-secondary/10 text-secondary' },
+        { label: 'Total Earning', key: 'totalFundsRaised', route: null, format: '1.0-2', icon: 'fa-sack-dollar', iconClass: 'bg-success/10 text-success' },
+      ],
+    },
+  ];
+
+
+  private compactFormatter = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
+
+  // 950 -> "950", 1284 -> "1.3K", 1250430.5 -> "1.3M"
+  compactNumber(value: any): string {
+    const number = Number(value ?? 0);
+    return isNaN(number) ? String(value) : this.compactFormatter.format(number);
+  }
 
   ngOnInit() {
     this.token = localStorage.getItem('token');
     this.adminId = localStorage.getItem('adminId');
-    this.getPermission();
     this.fetchDashboardData(); 
   }
 
@@ -61,43 +87,9 @@ export class DashboardComponent {
   }
 
 
-  getPermission() {
-    const data = {
-        id : this.adminId,
-    }
-    this.service.getPermissions(data).subscribe((response: any) => {
-      if (response.code === 200) {
-        this.userPermission = response.data.permissions || [];;
-      } 
-    });
-  }
-
-  checkPermission(permissionType: string): void {
-    if (this.userPermission.includes('0') || this.userPermission.includes(permissionType)) {
-      switch (permissionType) {
-        case 'independent-customers':
-          this.router.navigate(['/admin/customers']);
-          break;
-        case 'organization-customers':
-          this.router.navigate(['/admin/customers']);
-          break;
-        case 'donors':
-          this.router.navigate(['/admin/donors']); 
-          break;
-        case 'campaign':
-          this.router.navigate(['/admin/campaign']);
-          break;
-        case 'campaign':
-          this.router.navigate(['/admin/campaign']);
-          break;
-        case 'earnings':
-          this.router.navigate(['/admin/earning']);
-          break;
-        default:
-          this.router.navigate(['/access-denied']);
-      }
-    } else {
-      this.router.navigate(['/access-denied']);
+  openCard(route: string | null) {
+    if (route) {
+      this.router.navigate([route]);
     }
   }
 
