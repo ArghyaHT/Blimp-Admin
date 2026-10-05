@@ -579,6 +579,12 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply w-full overflow-x-auto block;
     }
 
+    /* Tables with [scrollbarH] scroll inside their body; stop the outer element from also scrolling
+       (it caused a second scrollbar and let wheel scrolling shift the whole table) */
+    ngx-datatable.material.scroll-horz {
+        @apply overflow-x-hidden;
+    }
+
     /* Listing filter bar: small field labels and ng-select matched to .form-input */
     .filter-label {
         @apply mb-1.5 block text-xs font-semibold text-white-dark;
@@ -599,13 +605,26 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply border-primary shadow-none;
     }
 
-    /* Pinned ([frozenLeft]) datatable columns: keep the row stripe/hover colour and show a shadow edge */
-    .ngx-datatable.material.striped .datatable-body .datatable-row-odd .datatable-row-left {
+    /* Sticky-on-scroll datatable column: give the column cellClass/headerClass "sticky-col"; the component
+       sets --sticky-col-shift / --sticky-col-header-shift on the table so the column scrolls normally
+       until it reaches the left edge, then stays there */
+    .ngx-datatable .sticky-col {
+        position: relative;
+        z-index: 2;
+        transform: translateX(var(--sticky-col-shift, 0px));
+    }
+    .ngx-datatable .datatable-header .sticky-col {
+        transform: translateX(var(--sticky-col-header-shift, 0px));
+    }
+    .ngx-datatable.material .datatable-header .sticky-col,
+    .ngx-datatable.material .datatable-body-row .sticky-col {
+        background-color: #fff;
+    }
+    .ngx-datatable.material.striped .datatable-row-odd .sticky-col,
+    .ngx-datatable.material:not(.cell-selection) .datatable-body-row:hover .sticky-col {
         background-color: #eee;
     }
-    .ngx-datatable.material .datatable-header .datatable-row-left,
-    .ngx-datatable.material .datatable-body .datatable-row-left {
-        background-image: none;
+    .ngx-datatable.sticky-col-active .sticky-col {
         box-shadow: 6px 0 8px -6px rgba(0, 0, 0, 0.25);
     }
 

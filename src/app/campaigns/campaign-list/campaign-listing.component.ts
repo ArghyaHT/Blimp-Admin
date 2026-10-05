@@ -1,20 +1,21 @@
 
-import { Component, Injector } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import Swal from 'sweetalert2';
-import { ColumnMode } from '@swimlane/ngx-datatable';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CONSTANTS } from 'src/app/service/constant.service';
 import { BaseComponent } from 'src/app/utils/components/base/base.component';
-import { FlatpickrOptions } from 'ng2-flatpickr';
+import { FlatpickrOptions, Ng2FlatpickrComponent } from 'ng2-flatpickr';
 import * as ExcelJS from 'exceljs'
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-campaign-listing',
   templateUrl: './campaign-listing.component.html',
   styleUrls: ['./campaign-listing.component.css']
 })
-export class CampaignListingComponent extends BaseComponent {
+export class CampaignListingComponent extends BaseComponent implements AfterViewInit, OnDestroy {
 
   constructor(injector: Injector, private service: DashboardService, private formBuilder: FormBuilder) {
     super(injector);
@@ -33,6 +34,11 @@ export class CampaignListingComponent extends BaseComponent {
   constant = CONSTANTS
   adminId:any
   selectedCampaignOption: any;
+
+  @ViewChildren(Ng2FlatpickrComponent) datePickers!: QueryList<Ng2FlatpickrComponent>;
+  @ViewChild(DatatableComponent, { read: ElementRef }) tableElement?: ElementRef<HTMLElement>;
+  private stickyFrame = 0;
+  private stickyResizeObserver?: ResizeObserver;
   options: any[] = [];
   columns = [
     { name: 'ID', prop: 'id' },
@@ -82,7 +88,7 @@ export class CampaignListingComponent extends BaseComponent {
     });
   }
 
-  fetchData(sortBy: any = '', searchTerm: string = '') {
+  fetchData(sortBy: any = '', searchTerm: string = '', onComplete?: () => void) {
     const requestData: any = {
       page: this.page,
       search_text: this.search,
@@ -101,19 +107,23 @@ export class CampaignListingComponent extends BaseComponent {
     }
 
 
-    this.service.getCampaigns(this.token, requestData).subscribe((response: any) => {
-      if (response.code === 200) {
-        this.rows = response.data.Campaigns;
-        this.totalCampaigns = response.data.total_record_count;
-        this.totalPages = Math.ceil(this.totalCampaigns / this.per_page);
+    this.service.getCampaigns(this.token, requestData).subscribe({
+      next: (response: any) => {
+        if (response.code === 200) {
+          this.rows = response.data.Campaigns;
+          this.totalCampaigns = response.data.total_record_count;
+          this.totalPages = Math.ceil(this.totalCampaigns / this.per_page);
 
-      } else {
-        this.handleError(response.code, response.message);
-        this.totalCampaigns = 0;
-        this.totalPages = 0;
-        this.rows = [];
+        } else {
+          this.handleError(response.code, response.message);
+          this.totalCampaigns = 0;
+          this.totalPages = 0;
+          this.rows = [];
 
-      }
+        }
+        onComplete?.();
+      },
+      error: () => onComplete?.(),
     });
   }
 
@@ -146,6 +156,62 @@ export class CampaignListingComponent extends BaseComponent {
     }
   }
 
+  ngAfterViewInit() {
+    const table = this.tableElement?.nativeElement;
+    if (table && typeof ResizeObserver !== 'undefined') {
+      this.stickyResizeObserver = new ResizeObserver(() => this.scheduleStickyUpdate());
+      this.stickyResizeObserver.observe(table);
+    }
+    this.scheduleStickyUpdate();
+  }
+
+  ngOnDestroy() {
+    this.stickyResizeObserver?.disconnect();
+    cancelAnimationFrame(this.stickyFrame);
+  }
+
+  // Campaign Name scrolls normally until it reaches the table's left edge, then stays there.
+  // Positions are read from the DOM (not from scroll events) so it stays correct after resizes and reloads.
+  scheduleStickyUpdate() {
+    cancelAnimationFrame(this.stickyFrame);
+    this.stickyFrame = requestAnimationFrame(() => this.updateStickyColumn());
+  }
+
+  private updateStickyColumn() {
+    const table = this.tableElement?.nativeElement;
+    const body = table?.querySelector<HTMLElement>('.datatable-body');
+    const headerCell = table?.querySelector<HTMLElement>('.datatable-header-cell.sticky-col');
+    if (!table || !body || !headerCell) {
+      return;
+    }
+    // offsetLeft ignores transforms, so this is the column's normal position within its row
+    const columnLeft = headerCell.offsetLeft;
+    // The header row is moved by the table with a transform instead of scrolling, so read its own offset
+    const headerTransform = getComputedStyle(headerCell.parentElement as HTMLElement).transform;
+    const headerOffset = headerTransform && headerTransform !== 'none' ? -new DOMMatrixReadOnly(headerTransform).m41 : 0;
+
+    const bodyShift = Math.max(0, body.scrollLeft - columnLeft);
+    const headerShift = Math.max(0, headerOffset - columnLeft);
+    table.style.setProperty('--sticky-col-shift', `${bodyShift}px`);
+    table.style.setProperty('--sticky-col-header-shift', `${headerShift}px`);
+    table.classList.toggle('sticky-col-active', bodyShift > 0);
+  }
+
+  get hasActiveFilters(): boolean {
+    const { start_date, end_date } = this.form1?.value || {};
+    return !!(this.search || this.selectedCampaignOption || start_date || end_date);
+  }
+
+  resetFilters() {
+    this.search = '';
+    this.selectedCampaignOption = undefined;
+    // ng2-flatpickr doesn't clear its input on form reset, so clear the pickers directly (without firing change events)
+    this.datePickers.forEach((picker: any) => picker.flatpickr?.clear(false));
+    this.form1.reset();
+    this.page = 1;
+    this.fetchData();
+  }
+
   searchData() {
     this.page = 1;
 
@@ -175,105 +241,65 @@ export class CampaignListingComponent extends BaseComponent {
   }
 
 
+  // action 1 = mark the campaign, action 0 = remove the status again (undo)
   toggleSupport(id: number, action: number) {
-    const requestBody = { id: id, action: action, column: 'is_support',loggedInUserId : this.adminId };
-    this.confirmAction('support', action)
-      .then((result) => {
-        if (result.isConfirmed) {
-          this.service.updateCampaignStatus(this.token, requestBody).subscribe((response: any) => {
-            this.handleResponse(response, 'Support status updated successfully!');
-            if (response.status === 'success') {
-              this.rows.forEach((campaign) => {
-                campaign.is_support = 0;
-              });
-              const updatedCampaign = this.rows.find(campaign => campaign.id === id);
-              if (updatedCampaign) {
-                updatedCampaign.is_support = 1;
-              }
-            }
-          });
-        }
-      });
+    this.updateCampaignFlag(id, action, 'is_support', 'Supported');
   }
 
   toggleDiscover(id: number, action: number) {
-    const requestBody = { id: id, action: action, column: 'is_discover', loggedInUserId : this.adminId };
-    this.confirmAction('discover', action)
-      .then((result) => {
-        if (result.isConfirmed) {
-          this.service.updateCampaignStatus(this.token, requestBody).subscribe((response: any) => {
-            this.handleResponse(response, 'Discoverability status updated successfully!');
-          });
-        }
-      });
+    this.updateCampaignFlag(id, action, 'is_discover', 'Discoverable');
   }
-
 
   toggleFeatured(id: number, action: number) {
-    const requestBody = { id: id, action: action, column: 'is_featured', loggedInUserId : this.adminId };
-    this.confirmAction('featured', action)
-      .then((result) => {
-        if (result.isConfirmed) {
-          this.service.updateCampaignStatus(this.token, requestBody).subscribe((response: any) => {
-            this.handleResponse(response, 'Featured status updated successfully!');
-          });
-        }
-      });
+    this.updateCampaignFlag(id, action, 'is_featured', 'Featured');
   }
-
 
   toggleVerification(id: number, action: number) {
-    const requestBody = { id: id, action: action, column: 'is_verified', loggedInUserId : this.adminId };
-    this.confirmAction('verification', action)
-      .then((result) => {
-        if (result.isConfirmed) {
-          this.service.updateCampaignStatus(this.token, requestBody).subscribe((response: any) => {
-            this.handleResponse(response, 'Verification status updated successfully!');
-          });
-        }
-      });
+    this.updateCampaignFlag(id, action, 'is_verified', 'Verified');
   }
 
-  // toggleTaxBenefits(id: number, action: number) {
-  //   const requestBody = { id: id, action: action, column: 'is_tax_benefits', loggedInUserId : this.adminId };
-  //   this.confirmAction('tax benefits', action)
-  //     .then((result) => {
-  //       if (result.isConfirmed) {
-  //         this.service.updateCampaignStatus(this.token, requestBody).subscribe((response: any) => {
-  //           this.handleResponse(response, 'Tax benefits status updated successfully!');
-  //         });
-  //       }
-  //     });
-  // }
-  
-
-  confirmAction(type: string, action: number) {
-    const actionText = action === 1 ? 'mark as' : 'revoke';
-    return Swal.fire({
-      title: `Are you sure?`,
-      text: `You are about to ${actionText} ${type}!`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, proceed!'
+  private updateCampaignFlag(id: number, action: number, column: string, label: string) {
+    const requestBody = { id: id, action: action, column: column, loggedInUserId: this.adminId };
+    this.confirmAction(label, action).then((result) => {
+      if (result.isConfirmed) {
+        const successMessage = action === 1 ? `Campaign marked as ${label.toLowerCase()} successfully!` : `${label} status removed successfully!`;
+        this.runCampaignUpdate(this.service.updateCampaignStatus(this.token, requestBody), successMessage);
+      }
     });
   }
 
-  handleResponse(response: any, successMessage: string) {
-    if (response.code === 200) {
-      this.fetchData();
-      Swal.fire({
-        icon: 'success',
-        title: successMessage,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-      });
-    } else {
-      this.handleError(response.code, response.message);
-    }
+  confirmAction(label: string, action: number) {
+    return Swal.fire({
+      title: 'Are you sure?',
+      text: action === 1 ? `You are about to mark this campaign as ${label}.` : `You are about to remove the "${label}" status from this campaign.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: action === 1 ? '#3085d6' : '#d33',
+      cancelButtonColor: action === 1 ? '#d33' : '#3085d6',
+      confirmButtonText: action === 1 ? 'Yes, proceed!' : 'Yes, remove it!'
+    });
+  }
+
+  // Shows the full-screen "Please wait..." loader until the update and the list refresh are done
+  private runCampaignUpdate(request: Observable<any>, successMessage: string) {
+    this.spinner.show();
+    request.subscribe({
+      next: (response: any) => {
+        if (response.code === 200) {
+          this.fetchData('', '', () => {
+            this.spinner.hide();
+            this.showToast('success', successMessage);
+          });
+        } else {
+          this.spinner.hide();
+          this.handleError(response.code, response.message);
+        }
+      },
+      error: () => {
+        this.spinner.hide();
+        this.showToast('error', 'Something went wrong. Please check your internet connection and try again.');
+      },
+    });
   }
 
   activeCampaign(id: number) {
@@ -288,22 +314,7 @@ export class CampaignListingComponent extends BaseComponent {
       confirmButtonText: 'Yes, Inactivate It!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.service.activateDeactivateCampaign(this.token, requestBody).subscribe((response: any) => {
-          console.log(response);
-          if (response.code === 200) {
-            this.fetchData();
-            Swal.fire({
-              icon: 'success',
-              title: 'Campaign InActivate successfully!',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-          } else {
-            this.handleError(response.code, response.message);
-          }
-        });
+        this.runCampaignUpdate(this.service.activateDeactivateCampaign(this.token, requestBody), 'Campaign InActivate successfully!');
       }
     });
   }
@@ -320,22 +331,7 @@ export class CampaignListingComponent extends BaseComponent {
       confirmButtonText: 'Yes, Activate It!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.service.activateDeactivateCampaign(this.token, requestBody).subscribe((response: any) => {
-          console.log(response);
-          if (response.code === 200) {
-            this.fetchData();
-            Swal.fire({
-              icon: 'success',
-              title: 'Campaign Active successfully!',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-          } else {
-            this.handleError(response.code, response.message);
-          }
-        });
+        this.runCampaignUpdate(this.service.activateDeactivateCampaign(this.token, requestBody), 'Campaign Active successfully!');
       }
     });
   }
@@ -352,21 +348,7 @@ export class CampaignListingComponent extends BaseComponent {
       confirmButtonText: 'Yes, Deactivate Tax Benefits'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.service.activateDeactivateTaxCampaign(this.token, requestBody).subscribe((response: any) => {
-          if (response.code === 200) {
-            this.fetchData();
-            Swal.fire({
-              icon: 'success',
-              title: 'Tax benefits removed successfully!',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-          } else {
-            this.handleError(response.code, response.message);
-          }
-        });
+        this.runCampaignUpdate(this.service.activateDeactivateTaxCampaign(this.token, requestBody), 'Tax benefits removed successfully!');
       }
     });
   }
@@ -383,21 +365,7 @@ export class CampaignListingComponent extends BaseComponent {
       confirmButtonText: 'Yes, Activate Tax Benefits'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.service.activateDeactivateTaxCampaign(this.token, requestBody).subscribe((response: any) => {
-          if (response.code === 200) {
-            this.fetchData();
-            Swal.fire({
-              icon: 'success',
-              title: 'Tax benefits activated successfully!',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-          } else {
-            this.handleError(response.code, response.message);
-          }
-        });
+        this.runCampaignUpdate(this.service.activateDeactivateTaxCampaign(this.token, requestBody), 'Tax benefits activated successfully!');
       }
     });
   }
@@ -433,22 +401,7 @@ export class CampaignListingComponent extends BaseComponent {
   }
 
   processCampaignAction(requestBody: { id: number; action: number }, successMessage: string) {
-    this.service.approveRejectCampaign(this.token, requestBody).subscribe((response: any) => {
-      console.log(response);
-      if (response.code === 200) {
-        this.fetchData(); // Refresh the list to reflect changes
-        Swal.fire({
-          icon: 'success',
-          title: successMessage,
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-        });
-      } else {
-        this.handleError(response.code, response.message);
-      }
-    });
+    this.runCampaignUpdate(this.service.approveRejectCampaign(this.token, requestBody), successMessage);
   }
 
   deleteCamaign(id: number) {
@@ -465,21 +418,7 @@ export class CampaignListingComponent extends BaseComponent {
       confirmButtonText: 'Yes, Delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.service.deleteCampaign(this.token, requestBody).subscribe((response: any) => {
-          if (response.code === 200) {
-            this.fetchData();
-            Swal.fire({
-              icon: 'success',
-              title: 'Campaign Deleted successfully!',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-          } else {
-            this.handleError(response.code, response.message);
-          }
-        });
+        this.runCampaignUpdate(this.service.deleteCampaign(this.token, requestBody), 'Campaign Deleted successfully!');
       }
     });
   }

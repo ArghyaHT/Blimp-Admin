@@ -54,12 +54,10 @@
   align-items: center;
 }
 
+/* Small 16:9 banner thumbnail so rows stay compact */
 .datatable-image {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 45px;
   object-fit: cover;
-}
-
-.ng-select.custom-dropdown {
-  width: 300px; 
+  border-radius: 6px;
 }

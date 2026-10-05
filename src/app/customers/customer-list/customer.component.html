@@ -59,19 +59,19 @@
 <ngx-datatable class="material striped datatable-compact" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="60"
     [footerHeight]="60" [rowHeight]="'auto'" [externalSorting]="false" [scrollbarH]="true">
 
-    <ngx-datatable-column name="Name" [width]="140" [minWidth]="120" [sortable]="true" prop="fullname">
+    <ngx-datatable-column name="Name" [width]="110" [minWidth]="110" [sortable]="true" prop="fullname">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <span class="break-words py-2" [title]="row?.fullname || ''">{{ row?.fullname }}</span>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Email" [width]="210" [minWidth]="180" [sortable]="true" prop="email">
+    <ngx-datatable-column name="Email" [width]="175" [minWidth]="175" [sortable]="true" prop="email">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <span class="break-all py-2" [title]="row?.email || ''">{{ row?.email }}</span>
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Phone" [width]="165" [minWidth]="155" [sortable]="true" prop="phone_number">
+    <ngx-datatable-column name="Phone" [width]="145" [minWidth]="145" [sortable]="true" prop="phone_number">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <span *ngIf="row?.country_code || row?.phone_number; else noPhone" class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                 <ng-container *ngIf="phoneCodeDigits(row?.country_code) as code">
@@ -90,25 +90,25 @@
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="User Type" [width]="90" [minWidth]="85" [sortable]="true" prop="user_type">
+    <ngx-datatable-column name="User Type" [width]="75" [minWidth]="75" [sortable]="true" prop="user_type">
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.user_type === 1 ? 'Donor' : 'Campaigner' }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Account Type" [width]="100" [minWidth]="90" [sortable]="true" prop="account_type" >
+    <ngx-datatable-column name="Account Type" [width]="85" [minWidth]="85" [sortable]="true" prop="account_type" >
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.account_type === 1 ? 'Independant' : 'Organization' }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Identity Type" [width]="105" [minWidth]="95" [sortable]="true" prop="identity_type">
+    <ngx-datatable-column name="Identity Type" [width]="85" [minWidth]="85" [sortable]="true" prop="identity_type">
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.identity_type === 1 ? 'Anonymous' : (row?.identity_type === 2 ? 'Share Identity' : 'Not Defined') }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Status Action" [width]="95" [minWidth]="90" [sortable]="false">
+    <ngx-datatable-column name="Status Action" [width]="85" [minWidth]="85" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <button type="button" class="btn" [ngClass]="row?.is_active === 1 ? 'btn-success' : 'btn-danger'"
                 (click)="toggleCustomerStatus(row.id, row?.is_active === 1 ? true : false)">
@@ -117,13 +117,13 @@
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Created Date" [width]="95" [minWidth]="90" [sortable]="false">
+    <ngx-datatable-column name="Created Date" [width]="85" [minWidth]="85" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row?.createdAt | date: 'yyyy-MM-dd' }}
         </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column name="Action" [width]="75" [minWidth]="70" [sortable]="false">
+    <ngx-datatable-column name="Action" [width]="70" [minWidth]="70" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div class="flex items-center gap-3">
                 <button type="button" ngxTippy="View" [routerLink]="['/admin/customers/customer-details', row.id]">
