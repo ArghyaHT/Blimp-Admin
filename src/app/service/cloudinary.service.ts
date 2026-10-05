@@ -27,18 +27,30 @@ uploadFile(file: File, folder?: string): Promise<any> {
 
 // Builds a browser-loadable image URL from the value the API returns.
 // The API sends "cloudinary://<credentials>@<cloud><folder>/<id>", which is not a valid
-// image URL, so only the trailing public id is kept. Full http(s) URLs pass through unchanged.
-getImageUrl(storedValue: string | null | undefined, folder: string): string {
-  if (!storedValue) {
+// image URL, so the "<folder>/<id>" part after the cloud name is used. Bare ids are placed
+// under `folder` when given. Full http(s) URLs pass through unchanged.
+getImageUrl(storedValue: string | null | undefined, folder?: string): string {
+  if (!storedValue || storedValue === 'null' || storedValue === 'undefined') {
     return '';
   }
   if (/^https?:\/\//.test(storedValue)) {
     return storedValue;
   }
-  const publicId = storedValue.split('/').pop();
+
+  let path: string;
+  const cloudPrefix = `@${this.cloudName}`;
+  const prefixIndex = storedValue.indexOf(cloudPrefix);
+  if (storedValue.startsWith('cloudinary://') && prefixIndex !== -1) {
+    path = storedValue.slice(prefixIndex + cloudPrefix.length).replace(/^\/+/, '');
+  } else {
+    const id = storedValue.split('/').pop() || '';
+    path = folder ? `${folder}/${id}` : id;
+  }
+
+  const publicId = path.split('/').pop();
   if (!publicId || publicId === 'null' || publicId === 'undefined') {
     return '';
   }
-  return `https://res.cloudinary.com/${this.cloudName}/image/upload/${folder}/${publicId}`;
+  return `https://res.cloudinary.com/${this.cloudName}/image/upload/${path}`;
 }
 }

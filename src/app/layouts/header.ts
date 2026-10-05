@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
+import { CloudinaryService } from 'src/app/service/cloudinary.service';
 
 @Component({
     moduleId: module.id,
@@ -83,8 +84,10 @@ export class HeaderComponent {
     ];
     fullName : any;
     userProfileImage: any;
+    profileImageError = false;
     constructor(
         private Auth: AuthService,
+        private cloudinaryService: CloudinaryService,
         public translate: TranslateService,
         public storeData: Store<any>,
         public router: Router,
@@ -109,8 +112,21 @@ export class HeaderComponent {
             }
         });
 
-        this.fullName = localStorage.getItem('name');
-        this.userProfileImage = localStorage.getItem('profile');
+        const name = localStorage.getItem('name');
+        this.fullName = name && name !== 'null' && name !== 'undefined' ? name : '';
+        this.userProfileImage = this.cloudinaryService.getImageUrl(localStorage.getItem('profile'));
+        this.profileImageError = false;
+    }
+
+    // Shown in place of the profile photo when none is set or it fails to load
+    get userInitials(): string {
+        return (this.fullName || '')
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((part: string) => part[0].toUpperCase())
+            .join('');
     }
 
     isValidUserProfileImage(imageUrl: string | null): boolean {

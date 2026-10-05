@@ -40,7 +40,14 @@
                                  src="./assets/images/user-profile.jpeg" 
                                  alt="Static User Image" />
                         </ng-template> -->
-                        <img class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" [src]="userProfileImage" alt="" />
+                        <img *ngIf="userProfileImage && !profileImageError; else headerAvatarFallback"
+                            class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" [src]="userProfileImage"
+                            [alt]="fullName || 'Profile'" (error)="profileImageError = true" />
+                        <ng-template #headerAvatarFallback>
+                            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+                                {{ userInitials }}<icon-user *ngIf="!userInitials" class="h-5 w-5"></icon-user>
+                            </span>
+                        </ng-template>
                     </button>
                     
                     
@@ -66,7 +73,14 @@
                                             alt="Static User Image" 
                                         />
                                     </ng-template> -->
-                                    <img class="h-10 w-10 rounded-md object-cover" [src]="userProfileImage" alt="" />
+                                    <img *ngIf="userProfileImage && !profileImageError; else menuAvatarFallback"
+                                        class="h-10 w-10 rounded-md object-cover" [src]="userProfileImage" [alt]="fullName || 'Profile'"
+                                        (error)="profileImageError = true" />
+                                    <ng-template #menuAvatarFallback>
+                                        <span class="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-base font-semibold text-white">
+                                            {{ userInitials }}<icon-user *ngIf="!userInitials" class="h-5 w-5"></icon-user>
+                                        </span>
+                                    </ng-template>
                                 </div>
                                 
                                 
