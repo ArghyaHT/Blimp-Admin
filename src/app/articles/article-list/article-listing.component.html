@@ -3,7 +3,8 @@
 <div class="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
     <div>
         <h5 class="text-lg font-semibold dark:text-white-light">Manage Articles</h5>
-        <p class="text-xs text-white-dark">{{ totalArticle }} {{ totalArticle === 1 ? 'article' : 'articles' }}</p>
+        <p *ngIf="!(loading && !rows.length); else countLoading" class="text-xs text-white-dark">{{ totalArticle }} {{ totalArticle === 1 ? 'article' : 'articles' }}</p>
+        <ng-template #countLoading><p class="text-xs text-white-dark">Loading…</p></ng-template>
     </div>
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div class="relative sm:w-64">
@@ -18,7 +19,10 @@
     </div>
 </div>
 
-<div class="table-responsive w-full overflow-x-auto">
+<!-- Skeleton while the first page of data loads; on later reloads the current rows are dimmed instead -->
+<app-table-skeleton *ngIf="loading && !rows.length" [columns]="8"></app-table-skeleton>
+<div class="table-responsive w-full overflow-x-auto transition-opacity" [class.table-is-loading]="loading && !rows.length"
+    [class.opacity-50]="loading && rows.length">
 <ngx-datatable class="material striped datatable-compact" [rows]="rows" [columns]="columns" [columnMode]="columnMode" [headerHeight]="50"
     (sort)="onSort($event)" [footerHeight]="50" [rowHeight]="'auto'" [count]="totalArticle" [scrollbarH]="true">
 

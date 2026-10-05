@@ -7,6 +7,7 @@ import { IconModule } from 'src/app/shared/icon/icon.module';
 import { ModalModule } from 'angular-custom-modal';
 import { CustomerDetailsComponent } from './customer-details/customer-details.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { UtilsModule } from '../utils/utils.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Ng2FlatpickrModule } from 'ng2-flatpickr';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -32,6 +33,7 @@ const routes: Routes = [
     CustomerDetailsComponent
   ],
   imports: [RouterModule.forChild(routes),
+    UtilsModule,
     // PdfViewerModule,
     CommonModule,
     DataTableModule,

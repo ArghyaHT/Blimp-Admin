@@ -1,5 +1,6 @@
 
 import { Component, ElementRef, Injector, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import Swal from 'sweetalert2';
 import { ColumnMode } from '@swimlane/ngx-datatable';
@@ -40,6 +41,7 @@ export class customerListingComponent extends BaseComponent {
   totalPages: number = 0;
   totalCustomer: number = 0;
   rows: any[] = [];
+  loading = false; // true while the list is being fetched (shows the table skeleton)
   token: any;
   selectedOption: any;
   options: any[] = [];
@@ -142,7 +144,8 @@ export class customerListingComponent extends BaseComponent {
       requestData.end_date = this.formatDate(endDate);
     }
 
-    this.service.customer_listing(this.token, requestData).subscribe((response: any) => {
+    this.loading = true;
+    this.service.customer_listing(this.token, requestData).pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code == 200) {
         this.options = response.data.customersList.map((customer: any) => ({ id: customer.id, name: customer.fullname, email: customer.email, user_type: customer.user_type }));
         this.rows = response.data.customersList;

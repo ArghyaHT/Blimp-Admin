@@ -1,5 +1,6 @@
 
 import { ModalComponent } from 'angular-custom-modal';
+import { finalize } from 'rxjs/operators';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import Swal from 'sweetalert2';
@@ -26,6 +27,7 @@ export class SubscribeNewsLettersListingComponent extends BaseComponent {
   totalPages: number = 0;
   totalSubscribNewsLetters: number = 0;
   rows: any[] = [];
+  loading = false; // true while the list is being fetched (shows the table skeleton)
   columns = [];
   token:any;
 
@@ -42,7 +44,8 @@ export class SubscribeNewsLettersListingComponent extends BaseComponent {
       record_count: parseInt(this.per_page),
     };
 
-    this.service.subscribeNewsLetters(this.token,requestData).subscribe((response: any) => {
+    this.loading = true;
+    this.service.subscribeNewsLetters(this.token,requestData).pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code === 200) {
         this.rows = response.data.SubscribeNewsLetters;
         this.totalSubscribNewsLetters = response.data.total_record_count;

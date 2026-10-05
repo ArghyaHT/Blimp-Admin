@@ -1,5 +1,6 @@
 
 import { Component, Injector } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import { CloudinaryService } from 'src/app/service/cloudinary.service';
 import Swal from 'sweetalert2';
@@ -27,6 +28,7 @@ export class ArticleListingComponent extends BaseComponent {
   totalPages: number = 0;
   totalArticle: number = 0;
   rows: any[] = [];
+  loading = false; // true while the list is being fetched (shows the table skeleton)
   token: any;
   constant = CONSTANTS
   adminId:any
@@ -56,7 +58,8 @@ export class ArticleListingComponent extends BaseComponent {
       record_count: parseInt(this.per_page),
     };
 
-    this.service.article_list(this.token, requestData).subscribe((response: any) => {
+    this.loading = true;
+    this.service.article_list(this.token, requestData).pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code === 200) {
         this.rows = response.data.Articles;
         this.totalArticle = response.data.total_record_count;

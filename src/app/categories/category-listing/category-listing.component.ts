@@ -1,4 +1,5 @@
 import { ModalComponent } from 'angular-custom-modal';
+import { finalize } from 'rxjs/operators';
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import Swal from 'sweetalert2';
@@ -31,6 +32,7 @@ export class CategoryListingComponent extends BaseComponent {
   totalCategory = 0;
   totalCustomer = 0;
   rows: any[] = [];
+  loading = false; // true while the list is being fetched (shows the table skeleton)
   columns = [
     { prop: 'id', name: 'Id', sortable: true },
     { prop: 'name', name: 'Category Name', sortable: true },
@@ -77,7 +79,8 @@ export class CategoryListingComponent extends BaseComponent {
     };
 
 
-    this.service.category_list(this.token, requestData).subscribe((response: any) => {
+    this.loading = true;
+    this.service.category_list(this.token, requestData).pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code === 200) {
         this.rows = response.data.category;
         this.totalCategory = response.data.total_record_count;

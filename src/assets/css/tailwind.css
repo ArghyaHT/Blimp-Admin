@@ -843,3 +843,9 @@ pre code.hljs {
     from { transform: translateX(-100%); }
     to { transform: translateX(250%); }
 }
+
+/* Table hidden (but kept rendered, so its column sizing stays correct) while the skeleton is shown */
+.table-is-loading {
+    height: 0 !important;
+    overflow: hidden !important;
+}

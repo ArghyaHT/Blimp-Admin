@@ -1,5 +1,6 @@
 
 import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import Swal from 'sweetalert2';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
@@ -30,6 +31,7 @@ export class CampaignListingComponent extends BaseComponent implements AfterView
   totalPages: number = 0;
   totalCampaigns: number = 0;
   rows: any[] = [];
+  loading = false; // true while the list is being fetched (shows the table skeleton)
   token: any;
   constant = CONSTANTS
   adminId:any
@@ -107,7 +109,8 @@ export class CampaignListingComponent extends BaseComponent implements AfterView
     }
 
 
-    this.service.getCampaigns(this.token, requestData).subscribe({
+    this.loading = true;
+    this.service.getCampaigns(this.token, requestData).pipe(finalize(() => (this.loading = false))).subscribe({
       next: (response: any) => {
         if (response.code === 200) {
           this.rows = response.data.Campaigns;

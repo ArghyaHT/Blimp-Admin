@@ -4,7 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { slideDownUp } from '../shared/animations';
-import { DashboardService } from '../service/dashboard.service';
+import { AuthService } from '../service/auth.service';
 
 @Component({
     moduleId: module.id,
@@ -21,7 +21,7 @@ export class SidebarComponent {
     activeDropdown: string[] = [];
     parentDropdown: string = '';
     constructor(public translate: TranslateService, public storeData: Store<any>, public router: Router,
-        private service: DashboardService,
+        private auth: AuthService,
     ) {
         this.initStore();
     }
@@ -69,17 +69,15 @@ export class SidebarComponent {
     }
 
     getPermission() {
-        const data = {
-            id : this.adminId,
-        }
-        this.service.getPermissions(data).subscribe((response: any) => {
-          if (response.code === 200) {
-                        this.userPermission = {
-                                ...response.data,
-                                role: Number(response.data.role),
-                                permissions: response.data.permissions || [],
-                        };
-          } 
+        // Show the menu immediately from the last confirmed permissions, then refresh from the server
+        this.userPermission = this.auth.getCachedAccess() || this.userPermission;
+        this.auth.getPermission().subscribe({
+            next: (response: any) => {
+                if (response.code === 200) {
+                    this.userPermission = { role: Number(response.role), permissions: response.permissions || [] };
+                }
+            },
+            error: () => {},
         });
-      }
+    }
 }

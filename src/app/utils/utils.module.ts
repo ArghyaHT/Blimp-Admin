@@ -13,6 +13,7 @@ import { ApprovalActionPipe, ContactMethodPipe, CustomDatePipe, DiscoverPipe, Do
 // Components
 
 import { ControlMessagesComponent } from './components/control-messages/control-messages.component';
+import { TableSkeletonComponent } from './components/table-skeleton/table-skeleton.component';
 
 @NgModule({
   exports: [
@@ -23,6 +24,7 @@ import { ControlMessagesComponent } from './components/control-messages/control-
     StatusPipe,
     CustomDatePipe,
     ControlMessagesComponent,
+    TableSkeletonComponent,
     DraftPipe,
     SupoprtPipe,
     DiscoverPipe,
@@ -45,7 +47,7 @@ import { ControlMessagesComponent } from './components/control-messages/control-
     FormsModule,
     ReactiveFormsModule,
   ],
-  declarations: [NumberFormatPipe, ControlMessagesComponent, StatusPipe, CustomDatePipe,
+  declarations: [NumberFormatPipe, ControlMessagesComponent, TableSkeletonComponent, StatusPipe, CustomDatePipe,
     DraftPipe, SupoprtPipe, DiscoverPipe,FeaturedPipe, VerifiedPipe, TaxBenefitsPipe,ApprovalActionPipe, PurposePipe, PatientRelationPipe,
     EducationStatusPipe, ContactMethodPipe, EmploymentStatusPipe, DonorRequestPipe,SafeUrlPipe
 
