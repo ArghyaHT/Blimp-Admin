@@ -175,6 +175,7 @@ export class HeaderComponent {
                 localStorage.removeItem('adminId');
                 localStorage.removeItem('name');
                 localStorage.removeItem('profile');
+                localStorage.removeItem('adminAccess');
                 this.router.navigate(['']);
             }
         })

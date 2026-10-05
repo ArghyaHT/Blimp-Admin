@@ -4,6 +4,8 @@ import { BehaviorSubject, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/app/environments/environment.development';
 
+const ACCESS_CACHE_KEY = 'adminAccess';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,15 +24,19 @@ export class AuthService {
   reloadLogin() {
     const localToken = localStorage.getItem('token');
     if (localToken) {
-      this.is_loggin_or_not().subscribe((response: any) => {
-        const serverToken = response.data ? response.data.token : undefined;
-        if (localToken === serverToken) {
-          this.is_loggedIn.next(true);
-          this.router.navigate(['/admin']);
-        } else {
-          this.is_loggedIn.next(false);
-          this.router.navigate(['/']);
-        }
+      this.is_loggin_or_not().subscribe({
+        next: (response: any) => {
+          const serverToken = response.data ? response.data.token : undefined;
+          if (localToken === serverToken) {
+            this.is_loggedIn.next(true);
+            this.router.navigate(['/admin']);
+          } else {
+            this.is_loggedIn.next(false);
+            this.router.navigate(['/']);
+          }
+        },
+        // Server unreachable: keep the saved session and let the route guard restore it
+        error: () => this.router.navigate(['/admin']),
       });
     } else {
       this.is_loggedIn.next(false);
@@ -100,12 +106,34 @@ export class AuthService {
       if (response.code === 200) {
         this.userRole = Number(response.data.role);
         this.userPermissions = response.data.permissions || [];
+        this.cacheAccess();
       }
       return {
+        code: response.code,
         role: this.userRole,
         permissions: this.userPermissions,
       };
     }));
+  }
+
+  // Last known role/permissions, so a page reload can restore the session when the server is slow or unreachable
+  private cacheAccess() {
+    localStorage.setItem(ACCESS_CACHE_KEY, JSON.stringify({ role: this.userRole, permissions: this.userPermissions }));
+  }
+
+  getCachedAccess(): { role: number; permissions: string[] } | null {
+    try {
+      const cached = JSON.parse(localStorage.getItem(ACCESS_CACHE_KEY) || 'null');
+      return cached && typeof cached.role === 'number' ? { role: cached.role, permissions: cached.permissions || [] } : null;
+    } catch {
+      return null;
+    }
+  }
+
+  // Used when the server reports the session as invalid
+  clearSession() {
+    ['token', 'adminId', 'name', 'email', 'profile', ACCESS_CACHE_KEY].forEach((key) => localStorage.removeItem(key));
+    this.is_loggedIn.next(false);
   }
 
 
