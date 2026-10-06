@@ -55,12 +55,6 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
     { id: 3, name: 'Community Service' }
   ];
 
-  patientRelation = [
-    { id: 1, name: 'Family' },
-    { id: 2, name: 'Friend' },
-    { id: 3, name: 'Other' }
-  ];
-
   educationStatus = [
     { id: 1, name: 'High School' },
     { id: 2, name: 'Bachelor\'s Degree' },
@@ -174,7 +168,6 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
       email: ['', [Validators.required, this.validationService.emailValidator]],
       beneficiary_details: ['', Validators.required],
       // optional: older campaigns were saved without these, which blocked updating them
-      patient_relation: [''],
       education_status: [''],
       employee_status: [''],
       contact_method: [''],
@@ -241,7 +234,6 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
           name: campaign?.name,
           email: campaign?.email,
           beneficiary_details: campaign?.beneficiary_details,
-          patient_relation: campaign?.patient_relation ?? '',
           education_status: campaign?.education_status ?? '',
           employee_status: campaign?.employee_status ?? '',
           contact_method: campaign?.contact_method ?? '',
@@ -467,7 +459,6 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
           name: this.editCampaignForm.value.name,
           email: this.editCampaignForm.value.email,
           beneficiary_details: this.editCampaignForm.value.beneficiary_details,
-          patient_relation: this.editCampaignForm.value.patient_relation || null,
           education_status: this.editCampaignForm.value.education_status || null,
           employee_status: this.editCampaignForm.value.employee_status || null,
           contact_method: this.editCampaignForm.value.contact_method || null,
