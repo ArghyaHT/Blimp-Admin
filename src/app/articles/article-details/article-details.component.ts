@@ -21,10 +21,7 @@ export class ArticleDetailsComponent extends BaseComponent {
 
   // resolved, browser-loadable media addresses (the API returns "cloudinary://…" values or bare ids)
   imageUrl = '';
-  peerImageUrl = '';
-  videoUrl = '';
   imageError = false;
-  peerImageError = false;
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -46,8 +43,6 @@ export class ArticleDetailsComponent extends BaseComponent {
           this.articleData = response.data;
           const a = this.articleData || {};
           this.imageUrl = this.cloudinaryService.getImageUrl(a.image, 'articles');
-          this.peerImageUrl = this.cloudinaryService.getImageUrl(a.peer_images, 'peers');
-          this.videoUrl = this.cloudinaryService.getImageUrl(a.video_url, 'videos').replace('/image/upload/', '/video/upload/');
         } else {
           this.handleError(response.code, response.message);
         }

@@ -77,44 +77,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- Peers -->
-        <section class="panel">
-            <h2 class="card-title">Peers</h2>
-            <div class="space-y-6">
-                <div>
-                    <h3 class="sub-title">Peer Title</h3>
-                    <p *ngIf="articleData?.peers; else none" class="plain-text">{{ articleData?.peers }}</p>
-                </div>
-                <div>
-                    <h3 class="sub-title">Peer Image</h3>
-                    <a *ngIf="peerImageUrl && !peerImageError" [href]="peerImageUrl" target="_blank" rel="noopener" class="block">
-                        <img [src]="peerImageUrl" [alt]="(articleData?.peers || 'Peer') + ' image'" class="banner-image" (error)="peerImageError = true" />
-                    </a>
-                    <div *ngIf="!peerImageUrl || peerImageError" class="media-empty">{{ peerImageUrl ? 'Image unavailable' : 'No peer image' }}</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Video -->
-        <section class="panel">
-            <h2 class="card-title">Video</h2>
-            <div class="space-y-6">
-                <div>
-                    <h3 class="sub-title">Video Title</h3>
-                    <p *ngIf="articleData?.video_title; else none" class="plain-text">{{ articleData?.video_title }}</p>
-                </div>
-                <div>
-                    <h3 class="sub-title">Video</h3>
-                    <video *ngIf="videoUrl; else noVideo" controls class="w-full max-w-2xl rounded-md bg-black" [src]="videoUrl"></video>
-                    <ng-template #noVideo><div class="media-empty">No video</div></ng-template>
-                </div>
-                <div>
-                    <h3 class="sub-title">Video Description</h3>
-                    <p *ngIf="articleData?.video_description; else none" class="plain-text">{{ articleData?.video_description }}</p>
-                </div>
-            </div>
-        </section>
     </div>
 
     <!-- ============ Sidebar ============ -->

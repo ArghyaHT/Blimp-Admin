@@ -16,16 +16,9 @@ export class EditArticleComponent extends BaseComponent {
   editArticleForm: FormGroup | any;
   is_submited = false;
   selectedArticleImage: any;
-  selectedPeersImage: any;
-  selectedArticleVideo: any;
   articleImageName: any;
   articleImage: any;
-  articlePeersImageName: any;
-  articlePeersImage: any;
-  articleVideoName: any;
-  articleVideo: any;
   articleImageError = false;
-  peerImageError = false;
   categories: any[] = [];
   subcategories: any[] = [];
   token: any;
@@ -69,11 +62,10 @@ export class EditArticleComponent extends BaseComponent {
       description: ['', [Validators.required]],
       category_id: ['', [Validators.required]],
       //sub_category_id: [null, [Validators.required]],
-      peers: ['', [Validators.required]],
-      peer_image: [''],
-      video_url: [''],
-      video_title: ['', [Validators.required]],
-      video_description: ['', [Validators.required]],
+      // Peers / Video are no longer shown (client request): no validation, the loaded values are sent back unchanged
+      peers: [''],
+      video_title: [''],
+      video_description: [''],
       other_details: ['', [Validators.required]],
     });
   }
@@ -125,8 +117,6 @@ export class EditArticleComponent extends BaseComponent {
         });
         // stored values are "cloudinary://…" strings or bare ids, so resolve them to loadable addresses
         this.articleImage = this.cloudinaryService.getImageUrl(article.image, 'articles');
-        this.articlePeersImage = this.cloudinaryService.getImageUrl(article.peer_images, 'peers');
-        this.articleVideo = this.cloudinaryService.getImageUrl(article.video_url, 'videos').replace('/image/upload/', '/video/upload/');
         //this.onCategoryChange({ target: { value: article.category.id } });
 
       }
@@ -150,33 +140,6 @@ export class EditArticleComponent extends BaseComponent {
     reader.readAsDataURL(this.selectedArticleImage);
   }
 
-  uploadPeerImage(event: any): void | boolean {
-    this.selectedPeersImage = event.target.files[0];
-    if (!this.selectedPeersImage || !this.selectedPeersImage.type.startsWith('image/')) {
-      return false;
-    }
-    if ((this.selectedPeersImage.size / 1024 / 1024) > 5) {
-      return false;
-    }
-    this.articlePeersImageName = this.selectedPeersImage;
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.articlePeersImage = reader.result;
-      this.peerImageError = false;
-    };
-    reader.readAsDataURL(this.selectedPeersImage);
-  }
-
-  uploadArticleVideo(event: any): void | boolean {
-    this.selectedArticleVideo = event.target.files[0];
-    this.articleVideoName = this.selectedArticleVideo;
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.articleVideo = reader.result
-    };
-    reader.readAsDataURL(this.selectedArticleVideo);
-  }
-
   async updateArticleFunction() {
     if (this.submitting) {
       return;
@@ -189,35 +152,15 @@ export class EditArticleComponent extends BaseComponent {
 
       let articlefileName = '';
       let articlefileKey = '';
-      let peersfileName = '';
-      let peersfileKey = '';
-      let videofileName = '';
-      let videofileKey = '';
 
       if (this.selectedArticleImage) {
         articlefileName = this.randomString() + this.selectedArticleImage.name;
         articlefileKey = `blimp/articles/${articlefileName}`;
       }
 
-      if (this.selectedPeersImage) {
-        peersfileName = this.randomString() + this.selectedPeersImage.name;
-        peersfileKey = `blimp/peers/${peersfileName}`;
-      }
-
-      if (this.selectedArticleVideo && this.selectedArticleVideo.name) {
-        videofileName = this.randomString() + this.selectedArticleVideo.name;
-        videofileKey = `blimp/videos/${videofileName}`;
-      }
-
       try {
         // if (this.selectedArticleImage) {
         //   await this.s3Service.uploadFile(this.selectedArticleImage, 'hlis-bhavin-bucket', articlefileKey);
-        // }
-        // if (this.selectedPeersImage) {
-        //   await this.s3Service.uploadFile(this.selectedPeersImage, 'hlis-bhavin-bucket', peersfileKey);
-        // }
-        // if (this.selectedArticleVideo && this.selectedArticleVideo.name) {
-        //   await this.s3Service.uploadFile(this.selectedArticleVideo, 'hlis-bhavin-bucket', videofileKey);
         // }
 
            // Upload article image if selected
@@ -227,17 +170,6 @@ export class EditArticleComponent extends BaseComponent {
         articlefileName = articleImageResponse.public_id.split('/').pop();
       }
 
-      // Upload peers image if selected
-      if (this.selectedPeersImage) {
-        const peersImageResponse = await this.cloudinaryService.uploadFile(this.selectedPeersImage, 'peers');
-        peersfileName = peersImageResponse.public_id.split('/').pop();
-      }
-
-      // Upload video if selected
-      if (this.selectedArticleVideo && this.selectedArticleVideo.name) {
-        const videoResponse = await this.cloudinaryService.uploadFile(this.selectedArticleVideo, 'videos');
-        videofileName = videoResponse.public_id.split('/').pop();
-      } 
 
         const articleBody: any = {
           'id': this.editArticleForm.value.id,
@@ -255,12 +187,6 @@ export class EditArticleComponent extends BaseComponent {
 
         if (articlefileName) {
           articleBody.image = articlefileName;
-        }
-        if (peersfileName) {
-          articleBody.peer_images = peersfileName;
-        }
-        if (videofileName) {
-          articleBody.video_url = videofileName;
         }
 
         this.service.edit_article(this.token, articleBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {

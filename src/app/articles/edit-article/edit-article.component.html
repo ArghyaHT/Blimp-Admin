@@ -85,69 +85,6 @@
             </div>
         </section>
 
-        <!-- ============ Peers ============ -->
-        <section class="form-section">
-            <h6 class="form-section-title">Peers</h6>
-            <div class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
-                <div>
-                    <label for="peers">Peer Title<span class="required-mark" aria-hidden="true">*</span></label>
-                    <input id="peers" aria-required="true" type="text" name="peers" formControlName="peers" placeholder="Enter Peer Title"
-                        class="form-input" />
-                    <p class="field-error" *ngIf="is_submited && !editArticleControl['peers'].valid">
-                        {{ editArticleControl['peers'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide peer title' }}
-                    </p>
-                </div>
-
-                <div>
-                    <label for="peer_image">Peer Image</label>
-                    <input id="peer_image" type="file" (change)="uploadPeerImage($event)" name="peer_image"
-                        formControlName="peer_image" class="form-input" accept=".jpg,.jpeg,.png,.gif" />
-                    <p class="field-error" *ngIf="is_submited && !editArticleControl['peer_image'].valid">
-                        {{ editArticleControl['peer_image'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide peer image' }}
-                    </p>
-                    <ng-container *ngIf="articlePeersImage">
-                        <img *ngIf="!peerImageError" [src]="articlePeersImage" alt="Peer image" class="media-preview"
-                            (error)="peerImageError = true" />
-                        <div *ngIf="peerImageError" class="media-preview image-unavailable">Image unavailable</div>
-                    </ng-container>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============ Video ============ -->
-        <section class="form-section">
-            <h6 class="form-section-title">Video</h6>
-            <div class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
-                <div>
-                    <label for="video_title">Video Title<span class="required-mark" aria-hidden="true">*</span></label>
-                    <input id="video_title" aria-required="true" type="text" name="video_title" formControlName="video_title"
-                        placeholder="Enter Video Title" class="form-input" />
-                    <p class="field-error" *ngIf="is_submited && !editArticleControl['video_title'].valid">
-                        {{ editArticleControl['video_title'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide video title' }}
-                    </p>
-                </div>
-
-                <div>
-                    <label for="video_url">Video</label>
-                    <input id="video_url" type="file" accept="video/*" (change)="uploadArticleVideo($event)" name="video_url"
-                        formControlName="video_url" class="form-input" />
-                    <p class="field-error" *ngIf="is_submited && !editArticleControl['video_url'].valid">
-                        {{ editArticleControl['video_url'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide video' }}
-                    </p>
-                    <video *ngIf="articleVideo" [src]="articleVideo" controls class="media-preview"></video>
-                </div>
-
-                <div class="md:col-span-2">
-                    <label for="video_description">Video Description<span class="required-mark" aria-hidden="true">*</span></label>
-                    <textarea id="video_description" aria-required="true" name="video_description" formControlName="video_description"
-                        placeholder="Enter Video Description" class="form-textarea" rows="6"></textarea>
-                    <p class="field-error" *ngIf="is_submited && !editArticleControl['video_description'].valid">
-                        {{ editArticleControl['video_description'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide video description' }}
-                    </p>
-                </div>
-            </div>
-        </section>
-
         <div class="form-section flex items-center justify-end gap-3">
             <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
             <button type="submit" class="btn btn-success" [disabled]="submitting">

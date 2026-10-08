@@ -16,16 +16,9 @@ export class AddArticleComponent extends BaseComponent {
   addArticleForm: FormGroup | any;
   is_submited = false;
   selectedArticleImage: any;
-  selectedPeersImage: any;
-  selectedArticleVideo: any;
   articleImageName: any;
   articleImage: any;
-  articlePeersImageName: any;
-  articlePeersImage: any;
-  articleVideoName: any;
-  articleVideo: any;
   articleImageError = false;
-  peerImageError = false;
   categories: any[] = [];
   subcategories: any[] = [];
 
@@ -56,11 +49,6 @@ export class AddArticleComponent extends BaseComponent {
       description: ['', [Validators.required]],
       category_id: ['', [Validators.required]],
       //sub_category_id: ['', [Validators.required]],
-      peers: [''],
-      peer_image: [''],
-      video_url: [''],
-      video_title: [''],
-      video_description: [''],
       other_details: ['', [Validators.required]],
     });
   }
@@ -107,19 +95,6 @@ export class AddArticleComponent extends BaseComponent {
       try {
         const articleImageResponse = await this.cloudinaryService.uploadFile(this.selectedArticleImage, 'articles');
         const articleImagePublicId = extractFilename(articleImageResponse.public_id);  // or use articleImageResponse.secure_url
-        let peersImagePublicId = '';
-        let videoPublicId = '';
-
-        if (this.selectedPeersImage) {
-          const peersImageResponse = await this.cloudinaryService.uploadFile(this.selectedPeersImage, 'peers');
-          peersImagePublicId = extractFilename(peersImageResponse.public_id);
-        }
-
-        if (this.selectedArticleVideo) {
-          const videoResponse = await this.cloudinaryService.uploadFile(this.selectedArticleVideo, 'bannerVideo');
-          videoPublicId = extractFilename(videoResponse.public_id);
-        }
-
 
         const articleBody = {
           'image': articleImagePublicId,
@@ -128,13 +103,12 @@ export class AddArticleComponent extends BaseComponent {
           'description': this.addArticleForm.value.description,
           'category_id': this.addArticleForm.value.category_id,
           //'sub_category_id': this.addArticleForm.value.sub_category_id,
-          'peers': this.addArticleForm.value.peers,
-          // 'peer_images': peersfileName,
-          // 'video_url': videofileName,
-          'peer_images': peersImagePublicId,
-          'video_url': videoPublicId,
-          'video_title': this.addArticleForm.value.video_title,
-          'video_description': this.addArticleForm.value.video_description,
+          // Peers and Video were removed from the form (client request); sent empty, as when they were left blank before
+          'peers': '',
+          'peer_images': '',
+          'video_url': '',
+          'video_title': '',
+          'video_description': '',
           'other_details': this.addArticleForm.value.other_details,
           'loggedInUserId': this.adminId
         }
@@ -173,27 +147,6 @@ export class AddArticleComponent extends BaseComponent {
       this.articleImageError = false;
     };
     reader.readAsDataURL(this.selectedArticleImage);
-  }
-
-  uploadPeerImage(event: any) {
-    this.selectedPeersImage = event.target.files[0];
-    this.articlePeersImageName = this.selectedPeersImage.name;
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.articlePeersImage = e.target.result;
-      this.peerImageError = false;
-    };
-    reader.readAsDataURL(this.selectedPeersImage);
-  }
-
-  uploadArticleVideo(event: any) {
-    this.selectedArticleVideo = event.target.files[0];
-    this.articleVideoName = this.selectedArticleVideo.name;
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.articleVideo = e.target.result;
-    };
-    reader.readAsDataURL(this.selectedArticleVideo);
   }
 
   cancel() {
