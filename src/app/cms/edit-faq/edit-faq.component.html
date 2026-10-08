@@ -53,7 +53,10 @@
 
         <div class="mt-8 flex items-center justify-end gap-3 border-t border-white-light pt-5 dark:border-[#1b2e4b]">
             <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-            <button type="submit" class="btn btn-success">Update FAQ</button>
+            <button type="submit" class="btn btn-success" [disabled]="submitting">
+                <span *ngIf="submitting" class="btn-spinner"></span>
+                {{ submitting ? 'Please wait...' : 'Update FAQ' }}
+            </button>
         </div>
     </form>
 </div>

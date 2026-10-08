@@ -61,3 +61,17 @@
   object-fit: cover;
   border-radius: 6px;
 }
+
+/* Image opens the article details page, same as the title */
+.image-link {
+  width: 100%;
+}
+
+.image-link .datatable-image {
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image-link:hover .datatable-image {
+  opacity: 0.85;
+  box-shadow: 0 0 0 2px #4361ee;
+}

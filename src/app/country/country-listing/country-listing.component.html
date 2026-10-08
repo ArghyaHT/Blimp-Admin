@@ -112,7 +112,7 @@
         <form class="text-m" [formGroup]="editCountryForm" (ngSubmit)="editCountryFunction()">
 
             <!-- Country Code -->
-            <label for="phone_code">Country Code</label>
+            <label for="phone_code">Country Code<span class="required-mark" aria-hidden="true">*</span></label>
             <div class="relative text-white-dark">
                 <input id="phone_code" type="number" name="phone_code" formControlName="phone_code"
                     placeholder="Enter Country Code" class="form-input ps-10 placeholder:text-white-dark"  (keypress)="validateNumber($event)" (input)="limitLength($event, 3)" maxlength="3" />
@@ -126,7 +126,7 @@
             <br />
 
             <!-- Country Icon -->
-            <label for="image">Country Icon</label>
+            <label for="country_icon">Country Icon <span class="text-xs font-normal text-white-dark">(optional)</span></label>
             <div class="max-w-xs md:max-w-none">
                 <div class="relative text-white-dark" style="max-width: 500px;">
                     <!-- <img [src]="countryIconContent" alt="Country Icon" class="mb-4 icon-country"> -->
@@ -135,14 +135,12 @@
                         <br/> <br/>
                         <img *ngIf="countryIconContent" [src]="countryIconContent" alt="Country Icon" style="width: 100px; height: 100px;"/>
                 </div>
-                <span class="errormsg" *ngIf="is_submitted && !editCountryControl['country_icon'].valid">
-                    {{ editCountryControl['country_icon'].errors?.['pattern'] ? 'Please provide a country icon' : 'Please provide a country icon to update' }}
-                </span>
+                <p class="mt-1 text-xs text-white-dark">Leave empty to keep the current icon.</p>
             </div>
             <br />
 
             <!-- Country Name -->
-            <label for="name">Country Name</label>
+            <label for="name">Country Name<span class="required-mark" aria-hidden="true">*</span></label>
             <div class="relative text-white-dark">
                 <input id="name" type="text" name="name" formControlName="name" placeholder="Enter Country name"
                     class="form-input ps-10 placeholder:text-white-dark" />
@@ -157,7 +155,10 @@
             <!-- Buttons -->
             <div class="mt-8 flex items-center justify-end">
                 <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-                <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Update</button>
+                <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="submitting">
+                    <span *ngIf="submitting" class="btn-spinner"></span>
+                    {{ submitting ? 'Please wait...' : 'Update' }}
+                </button>
             </div>
         </form>
     </ng-template>
@@ -170,7 +171,7 @@
     </ng-template>
     <ng-template #modalBody>
         <form class="text-l" [formGroup]="addCountryForm" (ngSubmit)="addCountryFunction()">
-            <label for="phone_code">Country Code</label>
+            <label for="phone_code">Country Code<span class="required-mark" aria-hidden="true">*</span></label>
             <div class="relative text-white-dark">
                 <input id="phone_code" type="text" name="phone_code" formControlName="phone_code"
                   placeholder="Enter Country Code" class="form-input ps-10 placeholder:text-white-dark" appNoWhitespace
@@ -186,19 +187,17 @@
 
             <br />
 
-            <label for="name">Country Icon</label>
+            <label for="add_country_icon">Country Icon <span class="text-xs font-normal text-white-dark">(optional)</span></label>
             <div class="relative text-white-dark">
-                <input id="name" type="file" accept="image/*" (change)="uploadCountryIcon($event)" name="country_icon"
+                <input id="add_country_icon" type="file" accept="image/*" (change)="uploadCountryIcon($event)" name="country_icon"
                     formControlName="country_icon" class="form-input" />
                     <br/> <br/>
                     <img *ngIf="countryIcon" [src]="countryIcon" alt="Country Icon" style="width: 100px; height: 100px;"/>
             </div>
-            <span class="errormsg" *ngIf="is_submitted && !addCountryControl['country_icon'].valid">
-                {{ addCountryControl['country_icon'].errors?.['pattern'] ? 'Please provide valid country icon' : 'Please provide  country icon' }}
-            </span>
+            <p class="mt-1 text-xs text-white-dark">You can add an icon later by editing the country.</p>
             <br>
 
-            <label for="name">Country Name</label>
+            <label for="name">Country Name<span class="required-mark" aria-hidden="true">*</span></label>
             <div class="relative text-white-dark">
                 <input id="name" type="text" name="name" formControlName="name" placeholder="Enter Country name"
                     class="form-input ps-10 placeholder:text-white-dark" />
@@ -213,7 +212,10 @@
 
             <div class="mt-8 flex items-center justify-end">
                 <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-                <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Add</button>
+                <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="submitting">
+                    <span *ngIf="submitting" class="btn-spinner"></span>
+                    {{ submitting ? 'Please wait...' : 'Add' }}
+                </button>
             </div>
         </form>
     </ng-template>

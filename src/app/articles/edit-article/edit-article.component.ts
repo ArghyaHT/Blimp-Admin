@@ -1,4 +1,5 @@
 import { Component, Injector } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CloudinaryService } from 'src/app/service/cloudinary.service';
 import { DashboardService } from 'src/app/service/dashboard.service';
@@ -11,6 +12,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
   styleUrls: ['./edit-article.component.css']
 })
 export class EditArticleComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   editArticleForm: FormGroup | any;
   is_submited = false;
   selectedArticleImage: any;
@@ -22,6 +24,8 @@ export class EditArticleComponent extends BaseComponent {
   articlePeersImage: any;
   articleVideoName: any;
   articleVideo: any;
+  articleImageError = false;
+  peerImageError = false;
   categories: any[] = [];
   subcategories: any[] = [];
   token: any;
@@ -119,9 +123,10 @@ export class EditArticleComponent extends BaseComponent {
           video_description: article.video_description,
           other_details: article.other_details,
         });
-        this.articleImage = article.image;
-        this.articlePeersImage = article.peer_images;
-        this.articleVideo = article.video_url;
+        // stored values are "cloudinary://…" strings or bare ids, so resolve them to loadable addresses
+        this.articleImage = this.cloudinaryService.getImageUrl(article.image, 'articles');
+        this.articlePeersImage = this.cloudinaryService.getImageUrl(article.peer_images, 'peers');
+        this.articleVideo = this.cloudinaryService.getImageUrl(article.video_url, 'videos').replace('/image/upload/', '/video/upload/');
         //this.onCategoryChange({ target: { value: article.category.id } });
 
       }
@@ -139,7 +144,8 @@ export class EditArticleComponent extends BaseComponent {
     this.articleImageName = this.selectedArticleImage;
     const reader = new FileReader();
     reader.onload = () => {
-      this.articleImage = reader.result
+      this.articleImage = reader.result;
+      this.articleImageError = false;
     };
     reader.readAsDataURL(this.selectedArticleImage);
   }
@@ -155,7 +161,8 @@ export class EditArticleComponent extends BaseComponent {
     this.articlePeersImageName = this.selectedPeersImage;
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      this.articlePeersImage = reader.result
+      this.articlePeersImage = reader.result;
+      this.peerImageError = false;
     };
     reader.readAsDataURL(this.selectedPeersImage);
   }
@@ -171,7 +178,10 @@ export class EditArticleComponent extends BaseComponent {
   }
 
   async updateArticleFunction() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submited = true;
 
     if (this.editArticleForm.valid) {
@@ -253,8 +263,8 @@ export class EditArticleComponent extends BaseComponent {
           articleBody.video_url = videofileName;
         }
 
-        this.service.edit_article(this.token, articleBody).subscribe((response: any) => {
-          this.spinner.hide();
+        this.service.edit_article(this.token, articleBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.showToast('success', response.message);
             this.router.navigate(['/admin/article']);
@@ -263,11 +273,11 @@ export class EditArticleComponent extends BaseComponent {
           }
         });
       } catch (error) {
-        this.spinner.hide();
+        this.submitting = false;
         this.showToast('error', 'Upload failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 

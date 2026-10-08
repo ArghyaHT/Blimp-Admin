@@ -1,4 +1,5 @@
 import { Component, Injector } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormGroup, FormBuilder, Validators, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
@@ -18,6 +19,10 @@ export class ChangePasswordComponent extends BaseComponent {
   passwordVisible = false;
   newPasswordVisible = false;
   confirmPasswordVisible = false;
+  submitting = false; // true while the change request is in progress ("Please wait..." on the button)
+
+  // Matches the pattern below: 6-16 characters, at least one number and one special character, no spaces
+  readonly passwordRule = 'Use 6-16 characters with at least one number and one special character (!@#$%^&*). No spaces.';
 
   constructor(injector: Injector,private fb: FormBuilder, private Auth: AuthService,) {
     super(injector);
@@ -78,7 +83,8 @@ export class ChangePasswordComponent extends BaseComponent {
     this.passwordForm.value.adminId = this.adminId;
     this.is_submitted = true;
     if (this.passwordForm.valid) {
-      this.Auth.Change_Password(token, this.passwordForm.value).subscribe((response: any) => {
+      this.submitting = true;
+      this.Auth.Change_Password(token, this.passwordForm.value).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
         if (response.code == '200') {
           Swal.fire({ icon: 'success', title: response.message, toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
           localStorage.removeItem('token');
@@ -91,7 +97,7 @@ export class ChangePasswordComponent extends BaseComponent {
         }
       })
     } else {
-      console.log('invalid');
+      this.passwordForm.markAllAsTouched();
     }
   }
 

@@ -1,4 +1,5 @@
 import { Component, Injector } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CloudinaryService } from 'src/app/service/cloudinary.service';
 import { DashboardService } from 'src/app/service/dashboard.service';
@@ -11,6 +12,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
   styleUrls: ['./add-teams.component.css']
 })
 export class AddTeamsComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   addTeamsForm: FormGroup | any;
   is_submited = false;
   selectedFile: any;
@@ -101,7 +103,10 @@ export class AddTeamsComponent extends BaseComponent {
 
 
   async addTeams() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submited = true;
     if (this.addTeamsForm.valid) {
 
@@ -124,8 +129,8 @@ export class AddTeamsComponent extends BaseComponent {
           'permissions': this.selectedItems,
           'password': this.addTeamsForm.value.password
         }
-        this.service.Add_Teams(this.token, teamBody).subscribe((response: any) => {
-          this.spinner.hide();
+        this.service.Add_Teams(this.token, teamBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.showToast('success', response.message);
             this.router.navigate(['/admin/teams']);
@@ -134,11 +139,11 @@ export class AddTeamsComponent extends BaseComponent {
           }
         });
       } catch (error) {
-        this.spinner.hide()
+        this.submitting = false;
         this.showToast('error', 'Upload failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 

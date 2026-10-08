@@ -89,7 +89,7 @@
     <ng-template #modalBody>
         <form class="text-m" [formGroup]="EditcategoryForm" (ngSubmit)="Edit_Category()">
             
-            <label for="category_name">Category Name</label>
+            <label for="category_name">Category Name<span class="required-mark" aria-hidden="true">*</span></label>
             <div class="relative text-white-dark">
                 <input id="name" type="text" name="name" formControlName="category_name" placeholder="Enter Category name"
                     class="form-input ps-10 placeholder:text-white-dark" />
@@ -104,7 +104,10 @@
 
             <div class="mt-8 flex items-center justify-end">
                 <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-                <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Update</button>
+                <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="submitting">
+                    <span *ngIf="submitting" class="btn-spinner"></span>
+                    {{ submitting ? 'Please wait...' : 'Update' }}
+                </button>
             </div>
         </form>
     </ng-template>
@@ -117,7 +120,7 @@
     </ng-template>
     <ng-template #modalBody>
         <form class="text-l" [formGroup]="AddcategoryForm" (ngSubmit)="Add_Category()">
-            <label for="name">Category Name</label>
+            <label for="name">Category Name<span class="required-mark" aria-hidden="true">*</span></label>
             <div class="relative text-white-dark">
                 <input id="name" type="text" name="category_name" formControlName="category_name" placeholder="Enter Category name"
                     class="form-input ps-10 placeholder:text-white-dark" />
@@ -132,7 +135,10 @@
 
             <div class="mt-8 flex items-center justify-end">
                 <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-                <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Add</button>
+                <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="submitting">
+                    <span *ngIf="submitting" class="btn-spinner"></span>
+                    {{ submitting ? 'Please wait...' : 'Add' }}
+                </button>
             </div>
         </form>
     </ng-template>

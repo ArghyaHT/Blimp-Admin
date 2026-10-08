@@ -1,6 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Component, Injector } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 import Swal from 'sweetalert2';
@@ -17,6 +18,7 @@ import { BaseComponent } from '../utils/components/base/base.component';
     ],
 })
 export class BoxedSigninComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
     loginForm: FormGroup;
     is_submited = false;
     passwordVisible: boolean = false;
@@ -44,9 +46,13 @@ export class BoxedSigninComponent extends BaseComponent {
     }
 
     handleLogin() {
+        if (this.submitting) {
+          return;
+        }
         this.is_submited = true;
         if (this.loginForm.valid) {
-            this.Auth.Login(this.loginForm.value).subscribe(
+            this.submitting = true;
+            this.Auth.Login(this.loginForm.value).pipe(finalize(() => (this.submitting = false))).subscribe(
                 (response: any) => {
                     if (response.code == 200) {
                         this.Auth.is_loggedIn.next(true);

@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import Swal from 'sweetalert2';
@@ -13,6 +14,7 @@ import { CloudinaryService } from 'src/app/service/cloudinary.service';
   styleUrls: ['./add-blogs.component.css']
 })
 export class AddBlogsComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   addBlogsForm: FormGroup | any;
   is_submited = false;
   selectedFile: any;
@@ -49,7 +51,10 @@ export class AddBlogsComponent extends BaseComponent {
 
 
   async addBlogs() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submited = true;
     if (this.addBlogsForm.valid) {
 
@@ -70,8 +75,8 @@ export class AddBlogsComponent extends BaseComponent {
           'description': this.addBlogsForm.value.description,
           'loggedInUserId': this.adminId
         }
-        this.service.Add_Blogs(this.token, blogBody).subscribe((response: any) => {
-          this.spinner.hide();
+        this.service.Add_Blogs(this.token, blogBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.showToast('success', response.message);
             this.router.navigate(['/admin/blogs']);
@@ -85,11 +90,11 @@ export class AddBlogsComponent extends BaseComponent {
           return parts[parts.length - 1];  // last part after '/'
         }
       } catch (error) {
-        this.spinner.hide();
+        this.submitting = false;
         this.showToast('error', 'Upload failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 

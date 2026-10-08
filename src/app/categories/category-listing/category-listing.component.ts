@@ -14,6 +14,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
   styleUrls: ['./category-listing.component.css']
 })
 export class CategoryListingComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
 
   @ViewChild('editcategory') editcategory!: ModalComponent;
   @ViewChild('addcategory') addcategory!: ModalComponent;
@@ -101,10 +102,14 @@ export class CategoryListingComponent extends BaseComponent {
   }
 
   Add_Category() {
+    if (this.submitting) {
+      return;
+    }
     this.is_submitted = true;
     if (this.AddcategoryForm.valid) {
       const categoryData = { name: this.AddcategoryForm.value.category_name };
-      this.service.add_category(this.token, categoryData).subscribe((response: any) => {
+      this.submitting = true;
+      this.service.add_category(this.token, categoryData).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
         if (response.code === 200) {
           this.fetchData();
           this.AddcategoryForm.reset({ category_name: '' });
@@ -127,6 +132,9 @@ export class CategoryListingComponent extends BaseComponent {
   }
 
   Edit_Category() {
+    if (this.submitting) {
+      return;
+    }
     this.is_submitted = true;
     if (this.EditcategoryForm.valid) {
       this.EditcategoryForm.get('id')?.enable();
@@ -134,7 +142,8 @@ export class CategoryListingComponent extends BaseComponent {
         id: this.EditcategoryForm.value.id,
         name: this.EditcategoryForm.value.category_name
       };
-      this.service.edit_category(this.token, categoryData).subscribe((response: any) => {
+      this.submitting = true;
+      this.service.edit_category(this.token, categoryData).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
         if (response.code === 200) {
           this.fetchData();
           this.editcategory.close();

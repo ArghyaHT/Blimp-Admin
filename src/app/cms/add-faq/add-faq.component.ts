@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from 'src/app/service/dashboard.service';
@@ -11,6 +12,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./add-faq.component.css']
 })
 export class AddFaqComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   addFaqForm: FormGroup | any;
   is_submited = false;
   token: any;
@@ -43,13 +45,17 @@ export class AddFaqComponent extends BaseComponent {
   get faqF() { return this.addFaqForm.controls; }
 
   submitFaq(): void {
+    if (this.submitting) {
+      return;
+    }
     this.is_submited = true;
     this.showFirstLanguageWithError();
     if (this.addFaqForm.valid) {
       const formData = this.addFaqForm.value;
       if (formData) {
         formData.id = this.faqId;
-        this.service.addFAQ(this.token, formData).subscribe((response: any) => {
+        this.submitting = true;
+        this.service.addFAQ(this.token, formData).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
           if (response.code === 200) {
             this.showSuccessToast('FAQ added successfully!');
             this.router.navigate(['/admin/cms/faq']);

@@ -46,7 +46,8 @@
 
             <div class="mt-8 flex items-center justify-end border-t border-white-light pt-5 dark:border-[#1b2e4b]">
                 <button type="button" class="btn btn-success" [disabled]="language.saving" (click)="save(language)">
-                    {{ language.saving ? 'Saving…' : 'Save ' + language.label }}
+                    <span *ngIf="language.saving" class="btn-spinner"></span>
+                    {{ language.saving ? 'Please wait...' : 'Save ' + language.label }}
                 </button>
             </div>
         </div>

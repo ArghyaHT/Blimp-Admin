@@ -1,5 +1,6 @@
 import { ModalComponent } from 'angular-custom-modal';
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import Swal from 'sweetalert2';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
@@ -13,6 +14,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
   styleUrls: ['./sub-category-listing.component.css']
 })
 export class SubCategoryListingComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
 
   @ViewChild('editsubcategory') editsubcategory!: ModalComponent;
   @ViewChild('addsubcategory') addsubcategory!: ModalComponent;
@@ -115,13 +117,17 @@ export class SubCategoryListingComponent extends BaseComponent {
   }
 
   Add_Subcategory() {
+    if (this.submitting) {
+      return;
+    }
     this.is_submitted = true;
     if (this.AddSubcategoryForm.valid) {
       const subcategoryData = {
         name: this.AddSubcategoryForm.value.sub_category_name,
         category_id: this.AddSubcategoryForm.value.category_id
       };
-      this.service.add_sub_category(this.token, subcategoryData).subscribe((response: any) => {
+      this.submitting = true;
+      this.service.add_sub_category(this.token, subcategoryData).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
         if (response.code === 200) {
           this.fetchData();
           this.AddSubcategoryForm.reset({ category_id: '', sub_category_name: '' });
@@ -149,6 +155,9 @@ export class SubCategoryListingComponent extends BaseComponent {
   }
 
   Edit_Subcategory(): void | boolean {
+    if (this.submitting) {
+      return;
+    }
     this.is_submitted = true;
     if (this.EditSubcategoryForm.valid) {
       this.EditSubcategoryForm.get('id')?.enable();
@@ -158,7 +167,9 @@ export class SubCategoryListingComponent extends BaseComponent {
         category_id: this.EditSubcategoryForm.value.category_id
       };
 
-      this.service.edit_sub_category(this.token, subcategoryData).subscribe((response: any) => {
+      this.submitting = true;
+
+      this.service.edit_sub_category(this.token, subcategoryData).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
         if (response.code === 200) {
           this.fetchData();
           this.editsubcategory.close();

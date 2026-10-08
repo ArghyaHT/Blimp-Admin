@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CloudinaryService } from 'src/app/service/cloudinary.service';
 import { DashboardService } from 'src/app/service/dashboard.service';
@@ -11,6 +12,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
   styleUrls: ['./add-article.component.css']
 })
 export class AddArticleComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   addArticleForm: FormGroup | any;
   is_submited = false;
   selectedArticleImage: any;
@@ -22,6 +24,8 @@ export class AddArticleComponent extends BaseComponent {
   articlePeersImage: any;
   articleVideoName: any;
   articleVideo: any;
+  articleImageError = false;
+  peerImageError = false;
   categories: any[] = [];
   subcategories: any[] = [];
 
@@ -88,11 +92,14 @@ export class AddArticleComponent extends BaseComponent {
 
 
   async addArticleFunction() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submited = true;
     if (this.addArticleForm.valid) {
       if (!this.selectedArticleImage) {
-        this.spinner.hide();
+        this.submitting = false;
         this.showToast('error', 'Please select an article image');
         return;
       }
@@ -132,8 +139,8 @@ export class AddArticleComponent extends BaseComponent {
           'loggedInUserId': this.adminId
         }
 
-        this.service.add_article(this.token, articleBody).subscribe((response: any) => {
-          this.spinner.hide();
+        this.service.add_article(this.token, articleBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.showToast('success', response.message);
             this.router.navigate(['/admin/article']);
@@ -148,11 +155,11 @@ export class AddArticleComponent extends BaseComponent {
           return parts[parts.length - 1];  // last part after '/'
         }
       } catch (error) {
-        this.spinner.hide();
+        this.submitting = false;
         this.showToast('error', 'Upload failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 
@@ -163,6 +170,7 @@ export class AddArticleComponent extends BaseComponent {
     const reader = new FileReader();
     reader.onload = (e: any) => {
       this.articleImage = e.target.result;
+      this.articleImageError = false;
     };
     reader.readAsDataURL(this.selectedArticleImage);
   }
@@ -173,6 +181,7 @@ export class AddArticleComponent extends BaseComponent {
     const reader = new FileReader();
     reader.onload = (e: any) => {
       this.articlePeersImage = e.target.result;
+      this.peerImageError = false;
     };
     reader.readAsDataURL(this.selectedPeersImage);
   }

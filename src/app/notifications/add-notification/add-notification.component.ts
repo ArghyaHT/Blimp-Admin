@@ -1,4 +1,5 @@
 import { Component, Injector } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import { S3Service } from 'src/app/service/s3.service';
@@ -10,6 +11,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
   styleUrls: ['./add-notification.component.css']
 })
 export class AddNotificationComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   addNotificationForm: FormGroup | any;
   is_submited = false;
   token: any;
@@ -73,7 +75,10 @@ export class AddNotificationComponent extends BaseComponent {
   }
 
   async addNotification() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submited = true;
     if (this.addNotificationForm.valid) {
       try {
@@ -90,8 +95,8 @@ export class AddNotificationComponent extends BaseComponent {
         }
 
 
-        this.service.addNotification(this.token, teamBody).subscribe((response: any) => {
-          this.spinner.hide();
+        this.service.addNotification(this.token, teamBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.showToast('success', response.message);
             this.router.navigate(['/admin']);
@@ -100,11 +105,11 @@ export class AddNotificationComponent extends BaseComponent {
           }
         });
       } catch (error) {
-        this.spinner.hide()
+        this.submitting = false;
         this.showToast('error', 'Notification failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 

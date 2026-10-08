@@ -82,16 +82,6 @@
                 </div>
 
                 <div class="md:col-span-2">
-                    <label for="campaign_details" id="campaign_details_label">Campaign Details<span class="required-mark" aria-hidden="true">*</span></label>
-                    <angular-editor data-labelledby="campaign_details_label" formControlName="campaign_details" [config]="config"
-                        placeholder="Enter Campaign Details">
-                    </angular-editor>
-                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['campaign_details'].valid">
-                        {{ editCampaignControl['campaign_details'].errors?.['pattern'] ? 'Please provide valid campaign details' : 'Please provide campaign details' }}
-                    </p>
-                </div>
-
-                <div class="md:col-span-2">
                     <label for="description" id="description_label">Description<span class="required-mark" aria-hidden="true">*</span></label>
                     <angular-editor data-labelledby="description_label" formControlName="description" [config]="config"
                         placeholder="Enter Description">
@@ -129,53 +119,6 @@
                         <option value="">Select Education Status</option>
                         <option *ngFor="let option of educationStatus" [value]="option.id">{{ option.name }}</option>
                     </select>
-                </div>
-
-                <div>
-                    <label for="employee_status">Employee Status</label>
-                    <select id="employee_status" class="form-select" formControlName="employee_status">
-                        <option value="">Select Employee Status</option>
-                        <option *ngFor="let option of employmentStatus" [value]="option.id">{{ option.name }}</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="contact_method">Contact Method</label>
-                    <select id="contact_method" class="form-select" formControlName="contact_method">
-                        <option value="">Select Contact Method</option>
-                        <option *ngFor="let option of contactMethod" [value]="option.id">{{ option.name }}</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="request_for_donor">Request For Donor<span class="required-mark" aria-hidden="true">*</span></label>
-                    <select id="request_for_donor" aria-required="true" class="form-select" formControlName="request_for_donor">
-                        <option value="" disabled>Select Request For Donor</option>
-                        <option *ngFor="let option of requestForDonor" [value]="option.id">{{ option.name }}</option>
-                    </select>
-                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['request_for_donor'].valid">
-                        {{ editCampaignControl['request_for_donor'].errors?.['required'] ? 'Please select a request for donor' : '' }}
-                    </p>
-                </div>
-
-                <div class="md:col-span-2">
-                    <label for="beneficiary_details" id="beneficiary_details_label">Beneficiary Details<span class="required-mark" aria-hidden="true">*</span></label>
-                    <angular-editor data-labelledby="beneficiary_details_label" formControlName="beneficiary_details" [config]="config"
-                        placeholder="Enter Beneficiary Details">
-                    </angular-editor>
-                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['beneficiary_details'].valid">
-                        {{ editCampaignControl['beneficiary_details'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide beneficiary details' }}
-                    </p>
-                </div>
-
-                <div class="md:col-span-2">
-                    <label for="rasing_funds_decription" id="rasing_funds_decription_label">Raising Funds Description<span class="required-mark" aria-hidden="true">*</span></label>
-                    <angular-editor data-labelledby="rasing_funds_decription_label" formControlName="rasing_funds_decription" [config]="config"
-                        placeholder="Enter Raising Funds Description">
-                    </angular-editor>
-                    <p class="field-error" *ngIf="is_submited && !editCampaignControl['rasing_funds_decription'].valid">
-                        {{ editCampaignControl['rasing_funds_decription'].errors?.['pattern'] ? 'Please provide valid name' : 'Please provide raising funds description' }}
-                    </p>
                 </div>
             </div>
         </section>
@@ -245,7 +188,10 @@
 
         <div class="form-section flex items-center justify-end gap-3">
             <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-            <button type="submit" class="btn btn-success">Update</button>
+            <button type="submit" class="btn btn-success" [disabled]="submitting">
+                <span *ngIf="submitting" class="btn-spinner"></span>
+                {{ submitting ? 'Please wait...' : 'Update' }}
+            </button>
         </div>
     </form>
 </div>

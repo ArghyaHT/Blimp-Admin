@@ -16,6 +16,7 @@ import { CloudinaryService } from 'src/app/service/cloudinary.service';
   styleUrls: ['./country-listing.component.css']
 })
 export class CountryListingComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
 
   @ViewChild('editcountry') editCountryModal!: ModalComponent;
   @ViewChild('addcountry') addCountryModal!: ModalComponent;
@@ -63,7 +64,7 @@ export class CountryListingComponent extends BaseComponent {
     this.addCountryForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.maxLength(32)]],
       phone_code: ['', [Validators.required, Validators.pattern('^[0-9]{1,3}$')]],
-      country_icon: ['', Validators.required]
+      country_icon: [''] // optional: no new file keeps the current icon
 
 
     });
@@ -72,7 +73,7 @@ export class CountryListingComponent extends BaseComponent {
       id: [{ value: '', disabled: true }, Validators.required],
       name: ['', [Validators.required, Validators.maxLength(32)]],
       phone_code: ['', [Validators.required, Validators.pattern('^[0-9]{1,3}$')]],
-      country_icon: ['', Validators.required]
+      country_icon: [''] // optional: no new file keeps the current icon
 
     });
   }
@@ -113,35 +114,39 @@ export class CountryListingComponent extends BaseComponent {
   addCountryModalOpen() {
     this.addCountryModal.open();
     this.addCountryForm.reset({ name: '', phone_code: '', country_icon: '' });
+    // clear a file picked the last time the pop-up was open
+    this.selectedFile = null;
+    this.countryIcon = null;
     this.is_submitted = false;
   }
 
   async addCountryFunction() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submitted = true;
     if (this.addCountryForm.valid) {
 
-      const countryIconName = this.randomString() + this.selectedFile.name;
-      const countryFileKey = `blimp/country/${countryIconName}`;
-
       try {
-        // await this.s3Service.uploadFile(this.selectedFile, 'hlis-bhavin-bucket', countryFileKey)
-
-        // Upload country icon to Cloudinary under 'country' folder
-        const uploadResponse = await this.cloudinaryService.uploadFile(this.selectedFile, 'country');
-        const countryIconName = uploadResponse.public_id.split('/').pop() || '';
-
-        const categoryData = {
-          'country_icon': countryIconName,
+        const categoryData: any = {
           'name': this.addCountryForm.value.name,
           'phone_code': this.addCountryForm.value.phone_code,
         }
 
-        this.service.add_country(this.token, categoryData).subscribe((response: any) => {
-          this.spinner.hide();
+        // The icon is optional: upload it to Cloudinary ('country' folder) only when a file was picked
+        if (this.selectedFile) {
+          const uploadResponse = await this.cloudinaryService.uploadFile(this.selectedFile, 'country');
+          categoryData.country_icon = uploadResponse.public_id.split('/').pop() || '';
+        }
+
+        this.service.add_country(this.token, categoryData).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.fetchData();
             this.addCountryForm.reset({ name: '', phone_code: '', country_icon: '' });
+            this.selectedFile = null;
+            this.countryIcon = null;
             this.is_submitted = false;
             this.addCountryModal.close();
             this.showToast('success', response.message);
@@ -150,11 +155,11 @@ export class CountryListingComponent extends BaseComponent {
           }
         });
       } catch (error) {
-        this.spinner.hide()
+        this.submitting = false;
         this.showToast('error', 'Upload failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 
@@ -166,8 +171,11 @@ export class CountryListingComponent extends BaseComponent {
       this.editCountryForm.patchValue({
         id: country.id,
         name: country.name,
-        phone_code: country.phone_code
+        phone_code: country.phone_code,
+        country_icon: ''
       });
+      // show the current icon; clear a file picked while editing another country
+      this.selectedCountryIconFile = null;
       this.countryIconContent = country.iconUrl;
       this.editCountryModal.open();
     } else {
@@ -176,7 +184,10 @@ export class CountryListingComponent extends BaseComponent {
   }
 
   async editCountryFunction() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submitted = true;
 
     if (this.editCountryForm.valid) {
@@ -202,20 +213,20 @@ export class CountryListingComponent extends BaseComponent {
         countryIconFileName = uploadResponse.public_id.split('/').pop() || '';
       }
 
-        const countryData = {
+        // country_icon is only sent when a new file was uploaded, so the current icon is kept otherwise
+        // (the file input's own value is just the picked file's name, never a stored icon)
+        const countryData: any = {
           id: this.editCountryForm.value.id,
           name: this.editCountryForm.value.name,
           phone_code: this.editCountryForm.value.phone_code,
-          country_icon: this.editCountryForm.value.country_icon,
-
         };
 
         if (countryIconFileName) {
           countryData.country_icon = countryIconFileName;
         }
 
-        this.service.edit_country(this.token, countryData).subscribe((response: any) => {
-          this.spinner.hide();
+        this.service.edit_country(this.token, countryData).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.fetchData();
             this.editCountryModal.close();
@@ -225,11 +236,11 @@ export class CountryListingComponent extends BaseComponent {
           }
         });
       } catch (error) {
-        this.spinner.hide();
+        this.submitting = false;
         this.showToast('error', 'Upload failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 
@@ -365,6 +376,11 @@ export class CountryListingComponent extends BaseComponent {
 
   uploadCountryIcon(event: any) {
     this.selectedFile = event.target.files[0];
+    if (!this.selectedFile) {
+      // file picker cancelled: the icon is optional, so just clear the preview
+      this.countryIcon = null;
+      return;
+    }
     this.countryIconName = this.selectedFile.name;
     const reader = new FileReader();
     reader.onload = (e: any) => {

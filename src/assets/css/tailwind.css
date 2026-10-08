@@ -605,7 +605,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply border-primary shadow-none;
     }
 
-    /* Sticky-on-scroll datatable column: give the column cellClass/headerClass "sticky-col"; the component
+    /* Sticky-on-scroll datatable columns: give the columns cellClass/headerClass "sticky-col"; the component
        sets --sticky-col-shift / --sticky-col-header-shift on the table so the column scrolls normally
        until it reaches the left edge, then stays there */
     .ngx-datatable .sticky-col {
@@ -624,7 +624,8 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     .ngx-datatable.material:not(.cell-selection) .datatable-body-row:hover .sticky-col {
         background-color: #eee;
     }
-    .ngx-datatable.sticky-col-active .sticky-col {
+    /* With several adjacent sticky columns, only the last one ("sticky-col-edge") casts the shadow */
+    .ngx-datatable.sticky-col-active .sticky-col-edge {
         box-shadow: 6px 0 8px -6px rgba(0, 0, 0, 0.25);
     }
 
@@ -865,6 +866,29 @@ pre code.hljs {
 }
 .skip-link:focus {
     top: 1rem;
+}
+
+/* Spinner inside a submit button while the form is saving: <span *ngIf="submitting" class="btn-spinner"></span>
+   followed by {{ submitting ? 'Please wait...' : 'Label' }}; the button also gets [disabled]="submitting" */
+.btn-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    border: 2px solid currentColor;
+    border-left-color: transparent;
+    border-radius: 9999px;
+    animation: btn-spinner-rotate 0.8s linear infinite;
+}
+@keyframes btn-spinner-rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+[dir='rtl'] .btn-spinner {
+    margin-right: 0;
+    margin-left: 0.5rem;
 }
 
 /* Red star after the label of a required form field */

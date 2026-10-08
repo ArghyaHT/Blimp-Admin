@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CloudinaryService } from 'src/app/service/cloudinary.service';
 import { DashboardService } from 'src/app/service/dashboard.service';
@@ -12,6 +13,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./edit-blogs.component.css']
 })
 export class EditBlogsComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   editBlogsForm: FormGroup | any;
   is_submited = false;
   selectedFile: File | any;
@@ -100,7 +102,10 @@ export class EditBlogsComponent extends BaseComponent {
   }
 
   async editBlogs() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submited = true;
 
     if (this.editBlogsForm.valid) {
@@ -138,8 +143,8 @@ export class EditBlogsComponent extends BaseComponent {
           blogBody.image = blogFileName;
         }
 
-        this.service.Edit_Blogs(this.token, blogBody).subscribe((response: any) => {
-          this.spinner.hide();
+        this.service.Edit_Blogs(this.token, blogBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.showToast('success', response.message);
             this.router.navigate(['/admin/blogs']);
@@ -148,11 +153,11 @@ export class EditBlogsComponent extends BaseComponent {
           }
         });
       } catch (error) {
-        this.spinner.hide();
+        this.submitting = false;
         this.showToast('error', 'Upload failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 

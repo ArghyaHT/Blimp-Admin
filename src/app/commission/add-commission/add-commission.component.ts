@@ -1,4 +1,5 @@
 import { Component, Injector } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -15,6 +16,8 @@ export class AddCommissionComponent extends BaseComponent {
   is_submited = false;
   token: any;
   adminId: any
+  loading = true;     // true until the saved percentages have loaded
+  submitting = false; // true while the update request is in progress ("Please wait..." on the button)
 
   constructor(injector: Injector, private fb: FormBuilder, private service: DashboardService,) {
     super(injector);
@@ -40,7 +43,8 @@ export class AddCommissionComponent extends BaseComponent {
   get commissioncontrol() { return this.commissionForm.controls; }
 
   getCommisionDetails() {
-    this.service.getCommissionDetails('').subscribe((response: any) => {
+    this.loading = true;
+    this.service.getCommissionDetails('').pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code === 200) {
         this.commissionForm.patchValue({
           commission: response.data.admin_commission,
@@ -65,7 +69,8 @@ export class AddCommissionComponent extends BaseComponent {
     this.commissionForm.value.adminId = this.adminId;
     this.is_submited = true;
     if (this.commissionForm.valid) {
-      this.service.add_update_commission(this.token, this.commissionForm.value).subscribe((response: any) => {
+      this.submitting = true;
+      this.service.add_update_commission(this.token, this.commissionForm.value).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
         if (response.code == '200') {
           this.showToast('success', response.message);
           this.router.navigate(['/admin'])
@@ -74,7 +79,7 @@ export class AddCommissionComponent extends BaseComponent {
         }
       })
     } else {
-      console.log('invalid');
+      this.commissionForm.markAllAsTouched();
     }
   }
 }

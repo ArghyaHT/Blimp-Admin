@@ -1,9 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { DashboardService } from 'src/app/service/dashboard.service';
-import { ActivatedRoute } from '@angular/router';
-import Swal from 'sweetalert2';
+import { CloudinaryService } from 'src/app/service/cloudinary.service';
 import { BaseComponent } from 'src/app/utils/components/base/base.component';
-import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-article-details',
@@ -12,14 +10,21 @@ import { FormBuilder } from '@angular/forms';
 })
 export class ArticleDetailsComponent extends BaseComponent {
 
-  constructor(injector: Injector, private formBuilder: FormBuilder, private service: DashboardService,) {
+  constructor(injector: Injector, private service: DashboardService, private cloudinaryService: CloudinaryService) {
     super(injector);
   }
 
   articleData: any
   id: any;
   token: any
+  loading = true;
 
+  // resolved, browser-loadable media addresses (the API returns "cloudinary://…" values or bare ids)
+  imageUrl = '';
+  peerImageUrl = '';
+  videoUrl = '';
+  imageError = false;
+  peerImageError = false;
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -33,12 +38,21 @@ export class ArticleDetailsComponent extends BaseComponent {
     const body = {
       "id": this.id
     }
-    this.service.article_details(this.token, body).subscribe((response: any) => {
-      if (response.code === 200) {
-        this.articleData = response.data;
-      } else {
-        this.handleError(response.code, response.message);
-      }
+    this.loading = true;
+    this.service.article_details(this.token, body).subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        if (response.code === 200) {
+          this.articleData = response.data;
+          const a = this.articleData || {};
+          this.imageUrl = this.cloudinaryService.getImageUrl(a.image, 'articles');
+          this.peerImageUrl = this.cloudinaryService.getImageUrl(a.peer_images, 'peers');
+          this.videoUrl = this.cloudinaryService.getImageUrl(a.video_url, 'videos').replace('/image/upload/', '/video/upload/');
+        } else {
+          this.handleError(response.code, response.message);
+        }
+      },
+      error: () => { this.loading = false; },
     });
   }
 

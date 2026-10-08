@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -11,6 +12,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
   styleUrls: ['./edit-faq.component.css']
 })
 export class EditFaqComponent extends BaseComponent {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   editFaqForm: FormGroup | any;
   is_submited = false;
   faqId: any;
@@ -75,6 +77,9 @@ export class EditFaqComponent extends BaseComponent {
   }
 
   editFAQ() {
+    if (this.submitting) {
+      return;
+    }
     this.is_submited = true;
     this.showFirstLanguageWithError();
     if (this.editFaqForm.valid) {
@@ -89,7 +94,8 @@ export class EditFaqComponent extends BaseComponent {
         question_it: this.editFaqForm.value.question_it,
         answer_it: this.editFaqForm.value.answer_it,
       };
-      this.service.UpdateFAQ(this.token, requestBody).subscribe((response: any) => {
+      this.submitting = true;
+      this.service.UpdateFAQ(this.token, requestBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
         if (response.code === 200) {
           Swal.fire({
             icon: 'success',

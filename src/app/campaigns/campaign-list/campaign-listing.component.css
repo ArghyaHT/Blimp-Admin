@@ -61,3 +61,17 @@
   object-fit: cover;
   border-radius: 6px;
 }
+
+/* Banner opens the campaign details page, same as the campaign name */
+.banner-link {
+  width: 100%;
+}
+
+.banner-link .datatable-image {
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.banner-link:hover .datatable-image {
+  opacity: 0.85;
+  box-shadow: 0 0 0 2px #4361ee;
+}

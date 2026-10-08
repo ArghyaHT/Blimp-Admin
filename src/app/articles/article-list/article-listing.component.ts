@@ -1,10 +1,10 @@
 
-import { Component, Injector } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import { CloudinaryService } from 'src/app/service/cloudinary.service';
 import Swal from 'sweetalert2';
-import { ColumnMode } from '@swimlane/ngx-datatable';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { FormBuilder } from '@angular/forms';
 import { CONSTANTS } from 'src/app/service/constant.service';
 import { BaseComponent } from 'src/app/utils/components/base/base.component';
@@ -14,7 +14,7 @@ import { BaseComponent } from 'src/app/utils/components/base/base.component';
   templateUrl: './article-listing.component.html',
   styleUrls: ['./article-listing.component.css']
 })
-export class ArticleListingComponent extends BaseComponent {
+export class ArticleListingComponent extends BaseComponent implements AfterViewInit, OnDestroy {
 
   constructor(injector: Injector, private service: DashboardService, private formBuilder: FormBuilder, private cloudinaryService: CloudinaryService) {
     super(injector);
@@ -32,6 +32,10 @@ export class ArticleListingComponent extends BaseComponent {
   token: any;
   constant = CONSTANTS
   adminId:any
+
+  @ViewChild(DatatableComponent, { read: ElementRef }) tableElement?: ElementRef<HTMLElement>;
+  private stickyFrame = 0;
+  private stickyResizeObserver?: ResizeObserver;
 
   columns = [
     // { prop: 'id', name: 'Id', sortable: true },
@@ -228,6 +232,48 @@ export class ArticleListingComponent extends BaseComponent {
     }
     const totalEntries = this.totalArticle;
     return `Showing ${start} to ${end} of ${totalEntries} entries`;
+  }
+
+  ngAfterViewInit() {
+    const table = this.tableElement?.nativeElement;
+    if (table && typeof ResizeObserver !== 'undefined') {
+      this.stickyResizeObserver = new ResizeObserver(() => this.scheduleStickyUpdate());
+      this.stickyResizeObserver.observe(table);
+    }
+    this.scheduleStickyUpdate();
+  }
+
+  ngOnDestroy() {
+    this.stickyResizeObserver?.disconnect();
+    cancelAnimationFrame(this.stickyFrame);
+  }
+
+  // Image + Title stay at the table's left edge while the other columns scroll (same approach as the Campaigns list).
+  // Positions are read from the DOM (not from scroll events) so it stays correct after resizes and reloads.
+  scheduleStickyUpdate() {
+    cancelAnimationFrame(this.stickyFrame);
+    this.stickyFrame = requestAnimationFrame(() => this.updateStickyColumn());
+  }
+
+  private updateStickyColumn() {
+    const table = this.tableElement?.nativeElement;
+    const body = table?.querySelector<HTMLElement>('.datatable-body');
+    const headerCell = table?.querySelector<HTMLElement>('.datatable-header-cell.sticky-col');
+    if (!table || !body || !headerCell) {
+      return;
+    }
+    // querySelector returns the first sticky column (Image); the rest follow it with the same shift.
+    // offsetLeft ignores transforms, so this is the column's normal position within its row
+    const columnLeft = headerCell.offsetLeft;
+    // The header row is moved by the table with a transform instead of scrolling, so read its own offset
+    const headerTransform = getComputedStyle(headerCell.parentElement as HTMLElement).transform;
+    const headerOffset = headerTransform && headerTransform !== 'none' ? -new DOMMatrixReadOnly(headerTransform).m41 : 0;
+
+    const bodyShift = Math.max(0, body.scrollLeft - columnLeft);
+    const headerShift = Math.max(0, headerOffset - columnLeft);
+    table.style.setProperty('--sticky-col-shift', `${bodyShift}px`);
+    table.style.setProperty('--sticky-col-header-shift', `${headerShift}px`);
+    table.classList.toggle('sticky-col-active', bodyShift > 0);
   }
 
   navigateToAddArticle() {

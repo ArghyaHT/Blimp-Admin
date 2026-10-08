@@ -79,7 +79,7 @@
   </ng-template>
   <ng-template #modalBody>
     <form class="text-m" [formGroup]="EditSubcategoryForm" (ngSubmit)="Edit_Subcategory()">
-      <label for="edit_category_id">Category</label>
+      <label for="edit_category_id">Category<span class="required-mark" aria-hidden="true">*</span></label>
       <div class="relative text-white-dark">
         <select id="edit_category_id" formControlName="category_id" class="form-input">
           <option value="" disabled>Select Category</option>
@@ -87,7 +87,7 @@
         </select>
       </div>
 
-      <label for="sub_category_name">Subcategory Name</label>
+      <label for="sub_category_name">Subcategory Name<span class="required-mark" aria-hidden="true">*</span></label>
       <div class="relative text-white-dark">
         <input id="sub_category_name" type="text" formControlName="sub_category_name"
           placeholder="Enter Subcategory name" class="form-input ps-10 placeholder:text-white-dark" />
@@ -98,7 +98,10 @@
 
       <div class="mt-8 flex items-center justify-end">
         <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-        <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="EditSubcategoryForm.invalid">Update</button>
+        <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="submitting || EditSubcategoryForm.invalid">
+            <span *ngIf="submitting" class="btn-spinner"></span>
+            {{ submitting ? 'Please wait...' : 'Update' }}
+        </button>
       </div>
     </form>
   </ng-template>
@@ -112,7 +115,7 @@
   </ng-template>
   <ng-template #modalBody>
     <form class="text-l" [formGroup]="AddSubcategoryForm" (ngSubmit)="Add_Subcategory()">
-      <label for="category_id">Category</label>
+      <label for="category_id">Category<span class="required-mark" aria-hidden="true">*</span></label>
       <div class="relative text-white-dark">
         <select id="category_id" formControlName="category_id" class="form-input">
           <option value="" disabled>Select Category</option>
@@ -122,7 +125,7 @@
 
       <br />
 
-      <label for="name">Sub Category Name</label>
+      <label for="name">Sub Category Name<span class="required-mark" aria-hidden="true">*</span></label>
       <div class="relative text-white-dark">
         <input id="name" type="text" name="sub_category_name" formControlName="sub_category_name"
           placeholder="Enter Sub Category name" class="form-input ps-10 placeholder:text-white-dark"
@@ -134,8 +137,10 @@
 
       <div class="mt-8 flex items-center justify-end">
         <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-        <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4"
-          [disabled]="AddSubcategoryForm.invalid || !AddSubcategoryForm.get('category_id').value">Add</button>
+        <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="submitting || AddSubcategoryForm.invalid || !AddSubcategoryForm.get('category_id').value">
+            <span *ngIf="submitting" class="btn-spinner"></span>
+            {{ submitting ? 'Please wait...' : 'Add' }}
+        </button>
       </div>
     </form>
   </ng-template>

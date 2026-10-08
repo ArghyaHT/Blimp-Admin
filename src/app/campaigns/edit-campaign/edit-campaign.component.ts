@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Injector } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { CloudinaryService } from 'src/app/service/cloudinary.service';
@@ -13,6 +14,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./edit-campaign.component.css']
 })
 export class EditCampaignComponent extends BaseComponent implements AfterViewInit {
+  submitting = false; // true while the form is being saved ("Please wait..." on the submit button)
   editCampaignForm: FormGroup | any;
   is_submited = false;
   selectedBannerImage: any;
@@ -59,24 +61,6 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
     { id: 1, name: 'High School' },
     { id: 2, name: 'Bachelor\'s Degree' },
     { id: 3, name: 'Master\'s Degree' }
-  ];
-
-  employmentStatus = [
-    { id: 1, name: 'Employed' },
-    { id: 2, name: 'Unemployed' },
-    { id: 3, name: 'Self-employed' }
-  ];
-
-  contactMethod = [
-    { id: 1, name: 'Email' },
-    { id: 2, name: 'Phone' },
-    { id: 3, name: 'Mail' }
-  ];
-
-  requestForDonor = [
-    { id: 1, name: 'Financial Assistance' },
-    { id: 2, name: 'Volunteer' },
-    { id: 3, name: 'Other' }
   ];
 
   config: AngularEditorConfig = {
@@ -155,7 +139,8 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
       //sub_category_id: [null, Validators.required],
       country: ['', Validators.required],
       target_amount: [''],
-      campaign_details: ['', Validators.required],
+      // hidden on this page (client request): no validation, the loaded value is sent back unchanged
+      campaign_details: [''],
       purpose: ['', Validators.required],
       campaign_name: ['', Validators.required],
       description: ['', Validators.required],
@@ -166,13 +151,14 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
       campaign_video: [''],
       name: ['', Validators.required],
       email: ['', [Validators.required, this.validationService.emailValidator]],
-      beneficiary_details: ['', Validators.required],
       // optional: older campaigns were saved without these, which blocked updating them
       education_status: [''],
+      // hidden on this page (client request): no validation, the loaded values are sent back unchanged
       employee_status: [''],
       contact_method: [''],
-      request_for_donor: [null, Validators.required],
-      rasing_funds_decription: ['', Validators.required],
+      request_for_donor: [null],
+      beneficiary_details: [''],
+      rasing_funds_decription: [''],
     });
   }
 
@@ -390,7 +376,10 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
   }
 
   async updateCampaignFunction() {
-    this.spinner.show();
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.is_submited = true;
     if (this.editCampaignForm.valid) {
       this.editCampaignForm.get('id')?.enable();
@@ -480,8 +469,8 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
           campaignBody.youtube_link = this.editCampaignForm.value.youtube_link;
         }
 
-        this.service.edit_campaign(this.token, campaignBody).subscribe((response: any) => {
-          this.spinner.hide();
+        this.service.edit_campaign(this.token, campaignBody).pipe(finalize(() => (this.submitting = false))).subscribe((response: any) => {
+          this.submitting = false;
           if (response.code === 200) {
             this.showToast('success', response.message);
             this.router.navigate(['/admin/campaign']);
@@ -490,11 +479,11 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
           }
         });
       } catch (error) {
-        this.spinner.hide();
+        this.submitting = false;
         this.showToast('error', 'Upload failed');
       }
     } else {
-      this.spinner.hide();
+      this.submitting = false;
     }
   }
 

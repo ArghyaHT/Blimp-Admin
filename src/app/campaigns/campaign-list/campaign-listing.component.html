@@ -60,16 +60,19 @@
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="Banner Image" [flexGrow]="2" [width]="110" [minWidth]="100" [sortable]="false">
+        <!-- Banner Image + Campaign Name scroll normally, then stick to the left edge together once scrolled to it (see updateStickyColumn) -->
+        <ngx-datatable-column name="Banner Image" cellClass="sticky-col" headerClass="sticky-col" [width]="110" [minWidth]="100"
+            [sortable]="false">
             <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="image-container">
+                <a class="image-container banner-link" [title]="row?.campaign_name || ''"
+                    [routerLink]="['/admin/campaign/campaign-details', row.id]">
                     <img [src]="row?.banner_image" [alt]="(row?.campaign_name || 'Campaign') + ' banner'" class="datatable-image" />
-                </div>
+                </a>
             </ng-template>
         </ngx-datatable-column>
 
-        <!-- Scrolls normally, then sticks to the left edge once scrolled to it (see updateStickyColumn) -->
-        <ngx-datatable-column name="Campaign Name" cellClass="sticky-col" headerClass="sticky-col" [width]="200" [minWidth]="180"
+        <ngx-datatable-column name="Campaign Name" cellClass="sticky-col sticky-col-edge" headerClass="sticky-col sticky-col-edge"
+            [width]="200" [minWidth]="180"
             [sortable]="true" prop="campaign_name">
             <ng-template let-row="row" ngx-datatable-cell-template>
                 <a class="truncate-text font-semibold text-black hover:text-primary hover:underline dark:text-white-light dark:hover:text-primary"

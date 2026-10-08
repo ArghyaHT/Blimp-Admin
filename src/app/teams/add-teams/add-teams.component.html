@@ -1,7 +1,7 @@
 <div class="container">
     <h2 class="blogs-heading">Add Teams</h2>
     <form [formGroup]="addTeamsForm" (ngSubmit)="addTeams()">
-        <label for="name">Team Image</label>
+        <label for="name">Team Image<span class="required-mark" aria-hidden="true">*</span></label>
         <div class="relative text-white-dark">
             <input id="name" type="file" accept="image/*" (change)="uploadProfileImage($event)" name="image"
                 formControlName="image" class="form-input" accept=".jpg,.jpeg,.png,.gif" />
@@ -11,7 +11,7 @@
             {{ addTeamsControl['image'].errors?.['pattern'] ? 'Please provide valid image' : 'Please provide image' }}
         </span>
         <br>
-        <label for="name">Team Name</label>
+        <label for="name">Team Name<span class="required-mark" aria-hidden="true">*</span></label>
         <div class="relative text-white-dark">
             <input id="name" type="text" name="name" formControlName="name" placeholder="Enter Team Name"
                 class="form-input" />
@@ -22,7 +22,7 @@
         </span>
         <br>
 
-        <label for="email">Team Email</label>
+        <label for="email">Team Email<span class="required-mark" aria-hidden="true">*</span></label>
         <div class="relative text-white-dark">
             <input id="email" name="email" formControlName="email" placeholder="Enter Team Email" class="form-input" />
         </div>
@@ -31,7 +31,7 @@
         </span>
         <br>
 
-        <label for="Password">Password</label>
+        <label for="Password">Password<span class="required-mark" aria-hidden="true">*</span></label>
         <div class="relative text-white-dark">
             <input id="Password" [type]="passwordVisible ? 'text' : 'password'" placeholder="Enter Password"
                 name="password" formControlName="password" class="form-input ps-10 placeholder:text-white-dark" />
@@ -49,7 +49,7 @@
         </span>
         <br>
 
-        <label for="designation">Team Designation</label>
+        <label for="designation">Team Designation<span class="required-mark" aria-hidden="true">*</span></label>
         <div class="relative text-white-dark">
             <input id="name" type="text" name="designation" formControlName="designation"
                 placeholder="Enter Team Designation" class="form-input" />
@@ -59,7 +59,7 @@
             }}
         </span>
         <br>
-        <label for="description">Team Description</label>
+        <label for="description">Team Description<span class="required-mark" aria-hidden="true">*</span></label>
         <div class="relative text-white-dark">
             <textarea id="description" type="text" name="description" formControlName="description"
                 placeholder="Enter Team Description" class="form-input" rows="9"> </textarea>
@@ -70,7 +70,7 @@
         </span>
 
         <br>
-        <label for="linkedin_profile">Team Linkedin Profile</label>
+        <label for="linkedin_profile">Team Linkedin Profile<span class="required-mark" aria-hidden="true">*</span></label>
         <div class="relative text-white-dark">
             <input id="linkedin_profile" type="text" name="linkedin_profile" formControlName="linkedin_profile"
                 placeholder="Enter Team Linkedin Profile" class="form-input" />
@@ -81,7 +81,7 @@
         </span>
 
         <br>
-        <label>Select Module Permission</label>
+        <label>Select Module Permission<span class="required-mark" aria-hidden="true">*</span></label>
         <ng-select [items]="modules" [(ngModel)]="selectedItems" [multiple]="true" [closeOnSelect]="false"
             [clearable]="false" [disabled]="disable" placeholder="Select Module Permission" formControlName="permission"
             bindLabel="label" bindValue="value">
@@ -98,7 +98,10 @@
 
         <div class="mt-8 flex items-center justify-center">
             <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
-            <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4">Add</button>
+            <button type="submit" class="btn btn-success ltr:ml-4 rtl:mr-4" [disabled]="submitting">
+                <span *ngIf="submitting" class="btn-spinner"></span>
+                {{ submitting ? 'Please wait...' : 'Add' }}
+            </button>
         </div>
     </form>
 </div>

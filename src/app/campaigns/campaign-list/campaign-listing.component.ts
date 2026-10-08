@@ -173,7 +173,7 @@ export class CampaignListingComponent extends BaseComponent implements AfterView
     cancelAnimationFrame(this.stickyFrame);
   }
 
-  // Campaign Name scrolls normally until it reaches the table's left edge, then stays there.
+  // Banner Image + Campaign Name scroll normally until they reach the table's left edge, then stay there together.
   // Positions are read from the DOM (not from scroll events) so it stays correct after resizes and reloads.
   scheduleStickyUpdate() {
     cancelAnimationFrame(this.stickyFrame);
@@ -187,6 +187,7 @@ export class CampaignListingComponent extends BaseComponent implements AfterView
     if (!table || !body || !headerCell) {
       return;
     }
+    // querySelector returns the first sticky column (Banner Image); the rest follow it with the same shift.
     // offsetLeft ignores transforms, so this is the column's normal position within its row
     const columnLeft = headerCell.offsetLeft;
     // The header row is moved by the table with a transform instead of scrolling, so read its own offset
