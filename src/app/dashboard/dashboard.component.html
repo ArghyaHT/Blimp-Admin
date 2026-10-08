@@ -24,7 +24,10 @@
             </div>
         </ng-container>
 
-        <button type="button" class="btn btn-primary" (click)="fetchDashboardData()">Apply Filter</button>
+        <button type="button" class="btn btn-primary" [disabled]="loading" (click)="fetchDashboardData()">
+            <span *ngIf="loading" class="btn-spinner"></span>
+            {{ loading ? 'Please wait...' : 'Apply Filter' }}
+        </button>
     </div>
 </div>
 
@@ -38,7 +41,9 @@
             <div class="min-w-0">
                 <p class="text-sm font-semibold text-white-dark">{{ card.label }}</p>
                 <!-- Short form (e.g. 1.3K, 1.3M); exact value on hover -->
-                <p class="mt-2 truncate text-3xl font-bold text-black dark:text-white-light"
+                <!-- Placeholder bar while the stats load (first load and after Apply Filter) -->
+                <div *ngIf="loading" class="mt-3 h-8 w-24 animate-pulse rounded bg-[#e0e6ed] dark:bg-[#1b2e4b]" aria-hidden="true"></div>
+                <p *ngIf="!loading" class="mt-2 truncate text-3xl font-bold text-black dark:text-white-light"
                     [title]="dashboardData ? (dashboardData[card.key] ?? 0 | number: card.format) : ''">
                     {{ dashboardData ? compactNumber(dashboardData[card.key]) : '—' }}
                 </p>

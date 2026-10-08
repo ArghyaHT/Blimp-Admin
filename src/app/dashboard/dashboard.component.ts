@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DashboardService } from 'src/app/service/dashboard.service';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,6 +9,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
+  loading = false; // true while the stats load: "Please wait..." on Apply Filter, placeholders in the cards
 
   filterOptions = [
     { value: '', label: 'Select Filter' },
@@ -79,7 +81,11 @@ export class DashboardComponent {
     };
 
 
-    this.service.getDashbordData(this.token, requestBody).subscribe((response: any) => {
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
+    this.service.getDashbordData(this.token, requestBody).pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code === 200) {
         this.dashboardData = response.data;
       }
