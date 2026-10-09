@@ -44,7 +44,7 @@ export class AddCommissionComponent extends BaseComponent {
 
   getCommisionDetails() {
     this.loading = true;
-    this.service.getCommissionDetails('').pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
+    this.service.getCommissionDetails(this.token, '').pipe(finalize(() => (this.loading = false))).subscribe((response: any) => {
       if (response.code === 200) {
         this.commissionForm.patchValue({
           commission: response.data.admin_commission,

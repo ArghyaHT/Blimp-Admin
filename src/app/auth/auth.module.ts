@@ -12,12 +12,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 // headlessui
 import { MenuModule } from 'headlessui-angular';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { loginGuard } from '../authguard/login.guard';
 
 
 const routes: Routes = [
     {
         path: '',
         component: BoxedSigninComponent,
+        canActivate: [loginGuard],
     },
     { 
         path: 'change-password',

@@ -1,74 +1,59 @@
-<main>
-
-    <div
-        class="relative flex min-h-screen items-center justify-center">
-
-        <div
-            class="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
-            <!-- <div
-                class="relative flex flex-col justify-center rounded-md bg-white/60 px-6 py-20 backdrop-blur-lg dark:bg-black/50 lg:min-h-[758px]"> -->
-
-                <div class="mx-auto w-full max-w-[550px]">
-                    <div class="panel">
-                        <div class="flex justify-center mb-10 items-center">
-                            <img class="w-100 flex-none mr-3 logo-img-login" src="./assets/logo/logo.svg" alt="Blimp" />
-                            <!-- <span class="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">BLIMP</span> -->
-                        </div>
-                        
-                        
-                    <form class="space-y-5 dark:text-white" id="sign_in" method="POST" [formGroup]="loginForm"
-                    (ngSubmit)="handleLogin()">
-                        <div>
-                            <label for="Email">Email<span class="required-mark" aria-hidden="true">*</span></label>
-                            <div class="relative text-white-dark">
-                                <input id="Email" type="email" name="email" formControlName="email" placeholder="Enter Email" 
-                                    class="form-input ps-10 placeholder:text-white-dark" />
-                                    
-                                <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                    <icon-mail [fill]="true" />
-                                </span>
-                                
-                            </div>
-
-                            <span class="errormsg"
-                                *ngIf="(is_submited && !loginControl['email'].valid) || (!loginControl['email'].valid && loginControl['email'].touched)">
-                                {{ loginControl['email'].errors?.['pattern'] ? 'Please provide a valid email' : 'Please
-                                provide a email' }}
-                            </span>
-                        </div>
-                        <div>
-                            <label for="Password">Password<span class="required-mark" aria-hidden="true">*</span></label>
-                            <div class="relative text-white-dark">
-                                <input id="Password" [type]="passwordVisible ? 'text' : 'password'" placeholder="Enter Password" name="password" formControlName="password"
-                                    class="form-input ps-10 placeholder:text-white-dark" />
-                                <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                    <icon-lock-dots [fill]="true" />
-                                </span>
-
-                                <button type="button" class="absolute inset-y-0 right-4 flex items-center" (click)="togglePasswordVisibility()">
-                                    <i [class]="passwordVisible ? 'fas fa-eye' : 'fas fa-eye-slash'"></i> <!-- FontAwesome icons as an example -->
-                                </button>
-                            </div>
-
-                            <span class="errormsg"
-                                *ngIf="(is_submited && !loginControl['password'].valid) || (!loginControl['password'].valid && loginControl['password'].touched)">
-                                {{ loginControl['password'].errors?.['pattern'] ? 'Please provide a valid password' : 'Please
-                                provide a password' }}
-                            </span>
-                        </div>
-                       
-                        <button type="submit" class="btn btn-success !mt-6 w-full border-0 shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]" [disabled]="submitting">
-                            <span *ngIf="submitting" class="btn-spinner"></span>
-                            {{ submitting ? 'Please wait...' : 'Log in' }}
-                        </button>
-                    </form>
-
-                    <div class="mb-10 md:mb-[60px]">
-
-                    </div>
-                   </div>
+<main class="login-page">
+    <!-- Same centred card as the Change Password page -->
+    <div class="relative flex min-h-screen items-center justify-center px-4 py-10">
+        <div class="w-full max-w-[440px]">
+            <div class="panel !p-6 sm:!p-8">
+                <div class="mb-6 flex justify-center">
+                    <img class="logo-img-login" src="./assets/logo/logo.svg" alt="Blimp" />
                 </div>
-            <!-- </div> -->
+
+                <div class="mb-7 text-center">
+                    <h1 class="text-xl font-semibold text-black dark:text-white-light">Welcome back</h1>
+                    <p class="mt-1 text-xs text-white-dark">Sign in to the Blimp admin panel</p>
+                </div>
+
+                <form class="space-y-5 dark:text-white" id="sign_in" method="POST" [formGroup]="loginForm" (ngSubmit)="handleLogin()" novalidate>
+                    <div>
+                        <label for="Email">Email<span class="required-mark" aria-hidden="true">*</span></label>
+                        <div class="relative text-white-dark">
+                            <input id="Email" aria-required="true" type="email" name="email" formControlName="email" autocomplete="username"
+                                placeholder="Enter your email" class="form-input ps-10 placeholder:text-white-dark" />
+                            <span class="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2">
+                                <icon-mail [fill]="true" />
+                            </span>
+                        </div>
+                        <p class="field-error" *ngIf="(is_submited || loginControl['email'].touched) && !loginControl['email'].valid">
+                            {{ loginControl['email'].errors?.['pattern'] ? 'Please enter a valid email address' : 'Please enter your email' }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <label for="Password">Password<span class="required-mark" aria-hidden="true">*</span></label>
+                        <div class="relative text-white-dark">
+                            <input id="Password" aria-required="true" [type]="passwordVisible ? 'text' : 'password'" name="password" formControlName="password"
+                                autocomplete="current-password" placeholder="Enter your password" class="form-input ps-10 pe-11 placeholder:text-white-dark" />
+                            <span class="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2">
+                                <icon-lock-dots [fill]="true" />
+                            </span>
+                            <button type="button" class="toggle-visibility" (click)="togglePasswordVisibility()"
+                                [attr.aria-label]="passwordVisible ? 'Hide password' : 'Show password'">
+                                <i [class]="passwordVisible ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+                            </button>
+                        </div>
+                        <p class="field-error" *ngIf="(is_submited || loginControl['password'].touched) && !loginControl['password'].valid">
+                            {{ loginControl['password'].errors?.['pattern'] ? 'Please enter a valid password' : 'Please enter your password' }}
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn btn-success !mt-7 w-full border-0" [disabled]="submitting">
+                        <span *ngIf="submitting" class="btn-spinner"></span>
+                        {{ submitting ? 'Please wait...' : 'Log in' }}
+                    </button>
+                </form>
+            </div>
+
+            <!-- Same text as the admin footer (layouts/footer.html) -->
+            <p class="mt-5 text-center text-xs text-white-dark">Copyright © {{ currentYear }}. All Rights Reserved</p>
         </div>
     </div>
 </main>

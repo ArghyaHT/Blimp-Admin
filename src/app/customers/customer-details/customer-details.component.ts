@@ -49,7 +49,7 @@ export class CustomerDetailsComponent {
   }
 
   loadCountryFlags() {
-    this.service.getCountry({}).subscribe((response: any) => {
+    this.service.getCountry(this.token, {}).subscribe((response: any) => {
       if (response.code === 200) {
         for (const country of response.data || []) {
           const code = this.phoneCodeDigits(country.phone_code);

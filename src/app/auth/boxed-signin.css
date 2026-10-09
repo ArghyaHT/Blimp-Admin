@@ -1,0 +1,10 @@
+/* Soft brand-tinted background behind the login card (light and dark) */
+.login-page {
+    display: block;
+    background: radial-gradient(circle at 15% 10%, rgba(67, 97, 238, 0.08), transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(0, 171, 85, 0.08), transparent 45%);
+}
+:host-context(.dark) .login-page {
+    background: radial-gradient(circle at 15% 10%, rgba(67, 97, 238, 0.15), transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(0, 171, 85, 0.1), transparent 45%);
+}

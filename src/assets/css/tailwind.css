@@ -891,6 +891,22 @@ pre code.hljs {
     margin-left: 0.5rem;
 }
 
+/* Show / hide password button inside a password input (right side): Login, Change Password */
+.toggle-visibility {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    inset-inline-end: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 0.875rem;
+    color: #888ea8;
+}
+.toggle-visibility:hover,
+.toggle-visibility:focus-visible {
+    color: #4361ee;
+}
+
 /* Red star after the label of a required form field */
 .required-mark {
     margin-left: 0.125rem;

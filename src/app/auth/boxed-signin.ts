@@ -10,6 +10,7 @@ import { BaseComponent } from '../utils/components/base/base.component';
 @Component({
     moduleId: module.id,
     templateUrl: './boxed-signin.html',
+    styleUrls: ['./boxed-signin.css'],
     animations: [
         trigger('toggleAnimation', [
             transition(':enter', [style({ opacity: 0, transform: 'scale(0.95)' }), animate('100ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))]),
@@ -22,6 +23,7 @@ export class BoxedSigninComponent extends BaseComponent {
     loginForm: FormGroup;
     is_submited = false;
     passwordVisible: boolean = false;
+    currentYear = new Date().getFullYear();
 
     constructor(injector: Injector, private fb: FormBuilder, private Auth: AuthService) {
         super(injector);
@@ -32,9 +34,7 @@ export class BoxedSigninComponent extends BaseComponent {
         })
     }
 
-    ngOnInit() {
-        this.Auth.reloadLogin()
-    }
+    // An admin who is already logged in never reaches this page: loginGuard sends them to the dashboard
 
     get loginControl() {
         return this.loginForm.controls;

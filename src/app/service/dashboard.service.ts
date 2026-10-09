@@ -755,10 +755,12 @@ export class DashboardService {
     });
   }
 
-  getCountry(body: any) {
+  getCountry(token: any, body: any) {
     return this.http.post(environment.APIURL + "/get-countries", body, {
       headers: {
-        "api-key": this.apiKey
+        "api-key": this.apiKey,
+        // only sent when logged in: a null header value makes Angular throw
+        ...(token ? { 'token': token } : {})
       },
     });
   }
@@ -780,10 +782,12 @@ export class DashboardService {
     });
   }
 
-  getCommissionDetails(body: any) {
+  getCommissionDetails(token: any, body: any) {
     return this.http.post(environment.APIURL + "/get-commission", body, {
       headers: {
-        "api-key": this.apiKey
+        "api-key": this.apiKey,
+        // only sent when logged in: a null header value makes Angular throw
+        ...(token ? { 'token': token } : {})
       },
     });
   }

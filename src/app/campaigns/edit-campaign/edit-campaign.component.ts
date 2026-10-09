@@ -190,7 +190,7 @@ export class EditCampaignComponent extends BaseComponent implements AfterViewIni
   // }
 
   getCountryList() {
-    this.service.getCountry('').subscribe((response: any) => {
+    this.service.getCountry(this.token, '').subscribe((response: any) => {
       if (response.code === 200) {
         this.countries = response.data;
       } else {
