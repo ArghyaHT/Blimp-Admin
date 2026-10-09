@@ -359,3 +359,119 @@ body.swal2-toast-shown .swal2-container.toast {
 .swal2-popup.swal2-toast .swal2-success [class^='swal2-success-circular-line'][class$='right'] {
     border-radius: 0 2em 2em 0 !important;
 }
+
+/* ===== Toasts (Swal.fire({ toast: true }) and BaseComponent.showToast) =====
+   A compact card: coloured bar on the left, a small icon in the type colour, the message in 14px text.
+   The animated SweetAlert icon is hidden and replaced by a Font Awesome icon picked from the popup's
+   swal2-icon-<type> class, so every toast in the app gets this look without code changes. */
+body.swal2-toast-shown .swal2-container.swal2-top-end,
+body.swal2-toast-shown .swal2-container.swal2-top-right {
+    width: auto;
+    max-width: calc(100vw - 2rem);
+    padding: 1rem;
+}
+.swal2-popup.swal2-toast {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    width: 360px !important;
+    max-width: 100%;
+    padding: 0.875rem 1rem !important;
+    border: 1px solid #e0e6ed;
+    border-left: 4px solid #4361ee;
+    border-radius: 0.5rem;
+    background: #fff;
+    box-shadow: 0 12px 32px -12px rgba(14, 23, 38, 0.3);
+}
+.dark .swal2-popup.swal2-toast {
+    /* not the left side: that keeps the type colour */
+    border-top-color: #1b2e4b;
+    border-right-color: #1b2e4b;
+    border-bottom-color: #1b2e4b;
+    background: #1b2e4b;
+    box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+}
+.swal2-popup.swal2-toast .swal2-icon {
+    display: none !important;
+}
+.swal2-popup.swal2-toast::before {
+    flex-shrink: 0;
+    width: 1.25rem;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1.125rem;
+    line-height: 1;
+    text-align: center;
+    content: '\f05a'; /* circle-info */
+    color: #4361ee;
+}
+.swal2-popup.swal2-toast .swal2-title {
+    flex: 1;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: start;
+    color: #0e1726;
+}
+.dark .swal2-popup.swal2-toast .swal2-title {
+    color: #e0e6ed;
+}
+.swal2-popup.swal2-toast .swal2-html-container {
+    margin: 0.125rem 0 0 !important;
+    padding: 0 !important;
+    font-size: 0.8125rem;
+    color: #888ea8;
+}
+.swal2-popup.swal2-toast .swal2-close {
+    position: static;
+    font-size: 1.25rem;
+}
+
+/* Type colours: success green, error red, warning amber, info/question blue */
+.swal2-popup.swal2-toast.swal2-icon-success {
+    border-left-color: #00ab55;
+}
+.swal2-popup.swal2-toast.swal2-icon-success::before {
+    content: '\f058'; /* circle-check */
+    color: #00ab55;
+}
+.swal2-popup.swal2-toast.swal2-icon-error {
+    border-left-color: #e7515a;
+}
+.swal2-popup.swal2-toast.swal2-icon-error::before {
+    content: '\f057'; /* circle-xmark */
+    color: #e7515a;
+}
+.swal2-popup.swal2-toast.swal2-icon-warning {
+    border-left-color: #e2a03f;
+}
+.swal2-popup.swal2-toast.swal2-icon-warning::before {
+    content: '\f071'; /* triangle-exclamation */
+    color: #e2a03f;
+}
+[dir='rtl'] .swal2-popup.swal2-toast {
+    border-left-width: 1px;
+    border-right: 4px solid #4361ee;
+}
+[dir='rtl'] .swal2-popup.swal2-toast.swal2-icon-success { border-right-color: #00ab55; }
+[dir='rtl'] .swal2-popup.swal2-toast.swal2-icon-error { border-right-color: #e7515a; }
+[dir='rtl'] .swal2-popup.swal2-toast.swal2-icon-warning { border-right-color: #e2a03f; }
+
+/* Slide in from the right instead of the default bounce */
+.swal2-popup.swal2-toast.swal2-show {
+    animation: blimp-toast-in 0.25s ease-out;
+}
+.swal2-popup.swal2-toast.swal2-hide {
+    animation: blimp-toast-out 0.2s ease-in forwards;
+}
+@keyframes blimp-toast-in {
+    from { opacity: 0; transform: translateX(1.5rem); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes blimp-toast-out {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(1.5rem); }
+}
