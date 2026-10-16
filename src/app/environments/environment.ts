@@ -1,6 +1,6 @@
 export const environment = {
   // APIURL:'http://localhost:8080/api/v1/admin/',
-  APIURL:'https://blimp-final.onrender.com/api/v1/admin',
+  APIURL: 'https://blimp-final-kk2n.onrender.com/api/v1/admin',
   //  APIURL: 'http://localhost:8000/api/v1/auth',  
   // APIURL: 'https://blimp.onrender.com/api/v1/auth',  
   APIKEY: 'blimp',
